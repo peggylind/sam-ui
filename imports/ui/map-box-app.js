@@ -25,7 +25,7 @@ const south = 28.93;
 export default class MapBox extends React.Component {
   constructor(props) {
       super(props);
-      ///console.log('in mapbox'+props)
+      console.log('in mapbox'+props)
       //const { data = {coords:[]} } = this.props;
       const coords = [[east,south],[west,north]];
       const age = [];
@@ -54,7 +54,6 @@ export default class MapBox extends React.Component {
       }
       if (this.props.data != prevState.samdata && prevState.waiting == 0){
         this.setState({samdata: this.props.data});
-        console.log('why not update??')
         //have to do the set state here with everything from the viewport!!!
         //this.forceUpdate();
       }
