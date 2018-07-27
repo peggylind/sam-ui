@@ -6,6 +6,9 @@ import Sam20k from "./sam_20k";
 
 //https://www.npmjs.com/package/mongo-graphql-starter
 //https://github.com/APIs-guru/graphql-voyager
+//will do it only on full_sam, and with nested calls on one_of == 'tenthousands', 'thousands', etc.
+//the nested calls made from SamDataForm and combine with $limit
+
 export default {
   Query: {
     async samcity(obj, args, { _id }){
@@ -24,19 +27,6 @@ export default {
   },
 
   SamCitizen: {
-    // goals: resolution =>
-    //   Goals.find({
-    //     resolutionId: resolution._id
-    //   }).fetch(),
-    //
-    // completed: resolution => {
-    //   const goals = Goals.find({
-    //     resolutionId: resolution._id
-    //   }).fetch();
-    //   if (goals.length === 0) return false;
-    //   const completedGoals = goals.filter(goal => goal.completed);
-    //   return goals.length === completedGoals.length;
-    // }
   },
 
   Mutation: {
