@@ -1,0 +1,6 @@
++ @babel/core@7.0.0-beta.54
+added 27 packages from 48 contributors in 4.227s
+[!] 1 vulnerability found [1766 packages audited]
+    Severity: 1 Low
+    Run `npm audit` for more detail
+

@@ -1,0 +1,37 @@
+notes:
+MONGO_URL=mongodb://localhost:27017/SamCity meteor
+
+Denizens
+
+
+
+
+Observations
+
+
+
+
+Maps
+
+
+
+
+Homes
+
+
+
+
+Models - DASH - and from others
+
+
+
+Starts with a group of what officials know about folks in your neighborhood - pick someone like yourself (or like someone you'd like to know about)
+
+have to redo sidepane b/c it won't let you rener inside...
+
+put in slider to send props to SamDataForm / can coordinates go up to app.js, and come back too?
+put all the other main choices in the object to pass; have initial viewport in app.js as a prop??
+graphQL for fetchmore?? https://github.com/apollographql/react-docs/blob/master/source/api-graphql.md
+change error handling: https://www.apollographql.com/docs/react/features/error-handling.html
+
+r for coordinates --
