@@ -21,8 +21,24 @@ export default {
       //return await SamCitizens.find( {_id: /[0]$/}, {limit:10000} ).fetch();
     },
     async samcity20k(obj, args, { _id }){
-      console.log('in async samcity20k '+JSON.stringify(args))
-       return await Sam20k.find( {member:args.member}, {limit:args.limit} ).fetch();
+      console.log('in async samcity20k obj '+JSON.stringify(obj))
+      console.log('in async samcity20k args '+JSON.stringify(args))
+       return await Sam20k.find( {
+         coords: {
+           $near: {
+             $geometry: {
+               type: "Point" ,
+               coordinates: args.coords
+             },
+             $maxDistance: args.dist, //in meters
+             $minDistance: 10
+           },
+         },
+         member:args.member,
+         race:args.race
+        },
+         {limit:args.limit}
+       ).fetch();
     }
   },
 

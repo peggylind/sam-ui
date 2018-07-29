@@ -11,8 +11,9 @@ import SamDataForm from './SamDataForm'; //change to just samdatamap??
 import Slide from './slider-input';
 
 const samprops = {
-  limit: 100,
+  limit: 1000,
   member: "Child",
+  race: "White",
   longitude: -95.29,
   latitude: 29.7,
   zoom: 10
@@ -30,16 +31,14 @@ export default class App extends Component {
        this.state = {
          samprops : samprops,
          mapprops : {
-              mapboxApiAccessToken: 'pk.eyJ1IjoibWRjaW90dGkiLCJhIjoiY2l1cWdyamw5MDAxcTJ2bGFmdzJxdGFyNyJ9.2b6aTKZNlT1_DEJiJ9l3hw',
-//this viewport is reaad in as object, but is a "new" class in map-box-app.js
-              bbox: bbox,
+              bbox: bbox, //may use later for searches - now based on geonear in circle
               viewport: {
                 width: window.innerWidth,
                 height: window.innerHeight,
                 longitude: -95.29,
                 latitude: 29.7,
-                zoom: 10,
-                pitch: 60,
+                zoom: 10,//16.051394480575627, //which is zoom for 1 meter for testing
+                pitch: 20,
                 bearing: 0
               }
             }
@@ -53,11 +52,12 @@ export default class App extends Component {
     this.setState({samprops});
   };
 
-  onMapChange = function(mapstuff){
+  onMapChange = function(mapstuff,dist){
     var samprops = {...this.state.samprops}
     samprops.latitude = mapstuff.latitude;
     samprops.longitude = mapstuff.longitude;
     samprops.zoom = mapstuff.zoom;
+    samprops.dist = dist;
     this.setState({samprops});
     //var mapprops = {...this.state.mapprops}
 
@@ -78,7 +78,7 @@ export default class App extends Component {
               samprops={this.state.samprops}
               onMapChange={this.onMapChange}
               limit={this.state.samprops.limit}
-              member="Child"/>
+              />
           </div>
       );
     };

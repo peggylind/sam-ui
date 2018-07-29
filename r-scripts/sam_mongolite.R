@@ -14,4 +14,4 @@ for (row in 1:nrow(samc)){
 }
 
 #mongolite can't deal with sfg, I think: Error: No method asJSON S3 class: sfg
-
+#need to add ensure_index for 2d_sphere etc. - think through

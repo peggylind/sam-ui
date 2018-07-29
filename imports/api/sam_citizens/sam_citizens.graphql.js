@@ -11,7 +11,7 @@ type SamCitizen {
 
 extend type Query {
   samcity: [SamCitizen]
-  samcity20k(limit:Int,member:String,coords:[Float]):[SamCitizen]
+  samcity20k(limit:Int,member:String,race:String,dist:Float,coords:[Float]):[SamCitizen]
 }
 
 type Mutation {

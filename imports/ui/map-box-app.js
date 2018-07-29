@@ -1,7 +1,7 @@
 import React from 'react';
 import DeckGL, { ScatterplotLayer, ArcLayer, LineLayer, MapController, Controller } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
-import WebMercatorViewport from 'viewport-mercator-project';
+import WebMercatorViewport, {getDistanceScales} from 'viewport-mercator-project';
 //import debounce from 'lodash.debounce';
 import SamMapControls from './SamMapController';
 
@@ -9,27 +9,19 @@ const west = -95.91;
 const east = -94.67;
 const north = 30.47;
 const south = 28.93;
+const coords = [[east,south],[west,north]];
 
 export default class MapBox extends React.Component {
   constructor(props) {
       super(props);
-      console.log('in mapbox'+JSON.stringify(props.mapprops))
+      //console.log('in mapbox'+JSON.stringify(props.mapprops))
       //const { data = {coords:[]} } = this.props;
-      const coords = [[east,south],[west,north]];
+
       const age = [];
       const race = [];
       this.SamControls = new SamMapControls({wtf:'wert'});
       this.state = {
             mapboxApiAccessToken: 'pk.eyJ1IjoibWRjaW90dGkiLCJhIjoiY2l1cWdyamw5MDAxcTJ2bGFmdzJxdGFyNyJ9.2b6aTKZNlT1_DEJiJ9l3hw',
-            // viewport: new WebMercatorViewport({
-            //     width: window.innerWidth,
-            //     height: window.innerHeight,
-            //     longitude: (west + east) / 2,
-            //     latitude: (north + south) / 2,
-            //     zoom: this.props.mapprops.viewport.zoom,
-            //     pitch: 60,
-            //     bearing: 0
-            // }),
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
             time: 0,
             samdata: [coords,age,race],
@@ -53,13 +45,47 @@ export default class MapBox extends React.Component {
         //this.forceUpdate();
       }
       if (this.state.viewport != prevState.viewport){
-        this.props.onMapChange(this.state.viewport)
-      }
+        var scale = getDistanceScales(this.state.viewport).metersPerPixel[0];
+        var width = window.innerWidth;
+        var worldWidth = width*scale;
+        var height = window.innerHeight;
+        var worldHeight = height*scale; //number of meters in window
+        if (worldHeight>worldWidth){
+          var dist4search = worldHeight
+        }else{
+          var dist4search = worldWidth
+        };
+        this.props.onMapChange(this.state.viewport,dist4search*1.2);
+        //console.log(this.state.viewport)
+      };
     };
-
+//https://github.com/uber-common/viewport-mercator-project/blob/master/docs/api-reference/web-mercator-utils.md
     componentDidMount() {
-    //  this.props.onMapChange('this.state.viewport')
-    //  this.emitChangeDebounced.cancel();
+      // var scale = getDistanceScales(this.state.viewport).metersPerPixel[0];
+      // //centerWorld gives array of two
+      // var centerWorld = lngLatToWorld([this.state.viewport.longitude,
+      //   this.state.viewport.latitude],scale);
+      // var width = window.innerWidth;
+      // var worldWidth = width*scale;
+      // console.log('worldWidth')
+      // console.log(worldWidth)
+      // var height = window.innerHeight;
+      // var worldHeight = height*scale; //number of meters in window
+      // var topLeft = [centerWorld[0]-(width/2),centerWorld[1]+(height/2)]
+      // var topLeftLL = worldToLngLat(topLeft,scale);
+      // console.log('topLeftLL')
+      // console.log(topLeftLL)
+      //
+      // var bottomRight = [centerWorld[0]+(width/2),centerWorld[1]-(height/2)]
+      // var bottomRightLL = worldToLngLat(bottomRight,scale)
+      // console.log('bottomRightLL')
+      // console.log(bottomRightLL)
+      // var fit2bounds = fitBounds({width: width, height: height,
+      //   bounds:[topLeftLL,bottomRightLL]})
+      // console.log(fit2bounds)
+      //it has the right middle point, but not the right zoom - distances are right;
+      //take larger of two for distance in mongo search??
+//fit2bounds gives the new
     }
     // handleEvent(event) {
     //   console.log(event)
@@ -84,13 +110,13 @@ export default class MapBox extends React.Component {
   render() {
 
     const layers = [
-  new ArcLayer({
-    id: 'arc-layer',
-    strokeWidth: 10,
-    data: [
-      { sourcePosition: [-95.91, 30.47], targetPosition: [-95.91, 30.93], color: [255, 0, 255] },
-    ],
-  }),
+  // new ArcLayer({
+  //   id: 'arc-layer',
+  //   strokeWidth: 10,
+  //   data: [
+  //     { sourcePosition: [-95.91, 30.47], targetPosition: [-95.91, 30.93], color: [255, 0, 255] },
+  //   ],
+  // }),
   new ScatterplotLayer({
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
@@ -108,15 +134,14 @@ export default class MapBox extends React.Component {
     // onHover: info => console.log('Hovered:', info),
     // onClick: info => console.log('Clicked:', info)
   }),
-  new LineLayer({
-    id: 'line-layer',
-    strokeWidth: 10,
-    data: [
-      { sourcePosition: [-95.01, 30.47], targetPosition: [-95.01, 28.93], color: [255, 0, 0] },
-    ],
-  }),
+  // new LineLayer({
+  //   id: 'line-layer',
+  //   strokeWidth: 10,
+  //   data: [
+  //     { sourcePosition: [-95.01, 30.47], targetPosition: [-95.01, 28.93], color: [255, 0, 0] },
+  //   ],
+  // }),
 ]
-//set up waiting logo
 
     return (
       <ReactMapGL

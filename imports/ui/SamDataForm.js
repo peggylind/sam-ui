@@ -8,11 +8,15 @@ const sam20kQuery = gql`
   query Sam20k(
     $limit: Int,
     $member: String,
+    $race: String,
+    $dist: Float,
     $coords: [Float]
   ) {
     samcity20k(
       limit: $limit,
       member: $member,
+      race: $race,
+      dist: $dist,
       coords: $coords
     ) {
       _id
@@ -62,7 +66,9 @@ export default graphql(sam20kQuery,
     options: props => ({
       variables: {
         limit:  props.samprops.limit || "450", //have this come from state...
-        member: props.samprops.member || "Adult",
+        member: props.samprops.member,
+        race: props.samprops.race,
+        dist: props.samprops.dist,
         coords: [props.samprops.longitude,props.samprops.latitude] || [-95.29,29.7]
       }
     }),
