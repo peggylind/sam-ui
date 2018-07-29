@@ -1,54 +1,49 @@
 import React from 'react';
-import DeckGL, { ScatterplotLayer, ArcLayer, LineLayer, MapController } from 'deck.gl';
+import DeckGL, { ScatterplotLayer, ArcLayer, LineLayer, MapController, Controller } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import WebMercatorViewport from 'viewport-mercator-project';
-
-// Set your mapbox access token here
-//const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiZGFzaGF0dWgiLCJhIjoiY2ppaXV5Z29nMXdxNTNxcXlicXBjeGhmayJ9.sG4Yw6rMHIBMRNlWwWphYQ';
-
-// Initial viewport settings
-// const initialViewState = {
-//   longitude: -122.41669,
-//   latitude: 37.7853,
-//   zoom: 13,
-//   pitch: 0,
-//   bearing: 0
-// };
-
-// Data to be used by the LineLayer
-//const linedata = [{sourcePosition: [-95.91, 30.47], targetPosition: [-94.67, 28.93]}];
+//import debounce from 'lodash.debounce';
+import SamMapControls from './SamMapController';
 
 const west = -95.91;
 const east = -94.67;
 const north = 30.47;
 const south = 28.93;
+
 export default class MapBox extends React.Component {
   constructor(props) {
       super(props);
-      console.log('in mapbox'+props)
+      console.log('in mapbox'+JSON.stringify(props.mapprops))
       //const { data = {coords:[]} } = this.props;
       const coords = [[east,south],[west,north]];
       const age = [];
       const race = [];
+      this.SamControls = new SamMapControls({wtf:'wert'});
       this.state = {
             mapboxApiAccessToken: 'pk.eyJ1IjoibWRjaW90dGkiLCJhIjoiY2l1cWdyamw5MDAxcTJ2bGFmdzJxdGFyNyJ9.2b6aTKZNlT1_DEJiJ9l3hw',
-            viewport: new WebMercatorViewport({
-                width: window.innerWidth,
-                height: window.innerHeight,
-                longitude: (west + east) / 2,
-                latitude: (north + south) / 2,
-                zoom: props.zoom,
-                pitch: 60,
-                bearing: 0
-            }),
+            // viewport: new WebMercatorViewport({
+            //     width: window.innerWidth,
+            //     height: window.innerHeight,
+            //     longitude: (west + east) / 2,
+            //     latitude: (north + south) / 2,
+            //     zoom: this.props.mapprops.viewport.zoom,
+            //     pitch: 60,
+            //     bearing: 0
+            // }),
+            viewport: new WebMercatorViewport(this.props.mapprops.viewport),
             time: 0,
             samdata: [coords,age,race],
             waiting: 1
         };
+  //      this.handleEvent = this.handleEvent.bind(this);
+  //      this.emitChangeDebounced = debounce(this.emitChange, 250);
       }
+
+
     componentDidUpdate(prevProps, prevState) {
       //console.log(this.props.data)
-      //there's a loading on the graphQL stuff, but starts late
+      //there's a 'loading' on the graphQL stuff, but starts late
+      //cannot go straight into map, because data async requires waiting.
       if (this.props.data && prevState.waiting == 1){
         this.setState({samdata: this.props.data, waiting: 0});
       }
@@ -57,9 +52,37 @@ export default class MapBox extends React.Component {
         //have to do the set state here with everything from the viewport!!!
         //this.forceUpdate();
       }
+      if (this.state.viewport != prevState.viewport){
+        this.props.onMapChange(this.state.viewport)
+      }
+    };
+
+    componentDidMount() {
+    //  this.props.onMapChange('this.state.viewport')
+    //  this.emitChangeDebounced.cancel();
     }
+    // handleEvent(event) {
+    //   console.log(event)
+    //     if (event.type === 'panend') {
+    //       console.log('panedn')
+    //         // do something
+    //     } else {
+    //         super.handleEvent(event);
+    //     }
+    // }
+    // handleChange(e) {
+    //   console.log('this is just'+e)
+    //   this.evalue = e.target.value;
+    //   this.emitChangeDebounced(e.target.value);
+    // }
+    // //register value on parent's function
+    // emitChange(value) {
+    //   this.props.onChange(value);
+    // }
+
 
   render() {
+
     const layers = [
   new ArcLayer({
     id: 'arc-layer',
@@ -80,7 +103,8 @@ export default class MapBox extends React.Component {
     radiusMinPixels: 1.12,
     radiusScale: 10,
     outline: false,
-    pickable: true,
+    pickable: true
+    //panEnd: info => console.log('panend:', info),
     // onHover: info => console.log('Hovered:', info),
     // onClick: info => console.log('Clicked:', info)
   }),
@@ -99,6 +123,7 @@ export default class MapBox extends React.Component {
         {...this.state.viewport}
         mapboxApiAccessToken={this.state.mapboxApiAccessToken}
         waiting={this.state.waiting}
+        mapControls={this.SamControls}
         onViewportChange={(viewport) => this.setState({viewport})}
       >
         {this.state.waiting && <div style={{position:"absolute",

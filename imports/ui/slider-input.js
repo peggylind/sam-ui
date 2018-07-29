@@ -5,24 +5,22 @@ import debounce from 'lodash.debounce';
 export default class Slide extends Component {
   constructor(props) {
     super(props);
-    console.log('slider'+JSON.stringify(this.props))
+    //console.log('slider'+JSON.stringify(this.props))
     this.handleChange = this.handleChange.bind(this);
     this.emitChangeDebounced = debounce(this.emitChange, 250);
     this.evalue = 1000;
-  }
+  };
   componentWillUnmount() {
     this.emitChangeDebounced.cancel();
-  }
-  componentDidMount() {
   };
   handleChange(e) {
     this.evalue = e.target.value;
     this.emitChangeDebounced(e.target.value);
-  }
+  };
   //register value on parent's function
   emitChange(value) {
     this.props.onChange(value);
-  }
+  };
 
 
   render() {

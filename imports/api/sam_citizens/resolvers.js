@@ -21,7 +21,7 @@ export default {
       //return await SamCitizens.find( {_id: /[0]$/}, {limit:10000} ).fetch();
     },
     async samcity20k(obj, args, { _id }){
-      console.log('in async samcity20k '+JSON.stringify(args.limit))
+      console.log('in async samcity20k '+JSON.stringify(args))
        return await Sam20k.find( {member:args.member}, {limit:args.limit} ).fetch();
     }
   },
