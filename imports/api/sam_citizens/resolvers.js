@@ -33,9 +33,9 @@ export default {
              $maxDistance: args.dist, //in meters
              $minDistance: 10
            },
-         },
-         member:args.member,
-         race:args.race
+         }//,
+         //member:args.member,
+         //race:args.race
         },
          {limit:args.limit}
        ).fetch();

@@ -15,11 +15,11 @@ export default class MapBox extends React.Component {
   constructor(props) {
       super(props);
       //console.log('in mapbox'+JSON.stringify(props.mapprops))
-      //const { data = {coords:[]} } = this.props;
 
       const age = [];
       const race = [];
       this.SamControls = new SamMapControls({wtf:'wert'});
+      this.setToolInfo = this.props.setToolInfo;
       this.state = {
             mapboxApiAccessToken: 'pk.eyJ1IjoibWRjaW90dGkiLCJhIjoiY2l1cWdyamw5MDAxcTJ2bGFmdzJxdGFyNyJ9.2b6aTKZNlT1_DEJiJ9l3hw',
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
@@ -55,57 +55,12 @@ export default class MapBox extends React.Component {
         }else{
           var dist4search = worldWidth
         };
-        this.props.onMapChange(this.state.viewport,dist4search*1.2);
-        //console.log(this.state.viewport)
+        this.props.onMapChange(this.state.viewport,dist4search);
+        console.log('dist4search')
+        console.log(dist4search)
       };
     };
 //https://github.com/uber-common/viewport-mercator-project/blob/master/docs/api-reference/web-mercator-utils.md
-    componentDidMount() {
-      // var scale = getDistanceScales(this.state.viewport).metersPerPixel[0];
-      // //centerWorld gives array of two
-      // var centerWorld = lngLatToWorld([this.state.viewport.longitude,
-      //   this.state.viewport.latitude],scale);
-      // var width = window.innerWidth;
-      // var worldWidth = width*scale;
-      // console.log('worldWidth')
-      // console.log(worldWidth)
-      // var height = window.innerHeight;
-      // var worldHeight = height*scale; //number of meters in window
-      // var topLeft = [centerWorld[0]-(width/2),centerWorld[1]+(height/2)]
-      // var topLeftLL = worldToLngLat(topLeft,scale);
-      // console.log('topLeftLL')
-      // console.log(topLeftLL)
-      //
-      // var bottomRight = [centerWorld[0]+(width/2),centerWorld[1]-(height/2)]
-      // var bottomRightLL = worldToLngLat(bottomRight,scale)
-      // console.log('bottomRightLL')
-      // console.log(bottomRightLL)
-      // var fit2bounds = fitBounds({width: width, height: height,
-      //   bounds:[topLeftLL,bottomRightLL]})
-      // console.log(fit2bounds)
-      //it has the right middle point, but not the right zoom - distances are right;
-      //take larger of two for distance in mongo search??
-//fit2bounds gives the new
-    }
-    // handleEvent(event) {
-    //   console.log(event)
-    //     if (event.type === 'panend') {
-    //       console.log('panedn')
-    //         // do something
-    //     } else {
-    //         super.handleEvent(event);
-    //     }
-    // }
-    // handleChange(e) {
-    //   console.log('this is just'+e)
-    //   this.evalue = e.target.value;
-    //   this.emitChangeDebounced(e.target.value);
-    // }
-    // //register value on parent's function
-    // emitChange(value) {
-    //   this.props.onChange(value);
-    // }
-
 
   render() {
 
@@ -129,7 +84,8 @@ export default class MapBox extends React.Component {
     radiusMinPixels: 1.12,
     radiusScale: 10,
     outline: false,
-    pickable: true
+    pickable: true,
+    onHover: ({object}) => this.setToolInfo(object?`${object.race}\n${object.total_income}`:null)
     //panEnd: info => console.log('panend:', info),
     // onHover: info => console.log('Hovered:', info),
     // onClick: info => console.log('Clicked:', info)

@@ -12,11 +12,12 @@ import Slide from './slider-input';
 
 const samprops = {
   limit: 1000,
-  member: "Child",
-  race: "White",
+  member: "Adult",
+  race: "Black or African American",
   longitude: -95.29,
   latitude: 29.7,
-  zoom: 10
+  zoom: 10,
+  dist: 10000000
   //this logic will apply to everything we want to show
 };
 //const App = ({ loading, resolutions, samcity, client, user }) => {
@@ -57,12 +58,16 @@ export default class App extends Component {
     samprops.latitude = mapstuff.latitude;
     samprops.longitude = mapstuff.longitude;
     samprops.zoom = mapstuff.zoom;
-    samprops.dist = dist;
+    samprops.dist = dist; //could add control to make it larger/smaller
     this.setState({samprops});
     //var mapprops = {...this.state.mapprops}
 
     // console.log('mapstuff '+JSON.stringify(this.state.mapprops))
     // console.log('mapstuff '+JSON.stringify(mapstuff))
+  }
+
+  setToolInfo = function(info){
+    console.log(info)
   }
 
   render(){
@@ -77,7 +82,7 @@ export default class App extends Component {
               mapprops={this.state.mapprops}
               samprops={this.state.samprops}
               onMapChange={this.onMapChange}
-              limit={this.state.samprops.limit}
+              setToolInfo={this.setToolInfo}
               />
           </div>
       );

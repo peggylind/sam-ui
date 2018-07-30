@@ -33,8 +33,9 @@ class SamDataForm extends Component {
        super(props);
        console.log('inSamDataForm '+JSON.stringify(this.props))
        this.state = {
-         passedProps : props
+         //passedProps : props
        }
+       console.log('state: '+JSON.stringify(this.state))
    }
    //https://reactjs.org/docs/react-component.html#componentdidupdate
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -53,6 +54,7 @@ class SamDataForm extends Component {
       <div>
         <MapBox
           onMapChange={this.props.onMapChange}
+          setToolInfo={this.props.setToolInfo}
           data={this.props.samcity20k}
           mapprops={this.props.mapprops}
           />
@@ -65,7 +67,7 @@ export default graphql(sam20kQuery,
   {
     options: props => ({
       variables: {
-        limit:  props.samprops.limit || "450", //have this come from state...
+        limit:  props.samprops.limit, //have this come from state...
         member: props.samprops.member,
         race: props.samprops.race,
         dist: props.samprops.dist,
