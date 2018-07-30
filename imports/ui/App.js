@@ -11,13 +11,14 @@ import SamDataForm from './SamDataForm'; //change to just samdatamap??
 import Slide from './slider-input';
 
 const samprops = {
-  limit: 1000,
+  limit: 20000,
   member: "Adult",
   race: "Black or African American",
+  age: "55 to 64",
   longitude: -95.29,
   latitude: 29.7,
   zoom: 10,
-  dist: 10000000
+  dist: 140000
   //this logic will apply to everything we want to show
 };
 //const App = ({ loading, resolutions, samcity, client, user }) => {

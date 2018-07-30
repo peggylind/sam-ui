@@ -22,6 +22,7 @@ const sam20kQuery = gql`
       _id
       member
       race
+      age
       total_income
       coords
     }

@@ -79,9 +79,18 @@ export default class MapBox extends React.Component {
     // data: [
     //   { position: [-94.67, 28.93], radius: 50, color: [0, 255, 0] },
     // ],
-    getColor: d => (d.age === "25 to 29" ? [0, 255, 0] : [0, 0, 255]),
-    opacity: 0.35,
+    // getColor: d => (d.age === "25 to 29" ? [0, 255, 0] :
+    //                 d.age === "55 to 64" ? [0, 0, 255] : [255, 0, 0]),
+    getColor: d => (d.race === "White" ? [133, 137, 247] :
+                    d.race === "Black or African American" ? [65, 247, 37] :
+                    d.race === "Asian" ? [247, 36, 155] :
+                    d.race === "Hispanic or Latino" ? [24, 249, 238] :
+                    d.race === "Some Other Race" ? [119, 3, 196] :
+                    d.race === "Two or More Races" ? [242, 100, 72] : [63, 61, 60]),
+    opacity: 0.85,
     radiusMinPixels: 1.12,
+    radiusMaxPixels: 100,
+    strokeWidth: 2,
     radiusScale: 10,
     outline: false,
     pickable: true,
