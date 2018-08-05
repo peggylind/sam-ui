@@ -45,8 +45,6 @@ export default class Slide extends Component {
       marginLeft: '85%',
       height: '97%'
     }
-//style={ this.props.isVert ?
-//  rangeStyleVertical : rangeStyleHorizontal}
 
     return (
 
@@ -65,32 +63,4 @@ export default class Slide extends Component {
 
     )
   }
-//onChange={this.handleChange}
-  // handleChange = pos => {
-  //   this.setState({
-  //     x: pos.x,
-  //     y: pos.y
-  //   });
-  // };
 }
-
-// <InputSlider
-//   className={this.props.className}
-
-//   onChange={this.handleChange}
-// />
-
-//https://www.npmjs.com/package/react-input-slider
-// Props
-// name	type	description	default
-// axis	string	type of slider ('x', 'y', 'xy')	'x'
-// x	number	value of x
-// xmax	number	max of x
-// xmin	number	min of x	0
-// y	number	value of y
-// ymax	number	max of y
-// ymin	number	min of y	0
-// xstep	number	step of x	1
-// ystep	number	step of y	1
-// onChange	function	change callback	null
-// onDragEnd	function	dragEnd callback	null

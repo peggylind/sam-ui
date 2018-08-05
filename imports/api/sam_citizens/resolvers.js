@@ -3,7 +3,7 @@ import {DataLoader} from 'dataloader';
 import SamCitizens from "./sam_citizens";
 import Sam20k from "./sam_20k";
 
-
+//if we start with starter version, we can try to get count, etc.
 //https://www.npmjs.com/package/mongo-graphql-starter
 //https://github.com/APIs-guru/graphql-voyager
 //will do it only on full_sam, and with nested calls on one_of == 'tenthousands', 'thousands', etc.

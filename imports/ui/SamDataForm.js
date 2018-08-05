@@ -32,23 +32,10 @@ const sam20kQuery = gql`
 class SamDataForm extends Component {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
        super(props);
-       console.log('inSamDataForm '+JSON.stringify(this.props))
+       //console.log('inSamDataForm '+JSON.stringify(this.props))
        this.state = {
-         //passedProps : props
-       }
-       console.log('state: '+JSON.stringify(this.state))
+        }
    }
-   //https://reactjs.org/docs/react-component.html#componentdidupdate
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.samprops.limit !== prevProps.samprops.limit) {
-      //console.log('should I call somethign?')
-      //this.refetchQueries();
-    }
-    //console.log(this.state.passedProps)
-    // this.setState(
-    //   {loading: true}
-    // )
-  }
     render(){
 
     return (
@@ -68,7 +55,8 @@ export default graphql(sam20kQuery,
   {
     options: props => ({
       variables: {
-        limit:  props.samprops.limit, //have this come from state...
+        toShow: props.samprops.toShow, //object with array for factors and colors
+        limit:  props.samprops.limit,
         member: props.samprops.member,
         race: props.samprops.race,
         dist: props.samprops.dist,

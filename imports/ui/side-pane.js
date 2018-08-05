@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import SlidingPane from 'react-sliding-pane';
 import 'react-sliding-pane/dist/react-sliding-pane.css';
 import Slide from './slider-input';
+import PullDown from './pull-down-input';
 //might just do my own pane...
 
 export default class SidePane extends Component {
@@ -40,7 +41,7 @@ export default class SidePane extends Component {
                   <button onClick={ () => this.setState({ isPaneOpenLeft: !this.state.isPaneOpenLeft }) }>
                       Left Pane
                   </button>
-                  <div>How many Sam Citizens to Show</div>
+                  <div>Sliders of various sorts on this side??</div>
               </div>
 
           <SlidingPane
@@ -54,7 +55,8 @@ export default class SidePane extends Component {
                   // triggered on "<" on left top click or on outside click
                   this.setState({ isPaneOpen: false });
               } }>
-              <div>Show graphs on this side?</div>
+              <div>Show selector/graphs on this side?</div>
+
           </SlidingPane>
           <SlidingPane
               isOpen={ this.state.isPaneOpenLeft }
@@ -66,11 +68,18 @@ export default class SidePane extends Component {
                 this.setState({ isPaneOpenLeft: false });
               } }>
               <Slide
-                onChange = {this.props.onPopChange}
+                onChange={this.props.onPopChange}
                 min={100}
                 max={100000}
                 step={1000}
               ></Slide>
+              <PullDown
+                onChangetoShow={this.props.onChangetoShow}
+                allcolors={this.props.samprops.allcolors}
+                toShow={this.props.samprops.toShow}
+              ></PullDown>
+
+              <h1>put GeoJSON selector here</h1>
           </SlidingPane>
           </div>
 )}};
