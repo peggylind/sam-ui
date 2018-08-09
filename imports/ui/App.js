@@ -38,7 +38,9 @@ const samprops = {
   allcolors: allcolors,
   //toShow: { category: 'race', factors: ['White','Asian','Black','Hispanic'],colors: [1,2,3,4]},
   toShow: [{category: 'race', factors: [{factorName:'White',factorColor:3},{factorName:'Asian',factorColor:2},
-    {factorName:'Black',factorColor:1},{factorName:'Hispanic',factorColor:5}]}],
+    {factorName:'Black',factorColor:1},{factorName:'Hispanic',factorColor:5}]},
+    {category: 'member', factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2}]}
+    ],
   cloudOrPlot: 'Plot' //scatterplot or cloud on map
   //this logic will apply to everything we want to show - component should feed whole object here
 };

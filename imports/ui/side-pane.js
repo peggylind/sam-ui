@@ -22,7 +22,7 @@ export default class SidePane extends Component {
       Modal.setAppElement(this.el);
     };
 
-
+//index for toShow category could be here - and then it could do a number of types.
     render() {
       const paneButtonStyle = {
         position: 'relative',
