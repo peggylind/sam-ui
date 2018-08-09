@@ -14,7 +14,23 @@ export default class PullDown extends Component {
 
   render() {
 //join colors dynamically???
+//change order of factors, not colors??
     return (
+      <div>
+<div>
+{this.props.toShow.factors.map((factor,ind) => <div key={ind}
+    style={{backgroundColor: this.props.allcolors[ind].HEX}}>
+    {factor}
+    <select onChange={this.onChangetoShow} defaultValue={this.props.allcolors[ind].name}>
+
+    {this.props.allcolors.map((color,i) => <option
+      key={factor+color.HEX}>
+    {color.name}
+    </option>)}
+    </select>
+    </div>)}
+</div>
+
 <div>
 <div style={{backgroundColor: this.props.allcolors[4].HEX}}>{this.props.toShow.category}
 <select onChange={this.onChangetoShow}
@@ -30,6 +46,7 @@ export default class PullDown extends Component {
     style={{color: x.HEX}}>
     {x.HEX}
     </option>)}</select>
+</div>
 </div>
 </div>
     )
