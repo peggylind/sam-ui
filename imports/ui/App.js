@@ -13,16 +13,17 @@ import Slide from './slider-input';
 //could have this and the other values in a JSON file??
 //https://www.ginifab.com/feeds/pms/cmyk_to_pantone.php
 //Wong, Bang, "Color Blindness," Nature Methods. Jun2011, Vol. 8 Issue 6, p441-441. 1p.
-const color1 = {name: 'orange', RGB : [230, 159, 0], CMYK: [0, 50, 100, 0],HEX: '#ff8000'};
-const color2 = {name: 'sky blue', RGB: [86, 180, 233], CMYK: [80,0,0,0],HEX: '#33ffff'};
-const color3 = {name: 'bluish green', RGB: [0, 158, 115], CMYK: [97,0,75,0],HEX: '#08ff40'};
-const color4 = {name: 'yellow', RGB: [240, 228, 66], CMYK: [10,5,90,0], HEX: '#e6f219'};
-const color5 = {name: 'blue', RGB: [0, 114, 178], CMYK: [100, 50, 0, 0], HEX: '#0080ff'};
-const color6 = {name: 'vermillion', RGB: [213, 94, 0], CMYK: [0, 80, 100, 0], HEX: '#ff3300'};
-const color7 = {name: 'reddish purple', RGB: [204, 121, 167], CMYK: [10,70,0,0], HEX: '#e64dff'};
-const color8 = {name: 'black', RGB: [0,0,0], CMYK: [0,0,0,100], HEX: '#000000'};
-const color9 = {name: 'white', RGB: [255,255,255], CMYK: [0,0,0,0], HEX: '#ffffff'};
-const allcolors = [color1,color2,color3,color4,color5,color6,color7,color8,color9];
+const color0 = {name: 'gray', RGB: [181,181,181], CMYK: [0,0,0,20], HEX: '#b5b5b5', indexnumber:0};
+const color1 = {name: 'orange', RGB : [230, 159, 0], CMYK: [0, 50, 100, 0],HEX: '#ff8000', indexnumber:1};
+const color2 = {name: 'sky blue', RGB: [86, 180, 233], CMYK: [80,0,0,0],HEX: '#33ffff', indexnumber:2};
+const color3 = {name: 'bluish green', RGB: [0, 158, 115], CMYK: [97,0,75,0],HEX: '#08ff40', indexnumber:3};
+const color4 = {name: 'yellow', RGB: [240, 228, 66], CMYK: [10,5,90,0], HEX: '#e6f219', indexnumber:4};
+const color5 = {name: 'blue', RGB: [0, 114, 178], CMYK: [100, 50, 0, 0], HEX: '#0080ff', indexnumber:5};
+const color6 = {name: 'vermillion', RGB: [213, 94, 0], CMYK: [0, 80, 100, 0], HEX: '#ff3300', indexnumber:6};
+const color7 = {name: 'reddish purple', RGB: [204, 121, 167], CMYK: [10,70,0,0], HEX: '#e64dff', indexnumber:7};
+const color8 = {name: 'black', RGB: [0,0,0], CMYK: [0,0,0,100], HEX: '#000000', indexnumber:8};
+const color9 = {name: 'white', RGB: [255,255,255], CMYK: [0,0,0,0], HEX: '#ffffff', indexnumber:9};
+const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color8,color9];
 //as list means we can resort to match data
 
 const samprops = {
@@ -35,7 +36,9 @@ const samprops = {
   zoom: 10,
   dist: 140000,
   allcolors: allcolors,
-  toShow: { category: 'race', factors: [['White':'color1'],['Black':'color2'],['Hispanic':'color3'],['Asian':'color4']]},
+  //toShow: { category: 'race', factors: ['White','Asian','Black','Hispanic'],colors: [1,2,3,4]},
+  toShow: [{category: 'race', factors: [{factorName:'White',factorColor:3},{factorName:'Asian',factorColor:2},
+    {factorName:'Black',factorColor:1},{factorName:'Hispanic',factorColor:5}]}],
   cloudOrPlot: 'Plot' //scatterplot or cloud on map
   //this logic will apply to everything we want to show - component should feed whole object here
 };
@@ -45,6 +48,7 @@ export default class App extends Component {
        super(props);
        //don't know if bind helps
        this.handlePopulationChange = this.handlePopulationChange.bind(this);
+       this.onChangetoShow = this.onChangetoShow.bind(this);
        this.onMapChange = this.onMapChange.bind(this);
        //bbox is NW,NE,SE,SW
        const bbox = [[-95.91,28.93],[-94.67,28.93],[-94.67,30.47],[-95.91,30.47]];
@@ -73,9 +77,18 @@ export default class App extends Component {
   };
 
   onChangetoShow = function(showObj){
-    var samprops = {...this.state.samprops};
-    samprops.toShow = showObj;
-    this.setState({samprops});
+     var samprops = {...this.state.samprops}
+     samprops.toShow.forEach(function (catRow, i){
+       if (catRow.category==showObj.catName){
+         catRow.factors.forEach(function (factorRow, j){
+           if (factorRow.factorName == showObj.factorName){
+             factorRow.factorColor = showObj.factorColor;
+             samprops.toShow[i].factors[j] = factorRow;
+           };
+         });
+       };
+     });
+     this.setState({samprops});
   };
 
   onMapChange = function(mapstuff,dist){

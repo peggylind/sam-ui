@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 //pull in other choices of things to show in other component
-
+//this should only be per category
 export default class PullDown extends Component {
   constructor(props) {
     super(props);
@@ -8,7 +8,8 @@ export default class PullDown extends Component {
     this.onChangetoShow = this.onChangetoShow.bind(this);
   };
   onChangetoShow(e) {
-    this.props.onChangetoShow(e.target.value);
+    var showObj = {catName:this.props.toShow.category,factorName:e.target.value.split('_')[0],factorColor:e.target.value.split('_')[1]};
+     this.props.onChangetoShow(showObj);
   };
 
 
@@ -17,38 +18,22 @@ export default class PullDown extends Component {
 //change order of factors, not colors??
     return (
       <div>
+      {this.props.toShow.category}
 <div>
 {this.props.toShow.factors.map((factor,ind) => <div key={ind}
-    style={{backgroundColor: this.props.allcolors[ind].HEX}}>
-    {factor}
-    <select onChange={this.onChangetoShow} defaultValue={this.props.allcolors[ind].name}>
+    style={{backgroundColor: this.props.allcolors[factor.factorColor].HEX}}>
+    {factor.factorName}
+    <select onChange={this.onChangetoShow} defaultValue={factor.factorName+'_'+factor.factorColor}>
 
     {this.props.allcolors.map((color,i) => <option
-      key={factor+color.HEX}>
+      key={factor+color.HEX} value={factor.factorName+'_'+i}>
     {color.name}
     </option>)}
     </select>
     </div>)}
 </div>
 
-<div>
-<div style={{backgroundColor: this.props.allcolors[4].HEX}}>{this.props.toShow.category}
-<select onChange={this.onChangetoShow}
->{this.props.toShow.factors.map((x,y) => <option key={y}
-    style={{backgroundColor: '#ff3300'}}>
-    {y}{this.props.allcolors[y].HEX}
-    </option>)}</select>
-</div>
-
-<div style={{backgroundColor: this.props.allcolors[2].HEX}}>{this.props.toShow.category}
-<select onChange={this.onChangetoShow}
->{this.props.allcolors.map((x,y) => <option key={y}
-    style={{color: x.HEX}}>
-    {x.HEX}
-    </option>)}</select>
-</div>
-</div>
-</div>
+  </div>
     )
   }
 }
