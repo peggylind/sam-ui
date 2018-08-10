@@ -9,9 +9,8 @@ type SamCitizen {
   limit: Int
 }
 
-extend type Query {
-  samcity: [SamCitizen]
-  samcity20k(limit:Int,member:String,race:String,dist:Float,coords:[Float]):[SamCitizen]
+type Query {
+  samcity2(limit:Int,member:String,race:String,dist:Float,coords:[Float]):[SamCitizen]
 }
 
 type Mutation {

@@ -4,15 +4,15 @@ import { graphql } from "react-apollo";
 import MapBox from "./map-box-app";
 //import Sam20k from '../api/sam_citizens/sam_20k';
 
-const sam20kQuery = gql`
-  query Sam20k(
+const samQuery = gql`
+  query SamCitizens(
     $limit: Int,
     $member: String,
     $race: String,
     $dist: Float,
     $coords: [Float]
   ) {
-    samcity20k(
+    samcity2(
       limit: $limit,
       member: $member,
       race: $race,
@@ -43,7 +43,7 @@ class SamDataForm extends Component {
         <MapBox
           onMapChange={this.props.onMapChange}
           setToolInfo={this.props.setToolInfo}
-          data={this.props.samcity20k}
+          data={this.props.samcity}
           mapprops={this.props.mapprops}
           />
       </div>
@@ -51,7 +51,7 @@ class SamDataForm extends Component {
   }
 }
 
-export default graphql(sam20kQuery,
+export default graphql(samQuery,
   {
     options: props => ({
       variables: {

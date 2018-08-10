@@ -1,7 +1,7 @@
 import React, {Component} from "react";
-import gql from "graphql-tag";
-import { graphql, compose } from "react-apollo";
-import { withApollo } from "react-apollo";
+// import gql from "graphql-tag";
+// import { graphql, compose } from "react-apollo";
+// import { withApollo } from "react-apollo";
 import RegisterForm from "./RegisterForm";
 import LoginForm from "./LoginForm";
 import SidePane from "./side-pane"; //would liftup twice for components under SidePane
@@ -9,6 +9,8 @@ import SidePane from "./side-pane"; //would liftup twice for components under Si
 import asyncComponent from './asyncComponent'; //may not use - still testing
 import SamDataForm from './SamDataForm'; //change to just samdatamap??
 import Slide from './slider-input';
+// var DASHlogo = require('/public/images/DASHlogo.png');
+// var UHLogo = require('/public/images/honors-the-honors-college-tertiary2.png');
 
 //could have this and the other values in a JSON file??
 //https://www.ginifab.com/feeds/pms/cmyk_to_pantone.php
@@ -29,8 +31,8 @@ const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color
 const samprops = {
   limit: 20000,
   member: "Adult",
-  race: "Black or African American",
-  age: "55 to 64",
+  race: "black",
+  age: 55,
   longitude: -95.29,
   latitude: 29.7,
   zoom: 10,
@@ -117,7 +119,18 @@ export default class App extends Component {
       //if (loading) return null;
       return (
           <div>
-            
+          <div style={{position:'absolute',marginLeft:'15%',zIndex:'3',width:'20%'}}>
+
+          <span style={{fontSize:"3em"}}>Practice Sam</span>
+
+          <span>
+          <img style={{width:"70%"}} src='/images/honors-logo.png' />
+          </span>
+          <span>
+          <img style={{width:"50%"}} src='/images/DASHlogo.png' />
+          </span>
+
+          </div>
             <SidePane
               samprops={this.state.samprops}
               onPopChange={this.handlePopulationChange}

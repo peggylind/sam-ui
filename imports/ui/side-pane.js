@@ -41,14 +41,13 @@ export default class SidePane extends Component {
                   <button onClick={ () => this.setState({ isPaneOpenLeft: !this.state.isPaneOpenLeft }) }>
                       Left Pane
                   </button>
-                  <div>Sliders of various sorts on this side??</div>
               </div>
 
           <SlidingPane
               className='some-custom-class'
               overlayClassName='some-custom-overlay-class'
               isOpen={ this.state.isPaneOpen }
-              title='Hey, it is optional pane title.  I can be React component too.'
+              title='Optional pane title.  I can be React component too.'
               subtitle='Optional subtitle.'
               width='50%'
               onRequestClose={ () => {
