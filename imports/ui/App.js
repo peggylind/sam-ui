@@ -117,7 +117,7 @@ export default class App extends Component {
       //if (loading) return null;
       return (
           <div>
-            <h1 style={{position:'absolute',marginLeft:'35%',zIndex:'3'}}>Practice Sam</h1>
+            
             <SidePane
               samprops={this.state.samprops}
               onPopChange={this.handlePopulationChange}
