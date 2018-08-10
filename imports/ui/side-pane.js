@@ -75,7 +75,7 @@ export default class SidePane extends Component {
               <PullDown
                 onChangetoShow={this.props.onChangetoShow}
                 allcolors={this.props.samprops.allcolors}
-                toShow={this.props.samprops.toShow[0]}
+                toShow={this.props.samprops.toShow}
               ></PullDown>
 
               <h1>put GeoJSON selector here</h1>

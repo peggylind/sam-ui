@@ -9,8 +9,13 @@ type SamCitizen {
   limit: Int
 }
 
+type Factor {
+  factorName: [String]
+}
+
 type Query {
-  samcity2(limit:Int,one_of:Int,member:String,race:String,dist:Float,coords:[Float]):[SamCitizen]
+  samcity2(limit:Int,one_of:Int,member:String,race:String,dist:Float,coords:[Float]):[SamCitizen],
+  factorlist(category:String):[Factor]
 }
 
 type Mutation {

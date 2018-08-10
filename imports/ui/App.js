@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 // import gql from "graphql-tag";
-// import { graphql, compose } from "react-apollo";
-// import { withApollo } from "react-apollo";
+// import { graphql } from "react-apollo";
 import RegisterForm from "./RegisterForm";
 import LoginForm from "./LoginForm";
 import SidePane from "./side-pane"; //would liftup twice for components under SidePane
@@ -39,11 +38,22 @@ function assignColors (newColors) {
   })
   return forColors
 }
-console.log(assignColors(toShow[0]))
+//for factors, maybe ensure only get 10 or fewer??
+// const factorQuery = gql`
+//   query SamCitizens(
+//     $category: String
+//   ) {
+//     factorlist(
+//       category: $category
+//     ) {
+//       Factor
+//     }
+//   }
+// `;
 
 
 const samprops = {
-  limit: 6000,
+  limit: 4000,
   one_of: 10,
   member: "Adult",
   race: "white",
@@ -99,7 +109,7 @@ export default class App extends Component {
            if (factorRow.factorName == showObj.factorName){
              factorRow.factorColor = showObj.factorColor;
              samprops.toShow[i].factors[j] = factorRow;
-             samprops.forColors = assignColors(samprops.toShow[i]); //probably have to have it return the object instead of writing it?
+             samprops.forColors = assignColors(samprops.toShow[i]); //may be able to make this smoother
            };
          });
        };
@@ -133,7 +143,7 @@ export default class App extends Component {
           <div>
           <div style={{position:'absolute',marginLeft:'15%',zIndex:'3',width:'20%'}}>
 
-          <span style={{fontSize:"3em"}}>Practice Sam</span>
+          <span style={{fontSize:"2em"}}>Practice Sam</span>
 
           <span>
           <img style={{width:"70%"}} src='/images/honors-logo.png' />
@@ -160,3 +170,12 @@ export default class App extends Component {
       );
     };
   };
+  // export default graphql(factorQuery,
+  //   {
+  //     options: props => ({
+  //       variables: {
+  //         category:  'race'
+  //       }
+  //     }),
+  //     props: ({ data }) => ({ ...data })
+  //   })(App)

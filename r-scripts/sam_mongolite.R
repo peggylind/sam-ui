@@ -16,6 +16,8 @@ for (row in 1:nrow(samc)){
   SamCity$insert(toJSON(samc[row,]))
 }
 SamCity$index(add = '{"coords" : "2dsphere"}')
+SamCity$index(add = '{"one_of" : 1 }')
+SamCity$index(remove = 'one_of_1')
 #add more! income, race, member, etc.
 
 #mongolite can't deal with sfg, I think: Error: No method asJSON S3 class: sfg

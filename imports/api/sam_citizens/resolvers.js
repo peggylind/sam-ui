@@ -20,6 +20,11 @@ export default {
     //  return await SamCitizens.find( {}, {limit:4000} ).fetch();
     //   //return await SamCitizens.find( {_id: /[0]$/}, {limit:10000} ).fetch();
     // },
+    // async factorlist(obj, args, { _id }){
+    //   console.log('in async factolist'+JSON.stringify(args))
+    //
+    //   // return await SamCitizens.distinct(args.category);
+    // },
     async samcity2(obj, args, { _id }){
       //console.log('in async samcity2 obj '+JSON.stringify(obj))
       console.log('in async samcity2 args '+JSON.stringify(args))
