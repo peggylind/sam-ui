@@ -8,12 +8,15 @@ sam <- readRDS("/Users/dprice3/Documents/Projects/Manale/complete_sample_set2018
 library(janitor)
 samc <- clean_names(sam)
 
+#should rm old, then replace with same name, but don't know about indices
+
 SamCity <- mongo("samcity2", url = "mongodb://localhost/SamCity");
 #mongolite throws  Error: No method asJSON S3 class: sfg , so tried an extra toJSON
 for (row in 1:nrow(samc)){
   SamCity$insert(toJSON(samc[row,]))
 }
-SamCity$index(add = '{coords : "2dsphere"}')
+SamCity$index(add = '{"coords" : "2dsphere"}')
+#add more! income, race, member, etc.
 
 #mongolite can't deal with sfg, I think: Error: No method asJSON S3 class: sfg
 #need to add ensure_index for 2d_sphere etc. - think through

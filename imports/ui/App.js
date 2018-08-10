@@ -27,11 +27,26 @@ const color8 = {name: 'black', RGB: [0,0,0], CMYK: [0,0,0,100], HEX: '#000000', 
 const color9 = {name: 'white', RGB: [255,255,255], CMYK: [0,0,0,0], HEX: '#ffffff', indexnumber:9};
 const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color8,color9];
 //as list means we can resort to match data
+const toShow = [{category: 'race', factors: [{factorName:'white',factorColor:3},{factorName:'asian',factorColor:2},
+  {factorName:'black',factorColor:1},{factorName:'hispanic',factorColor:5}]},
+  {category: 'member', factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2}]}
+];
+
+function assignColors (newColors) {
+  let forColors = {};
+  newColors.factors.forEach(function (factor, i){
+    forColors[factor.factorName] = allcolors[factor.factorColor].RGB
+  })
+  return forColors
+}
+console.log(assignColors(toShow[0]))
+
 
 const samprops = {
-  limit: 20000,
+  limit: 6000,
+  one_of: 10,
   member: "Adult",
-  race: "black",
+  race: "white",
   age: 55,
   longitude: -95.29,
   latitude: 29.7,
@@ -39,18 +54,14 @@ const samprops = {
   dist: 140000,
   allcolors: allcolors,
   //toShow: { category: 'race', factors: ['White','Asian','Black','Hispanic'],colors: [1,2,3,4]},
-  toShow: [{category: 'race', factors: [{factorName:'White',factorColor:3},{factorName:'Asian',factorColor:2},
-    {factorName:'Black',factorColor:1},{factorName:'Hispanic',factorColor:5}]},
-    {category: 'member', factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2}]}
-    ],
+  toShow: toShow,
+  forColors: assignColors(toShow[0]),
   cloudOrPlot: 'Plot' //scatterplot or cloud on map
   //this logic will apply to everything we want to show - component should feed whole object here
 };
-//const App = ({ loading, resolutions, samcity, client, user }) => {
 export default class App extends Component {
-   constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
+   constructor(props) {
        super(props);
-       //don't know if bind helps
        this.handlePopulationChange = this.handlePopulationChange.bind(this);
        this.onChangetoShow = this.onChangetoShow.bind(this);
        this.onMapChange = this.onMapChange.bind(this);
@@ -88,6 +99,7 @@ export default class App extends Component {
            if (factorRow.factorName == showObj.factorName){
              factorRow.factorColor = showObj.factorColor;
              samprops.toShow[i].factors[j] = factorRow;
+             samprops.forColors = assignColors(samprops.toShow[i]); //probably have to have it return the object instead of writing it?
            };
          });
        };

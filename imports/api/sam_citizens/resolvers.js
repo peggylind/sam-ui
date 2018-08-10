@@ -32,10 +32,11 @@ export default {
              },
              $maxDistance: args.dist, //in meters
              $minDistance: 10
-           },
-         }//,
-         //member:args.member,
-         //race:args.race
+           }
+         },
+         one_of:{$gte : args.one_of},
+        //  member:args.member,
+        //  race:args.race
         },
          {limit:args.limit}
        ).fetch();

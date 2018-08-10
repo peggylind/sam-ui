@@ -1,8 +1,7 @@
 //https://github.com/arackaf/mongo-graphql-starter
 //may also want: https://www.npmjs.com/package/graphql-geojson
 
-import { dataTypes } from "mongo-graphql-starter";
-console.log('something')
+import { dataTypes } from "mongo-graphql-starter"
 const {
   MongoIdType,
   MongoIdArrayType,

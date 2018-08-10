@@ -1,16 +1,16 @@
 export default `\
 type SamCitizen {
   _id: String!
+  one_of: Int
   member: String
-  age: String
+  age: Int
   race: String
-  total_income: String
   coords: [Float]
   limit: Int
 }
 
 type Query {
-  samcity2(limit:Int,member:String,race:String,dist:Float,coords:[Float]):[SamCitizen]
+  samcity2(limit:Int,one_of:Int,member:String,race:String,dist:Float,coords:[Float]):[SamCitizen]
 }
 
 type Mutation {
