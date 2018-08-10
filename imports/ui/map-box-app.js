@@ -4,8 +4,8 @@ import ReactMapGL from 'react-map-gl';
 import WebMercatorViewport, {getDistanceScales} from 'viewport-mercator-project';
 //import debounce from 'lodash.debounce';
 import SamMapControls from './SamMapController';
-import DASHlogo from './images/DASHlogo.png';
-import UHLogo from './images/honors-the-honors-college-tertiary2.png';
+// import DASHlogo from './images/DASHlogo.png';
+// import UHLogo from './images/honors-the-honors-college-tertiary2.png';
 
 const west = -95.91;
 const east = -94.67;
@@ -153,12 +153,7 @@ const ScatterMap = new ScatterplotLayer({
       >
       <div style={{position:'absolute',marginLeft:'45%',zIndex:'3',width:'20%'}}>
       <h1>Practice Sam</h1>
-      <span>
-          <img src={DASHlogo} width="100" height="50" />
-        </span>
-        <span>
-          <img src={UHlogo} width="100" height="50" />
-        </span>
+      
       </div>
         {this.state.waiting && <div style={{position:"absolute",
             marginTop:"30%", marginLeft:"30%", color:"green", fontSize:"2em"}}>
