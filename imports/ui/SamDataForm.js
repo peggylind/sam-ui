@@ -13,7 +13,7 @@ const samQuery = gql`
     $dist: Float,
     $coords: [Float]
   ) {
-    samcity2(
+    samcity(
       limit: $limit,
       one_of: $one_of,
       member: $member,
@@ -41,11 +41,9 @@ class SamDataForm extends Component {
         <MapBox
           onMapChange={this.props.onMapChange}
           setToolInfo={this.props.setToolInfo}
-          data={this.props.samcity2}
+          data={this.props.samcity}
           mapprops={this.props.mapprops}
-          allcolors={this.props.samprops.allcolors}
-          toShow={this.props.samprops.toShow[0]}
-          forColors={this.props.samprops.forColors}
+          samprops={this.props.samprops}
           />
       </div>
     );

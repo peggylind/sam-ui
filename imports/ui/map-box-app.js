@@ -10,22 +10,13 @@ const east = -94.67;
 const north = 30.47;
 const south = 28.93;
 const coords = [[east,south],[west,north]];
+const age = [];
+const race = [];
 
 
 export default class MapBox extends Component {
   constructor(props) {
-      super(props); //
-      //console.log('in mapbox'+JSON.stringify(props.samprops.allcolors))
-//props should include color1 - color7
-//props should include liftup for color and for data to show and for position on map or not?
-      const age = [];
-      const race = [];
-      // const forColors = {};
-      // props.toShow.factors.forEach(function (factor, i){
-      //   forColors[factor.factorName] = props.allcolors[factor.factorColor].RGB
-      // })
-      // console.log(props.allcolors[props.toShow.factors[2].factorColor].RGB)
-      // console.log(props.toShow)
+      super(props);
       this.SamControls = new SamMapControls();
       this.setToolInfo = this.props.setToolInfo;
       this.state = {
@@ -34,9 +25,9 @@ export default class MapBox extends Component {
             time: 0,
             samdata: [coords,age,race],
             waiting: 1,
-            toShow: this.props.toShow,
+            toShow: this.props.samprops.toShow[0],
             toTest: {white:[230,159,0],black:[213,94,0]},
-            forColors: this.props.forColors //maybe have in toShow - have to draw the flow again
+            forColors: this.props.samprops.forColors //maybe have in toShow - have to draw the flow again
         };
   //      this.handleEvent = this.handleEvent.bind(this);
   //      this.emitChangeDebounced = debounce(this.emitChange, 250);
@@ -44,9 +35,6 @@ export default class MapBox extends Component {
 
 
     componentDidUpdate(prevProps, prevState) {
-      //console.log('this.state.forColors'+JSON.stringify(this.state.forColors))
-      //there's a 'loading' on the graphQL stuff, but starts late
-      //cannot go straight into map, because data async requires waiting.
       if (this.props.data && prevState.waiting == 1){
         this.setState({samdata: this.props.data, waiting: 0});
       };
@@ -67,36 +55,18 @@ export default class MapBox extends Component {
           var dist4search = worldWidth
         };
         this.props.onMapChange(this.state.viewport,dist4search);
-        console.log('dist4search')
-        console.log(dist4search)
       };
     };
 
 //https://github.com/uber-common/viewport-mercator-project/blob/master/docs/api-reference/web-mercator-utils.md
 
   render() {
-//have layers list from named layers - so can move between easier
-//point-cloud layer lets you do 3d - https://github.com/uber/deck.gl/blob/master/docs/layers/point-cloud-layer.md
-//     const layers = [
-    //   layerTests,
-//   // new ArcLayer({
-//   //   id: 'arc-layer',
-//   //   strokeWidth: 10,
-//   //   data: [
-//   //     { sourcePosition: [-95.91, 30.47], targetPosition: [-95.91, 30.93], color: [255, 0, 255] },
-//   //   ],
-//   // }),
 
 const PointCloudMap = new PointCloudLayer({
   id: 'point-cloud-layer',
   data: [...this.state.samdata],
   getPosition: d => [d.coords[0], d.coords[1], 1000],
-  getColor: d => (d.race === "white" ? [133, 137, 247] :
-                  d.race === "black" ? [65, 247, 37] :
-                  d.race === "Asian" ? [247, 36, 155] :
-                  d.race === "Hispanic or Latino" ? [24, 249, 238] :
-                  d.race === "Some Other Race" ? [119, 3, 196] :
-                  d.race === "Two or More Races" ? [242, 100, 72] : [63, 61, 60]),
+  getColor: d => this.props.samprops.forColors[d.race],
   opacity: 0.85,
   radiusMinPixels: 1.12,
   radiusMaxPixels: 100,
@@ -113,23 +83,16 @@ const ScatterMap = new ScatterplotLayer({
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
 		getPosition: d => [d.coords[0], d.coords[1]],
-    getColor: d => this.props.forColors[d.race],
+    getColor: d => this.props.samprops.forColors[d.race],
     opacity: 0.85,
     radiusMinPixels: 1.12,
-    radiusMaxPixels: 100,
-    strokeWidth: 2,
-    radiusScale: 10,
+    radiusMaxPixels: 1000,
+    strokeWidth: 8,
+    radiusScale: 100,
     outline: false,
     pickable: true,
     onHover: ({object}) => this.setToolInfo(object?`${object.race}\n${object.total_income}`:null)
   });
-  // new LineLayer({
-  //   id: 'line-layer',
-  //   strokeWidth: 10,
-  //   data: [
-  //     { sourcePosition: [-95.01, 30.47], targetPosition: [-95.01, 28.93], color: [255, 0, 0] },
-  //   ],
-  // }),
   const layers = [
      ScatterMap
     //PointCloudMap

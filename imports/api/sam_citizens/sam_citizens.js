@@ -1,4 +1,4 @@
 import { Mongo } from "meteor/mongo";
 
-const SamCitizens = new Mongo.Collection("samcity2");
+const SamCitizens = new Mongo.Collection("samcity");
 export default SamCitizens;

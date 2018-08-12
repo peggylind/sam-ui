@@ -14,7 +14,7 @@ type Factor {
 }
 
 type Query {
-  samcity2(limit:Int,one_of:Int,member:String,race:String,dist:Float,coords:[Float]):[SamCitizen],
+  samcity(limit:Int,one_of:Int,member:String,race:String,dist:Float,coords:[Float]):[SamCitizen],
   factorlist(category:String):[Factor]
 }
 

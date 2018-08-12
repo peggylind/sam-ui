@@ -53,8 +53,8 @@ function assignColors (newColors) {
 
 
 const samprops = {
-  limit: 4000,
-  one_of: 10,
+  limit: 6000,
+  one_of: 1000,
   member: "Adult",
   race: "white",
   age: 55,
@@ -62,8 +62,8 @@ const samprops = {
   latitude: 29.7,
   zoom: 10,
   dist: 140000,
+
   allcolors: allcolors,
-  //toShow: { category: 'race', factors: ['White','Asian','Black','Hispanic'],colors: [1,2,3,4]},
   toShow: toShow,
   forColors: assignColors(toShow[0]),
   cloudOrPlot: 'Plot' //scatterplot or cloud on map
@@ -117,6 +117,8 @@ export default class App extends Component {
      this.setState({samprops});
   };
 
+//not really using yet, but it would go to the mapprops within anyway - this gives me a sideways tracking entry through samprops
+//may get rid of all this, and just have something that tracks
   onMapChange = function(mapstuff,dist){
     var samprops = {...this.state.samprops}
     samprops.latitude = mapstuff.latitude;
@@ -132,7 +134,7 @@ export default class App extends Component {
     samprops.mapOrPlot = datactrls.mapOrPlot;//also use to set map to 80 degrees??May need to turn off map??
     this.setState({samprops});
   }
-//use to populate sidepane? or popup?
+//use to populate sidepane? or popup? this is the tooltip
   setToolInfo = function(info){
     console.log(info)
   }
