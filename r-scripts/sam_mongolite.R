@@ -17,13 +17,16 @@ unique_names <- list()
 for (i in names(sam)){
   if(length(unique(sam[[i]])) < 10){
     uniq <- unique(sam[[i]]) #could run a summarise loop out of this side
+    print(uniq)
     unique_names[[i]] <- toJSON(uniq)
   }
 }
 write(toJSON(unique_names),"unique_names.json")
 
 
-
+#Error in toJSON(samc[row, ]) : 
+#unable to escape string. String is not utf8
+#seems to have been 4or5 places with weird characters in the notes columns - 1782584,1850900,1868732,1937535
 SamCity <- mongo("samcity", url = "mongodb://localhost/SamCity");
 #remove first!!
 #mongolite throws  Error: No method asJSON S3 class: sfg , so tried an extra toJSON
@@ -36,5 +39,15 @@ SamCity$index(add = '{"one_of" : 1 }')
 #SamCity$index(remove = 'one_of_1')
 #add more! income, race, member, etc.
 
-#mongolite can't deal with sfg, I think: Error: No method asJSON S3 class: sfg
-#need to add ensure_index for 2d_sphere etc. - think through
+sam_1_of_1k <- samc[samc$one_of>200,]
+#write(toJSON(sam_1_of_10k, pretty = TRUE, method="C"),'sam_1_of10k.json') $wrong shape
+sam_1_of100 <- sam_1_of_100 %>% select(-"curr_owner",-"note",-"appraised_by",
+            -"rcnld","nbhd_factor")
+
+for (row in 1:nrow(sam_1_of100)){
+  write(toJSON(sam_1_of100[row,]),file = 'sam_of_100.json',append=TRUE)
+}
+#then manually replaced all on } to }, (except last)
+#then added square brackets
+
+

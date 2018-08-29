@@ -8,6 +8,7 @@ import SidePane from "./side-pane"; //would liftup twice for components under Si
 import asyncComponent from './asyncComponent'; //may not use - still testing
 import SamDataForm from './SamDataForm'; //change to just samdatamap??
 import Slide from './slider-input';
+import LegendBox from './legend-box';
 // var DASHlogo = require('/public/images/DASHlogo.png');
 // var UHLogo = require('/public/images/honors-the-honors-college-tertiary2.png');
 
@@ -27,9 +28,20 @@ const color9 = {name: 'white', RGB: [255,255,255], CMYK: [0,0,0,0], HEX: '#fffff
 const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color8,color9];
 //as list means we can resort to match data
 const toShow = [{category: 'race', factors: [{factorName:'white',factorColor:3},{factorName:'asian',factorColor:2},
-  {factorName:'black',factorColor:1},{factorName:'hispanic',factorColor:5}]},
-  {category: 'member', factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2}]}
+    {factorName:'black',factorColor:1},{factorName:'hispanic',factorColor:5},{factorName:'other.race',factorColor:4},
+    {factorName:'multiracial',factorColor:0}]},
+  {category: 'member', factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2},
+    {factorName:'Householder',factorColor:1},{factorName:'Wife',factorColor:6}]},
+  {category: 'educational_attainment', factors: [{factorName:'High School Graduate',factorColor:3},{factorName:'Graduate or Professional Degree',factorColor:2},
+    {factorName:"Bachelor's Degree",factorColor:1},{factorName:"Associate's degree",factorColor:5},{factorName:"Some College, no degree",factorColor:5},
+    {factorName:"Less than 9th grade",factorColor:1},{factorName:"9th to 12th grade, no diploma",factorColor:5}]},
+    {category: 'asthma', factors: [{factorName:'Yes',factorColor:3},{factorName:'No',factorColor:2}]}
 ];
+// async getJSONnames => {
+//   const res = await fetch('/json/unique_names.json')
+//   const jsonnames = await res.json()
+//   return jsonnames
+// }
 
 function assignColors (newColors) {
   let forColors = {};
@@ -54,18 +66,25 @@ function assignColors (newColors) {
 
 const samprops = {
   limit: 6000,
-  one_of: 1000,
+  one_of: 10,
   member: "Adult",
   race: "white",
   age: 55,
   longitude: -95.29,
   latitude: 29.7,
   zoom: 10,
+  opacity: 0.45,
+  radiusMinPixels: 1.12,
+  radiusMaxPixels: 1000,
+  strokeWidth: 8,
+  radiusScale: 100,
+  outline: false,
+  pickable: true,
   dist: 140000,
-
   allcolors: allcolors,
   toShow: toShow,
   forColors: assignColors(toShow[0]),
+  catShow: 'race',
   cloudOrPlot: 'Plot' //scatterplot or cloud on map
   //this logic will apply to everything we want to show - component should feed whole object here
 };
@@ -86,7 +105,7 @@ export default class App extends Component {
                 height: window.innerHeight,
                 longitude: -95.29,
                 latitude: 29.7,
-                zoom: 10,//16.051394480575627, //which is zoom for 1 meter for testing
+                zoom: samprops.zoom,//16.051394480575627, //which is zoom for 1 meter for testing
                 pitch: 20,
                 bearing: 0
               }
@@ -110,6 +129,7 @@ export default class App extends Component {
              factorRow.factorColor = showObj.factorColor;
              samprops.toShow[i].factors[j] = factorRow;
              samprops.forColors = assignColors(samprops.toShow[i]); //may be able to make this smoother
+             samprops.catShow = samprops.toShow[i].category;
            };
          });
        };
@@ -117,14 +137,45 @@ export default class App extends Component {
      this.setState({samprops});
   };
 
-//not really using yet, but it would go to the mapprops within anyway - this gives me a sideways tracking entry through samprops
-//may get rid of all this, and just have something that tracks
+
   onMapChange = function(mapstuff,dist){
+    console.log("mapstuff"+JSON.stringify(mapstuff.zoom))
     var samprops = {...this.state.samprops}
     samprops.latitude = mapstuff.latitude;
     samprops.longitude = mapstuff.longitude;
     samprops.zoom = mapstuff.zoom;
     samprops.dist = dist;
+    if(mapstuff.zoom <= 10){
+      samprops.radiusMaxPixels = 1000
+      samprops.opacity = 0.85
+      samprops.strokeWidth = 8
+      samprops.radiusScale = 80
+    }
+    if(mapstuff.zoom > 10){
+      samprops.radiusMaxPixels = 1000
+      samprops.opacity = 0.65
+      samprops.strokeWidth = 6
+      samprops.radiusScale = 70
+    }
+    if(mapstuff.zoom > 11){
+      samprops.radiusMaxPixels = 1000
+      samprops.opacity = 0.45
+      samprops.strokeWidth = 4
+      samprops.radiusScale = 60
+    }
+    if(mapstuff.zoom > 12){
+      samprops.radiusMaxPixels = 1000
+      samprops.opacity = 0.25
+      samprops.strokeWidth = 2
+      samprops.radiusScale = 40
+    }
+    if(mapstuff.zoom > 13){
+      samprops.radiusMaxPixels = 1000
+      samprops.opacity = 0.25
+      samprops.strokeWidth = 2
+      samprops.radiusScale = 10
+      samprops.one_of = 1
+    }
     this.setState({samprops});
   };
 
@@ -139,22 +190,34 @@ export default class App extends Component {
     console.log(info)
   }
 
+  // componentWillUnmount(){
+  //   client.resetStore();
+  // }
+
   render(){
       //if (loading) return null;
       return (
           <div>
-          <div style={{position:'absolute',marginLeft:'15%',zIndex:'3',width:'20%'}}>
+          <div style={{position:"absolute",width:"100%",fontSize:"4em",textAlign:"center", zIndex:"3"}}>Sam City</div>
 
-          <span style={{fontSize:"2em"}}>Practice Sam</span>
-
+          <div style={{position:"absolute",marginLeft:"90%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
           <span>
-          <img style={{width:"70%"}} src='/images/honors-logo.png' />
+            <img style={{width:"100%"}} src='/images/DASHlogo.png' />
           </span>
+          <hr/>
           <span>
-          <img style={{width:"50%"}} src='/images/DASHlogo.png' />
+            <img style={{width:"100%"}} src='/images/honors-the-honors-college-primary.png' />
           </span>
 
           </div>
+            <LegendBox
+              samprops={this.state.samprops}
+              onPopChange={this.handlePopulationChange}
+              onChangetoShow={this.onChangetoShow}
+              onMapChange={this.onMapChange}
+              setToolInfo={this.setToolInfo}
+            />
+
             <SidePane
               samprops={this.state.samprops}
               onPopChange={this.handlePopulationChange}

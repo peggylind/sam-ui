@@ -32,7 +32,7 @@ export default class Slide extends Component {
       border: '3px solid green'
     }
     const rangeStyle = {
-      position: 'absolute',
+      position: 'relative',
       zIndex: '2',
       width: '80%',
       height: '100%',
@@ -40,7 +40,7 @@ export default class Slide extends Component {
       cursor: 'pointer'
     }
     const readOut = {
-      position: 'absolute',
+      position: 'relative',
       width:'14%',
       marginLeft: '85%',
       height: '97%'

@@ -62,41 +62,49 @@ export default class MapBox extends Component {
 
   render() {
 
-const PointCloudMap = new PointCloudLayer({
-  id: 'point-cloud-layer',
-  data: [...this.state.samdata],
-  getPosition: d => [d.coords[0], d.coords[1], 1000],
-  getColor: d => this.props.samprops.forColors[d.race],
-  opacity: 0.85,
-  radiusMinPixels: 1.12,
-  radiusMaxPixels: 100,
-  strokeWidth: 2,
-  radiusScale: 10,
-  outline: false,
-  pickable: true,
-  onHover: ({object}) => this.setToolInfo(object?`${object.race}\n${object.total_income}`:null)
-  //panEnd: info => console.log('panend:', info),
-  // onHover: info => console.log('Hovered:', info),
-  // onClick: info => console.log('Clicked:', info)
-});
+// const PointCloudMap = new PointCloudLayer({
+//   id: 'point-cloud-layer',
+//   data: [...this.state.samdata],
+//   getPosition: d => [d.coords[0], d.coords[1], 1000],
+//   getColor: d => this.props.samprops.forColors[d.race],
+//   opacity: 0.85,
+//   radiusMinPixels: 1.12,
+//   radiusMaxPixels: 100,
+//   strokeWidth: 2,
+//   radiusScale: 10,
+//   outline: false,
+//   pickable: true,
+//   onHover: ({object}) => this.setToolInfo(object?`${object.race}\n${object.total_income}`:null)
+//   //panEnd: info => console.log('panend:', info),
+//   // onHover: info => console.log('Hovered:', info),
+//   // onClick: info => console.log('Clicked:', info)
+// });
+//const showCat = 'race'
 const ScatterMap = new ScatterplotLayer({
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
 		getPosition: d => [d.coords[0], d.coords[1]],
-    getColor: d => this.props.samprops.forColors[d.race],
-    opacity: 0.85,
-    radiusMinPixels: 1.12,
-    radiusMaxPixels: 1000,
-    strokeWidth: 8,
-    radiusScale: 100,
-    outline: false,
-    pickable: true,
+    getColor: d => this.props.samprops.forColors[d[this.props.samprops.catShow]],
+    //getColor: d => this.props.samprops.forColors[d[showCat]],
+    opacity: this.props.samprops.opacity,
+    radiusMinPixels: this.props.samprops.radiusMinPixels,
+    radiusMaxPixels: this.props.samprops.radiusMaxPixels,
+    strokeWidth: this.props.samprops.strokeWidth,
+    radiusScale: this.props.samprops.radiusScale,
+    outline: this.props.samprops.outline,
+    pickable: this.props.samprops.pickable,
     onHover: ({object}) => this.setToolInfo(object?`${object.race}\n${object.total_income}`:null)
   });
   const layers = [
      ScatterMap
     //PointCloudMap
-];
+  ];
+    let patience = <div></div>
+    if (this.state.waiting){ patience =
+        <div style={{position:"absolute",
+        marginTop:"30%", marginLeft:"30%", color:"green", fontSize:"2em"}}>
+        Loading Data ... please wait</div>
+      }
 
     return (
       <ReactMapGL
@@ -106,11 +114,7 @@ const ScatterMap = new ScatterplotLayer({
         mapControls={this.SamControls}
         onViewportChange={(viewport) => this.setState({viewport})}
       >
-
-        {this.state.waiting && <div style={{position:"absolute",
-            marginTop:"30%", marginLeft:"30%", color:"green", fontSize:"2em"}}>
-            Loading Data ... please wait</div>}
-
+      {patience}
         <DeckGL
           {...this.state.viewport}
           initialViewState={this.state.viewport}

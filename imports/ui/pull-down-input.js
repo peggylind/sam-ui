@@ -12,14 +12,14 @@ export default class PullDown extends Component {
     }
   };
   onCatChange(event) { //if you take value of index, it does the map function differently - very odd
-    this.props.toShow.forEach(function(row,r){
+    this.props.samprops.toShow.forEach(function(row,r){
       if(row.category == event.target.value){
         console.log(r) //will need to implement fully - setState on categIndex for display, and maybe send some sort of thing to onChangetoShow???
       }
     })
   }
   onChangetoShow(e) {
-    var showObj = {catName:this.props.toShow[this.state.categIndex].category,factorName:e.target.value.split('_')[0],factorColor:e.target.value.split('_')[1]};
+    var showObj = {catName:this.props.samprops.toShow[this.state.categIndex].category,factorName:e.target.value.split('_')[0],factorColor:e.target.value.split('_')[1]};
      this.props.onChangetoShow(showObj);
   };
 
@@ -31,25 +31,27 @@ export default class PullDown extends Component {
       <div>
       <div style={{fontSize:"2em"}}>
       <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"40%"}}
-          defaultValue={this.props.toShow[this.state.categIndex].category}>
+          defaultValue={this.props.samprops.toShow[this.state.categIndex].category}>
 
-          {this.props.toShow.map((cat,k) => <option
-            key={cat+k} value={this.props.toShow[k].category}>
-            {this.props.toShow[k].category}
+          {this.props.samprops.toShow.map((cat,k) => <option
+            key={cat+k} value={this.props.samprops.toShow[k].category}>
+            {this.props.samprops.toShow[k].category}
             </option>)
           }
       </select>
       </div>
-<div>
-{this.props.toShow[this.state.categIndex].factors.map((factor,ind) => <div key={ind}
-    style={{backgroundColor: this.props.allcolors[factor.factorColor].HEX}}>
-    <h5 style={{marginLeft:"4%"}}>
+<div style={{fontSize:"1.2em", overflow:"scroll"}}>
+{this.props.samprops.toShow[this.state.categIndex].factors.map((factor,ind) => <div key={ind}
+    style={{backgroundColor: this.props.samprops.allcolors[factor.factorColor].HEX,
+      borderColor: this.props.samprops.allcolors[factor.factorColor].HEX,
+      borderWidth: "3px", borderStyle:"dashed", height:"2em"}}>
     {factor.factorName}
-    </h5>
-    <select onChange={this.onChangetoShow} style={{backgroundColor:"white",marginLeft:"40%"}}
+
+    <select onChange={this.onChangetoShow} style={{
+      backgroundColor:"#f8f8ff",marginLeft:"40%"}}
         defaultValue={factor.factorName+'_'+factor.factorColor}>
 
-    {this.props.allcolors.map((color,i) => <option
+    {this.props.samprops.allcolors.map((color,i) => <option
       key={factor+color.HEX} value={factor.factorName+'_'+i}>
         {color.name}
     </option>)}

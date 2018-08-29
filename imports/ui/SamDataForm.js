@@ -33,7 +33,18 @@ const samQuery = gql`
 class SamDataForm extends Component {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
        super(props);
+       this.state = {
+         jsonsam : ['age':'','race':'']
+       }
    }
+   async componentDidMount() {
+     const res = await fetch('/json/sam_of_100.json')
+     const jsonsam = await res.json()
+     this.setState({jsonsam})
+   }
+   // componentWillUnmount(){
+   //   client.resetStore();
+   // }
     render(){
 
     return (
@@ -41,7 +52,7 @@ class SamDataForm extends Component {
         <MapBox
           onMapChange={this.props.onMapChange}
           setToolInfo={this.props.setToolInfo}
-          data={this.props.samcity}
+          data={this.props.samprops.zoom <13 ? this.state.jsonsam : this.props.samcity}
           mapprops={this.props.mapprops}
           samprops={this.props.samprops}
           />

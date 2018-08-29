@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { render } from 'react-dom';
+//import { render } from 'react-dom'; //does it need render??
 import Modal from 'react-modal';
 import SlidingPane from 'react-sliding-pane';
 import 'react-sliding-pane/dist/react-sliding-pane.css';
@@ -32,16 +32,17 @@ export default class SidePane extends Component {
         return (
 
           <div style={paneButtonStyle} ref={ref => this.el = ref}>
+                <div style={{ marginLeft: '2%', position:'absolute' }}>
+                    <button onClick={ () => this.setState({ isPaneOpenLeft: !this.state.isPaneOpenLeft }) }>
+                        Left Pane
+                    </button>
+                </div>
                 <div style={{ marginLeft: '92%', position:'absolute' }}>
                     <button onClick={() => this.setState({ isPaneOpen: !this.state.isPaneOpen })}>
                       Right Pane
                     </button>
                 </div>
-              <div style={{ marginLeft: '2%', position:'absolute' }}>
-                  <button onClick={ () => this.setState({ isPaneOpenLeft: !this.state.isPaneOpenLeft }) }>
-                      Left Pane
-                  </button>
-              </div>
+
 
           <SlidingPane
               className='some-custom-class'
@@ -78,7 +79,6 @@ export default class SidePane extends Component {
                 toShow={this.props.samprops.toShow}
               ></PullDown>
 
-              <h1>put GeoJSON selector here</h1>
           </SlidingPane>
           </div>
 )}};

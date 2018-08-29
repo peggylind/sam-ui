@@ -1,0 +1,41 @@
+{"household.type":
+  ["Group Quarters","Married-couple family","Alone","Non-family","Female householder- no husband present","Male householder- no wife present"],
+"size":
+  [1,3,2,4,5,7,6],
+"number.of.vehicles":
+  ["NA",2,1,0,3,4,5],
+"member":
+  ["Adult","Child","Husband","Householder","Wife","Female Householder","Male Householder"],
+"sex":
+  ["Male","Female"],
+"race":
+  ["black","white","hispanic","other.race","multiracial","asian","american.indian.or.alaskan","islander"],
+"school.enrollment":
+  ["Not Enrolled in School","Public School","Private School","NA"],
+"educational.attainment":
+  ["High School Graduate","Graduate or Professional Degree","Bachelor's Degree","Associate's degree","Some College, no degree","Less than 9th grade","NA","9th to 12th grade, no diploma"],
+"employment":
+  ["Not in labor force","Employed","NA","Unemployed","In Armed Forces"],
+"disability":
+  ["No Disabilities","With One Type of Disability","With Two or More Types of Disabilities"],
+"nativity":
+  ["native","foreign","NA"],
+"English.speaking.skills":
+  ["only.english","english.bad","english.well","NA"],
+"citizenship":["Citizen","Not a U.S. Citizen","Naturalized Citizen","NA"],
+"Language.at.home":["English","Speaks Spanish","Speaks Other Languages","NA"],
+"veteran.status":["Nonveteran","Veteran"],
+"means.of.transportation.to.work":["NA","drove alone","walked","carpooled","worked at home","public transportation","other","bicycle"],
+"health.insurance":["no insurance","private insurance","public insurance"],
+"state":"48",
+"county":"201",
+"CONDO_FLAG":["0","1","NA","3"],
+"parcel_typ":["0","NA","4","5"],
+"valid":"Valid Geometry",
+"COUNTY":"201",
+"CLASS_STRUCTURE":["C","D","B","R","A","S","M"],
+"CLASS_STRUC_DESCRIPTION":["Masonry Bearing","Wood or Light Steel","Reinforced Concrete","Residential","Fireproofed Steel","Open Steel Skeleton","Mobile Home"],
+"QUALITY":["C","B","A","D","F","X","E"],
+"QUALITY_DESCRIPTION":["Average","Good","Excellent","Low","Poor","Superior","Very Low"],
+"one_of":[1,10,100,1000,10000],
+"asthma":["Yes","No"]}

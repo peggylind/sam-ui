@@ -45,7 +45,10 @@ export default {
         },
          {limit:args.limit}
        ).fetch();
-    }
+    }//,
+    // async jsonsam(obj, args, { _id }){
+    //   return await fetch("/json/one_of100.json");
+    // }
   },
 
   SamCitizen: {
