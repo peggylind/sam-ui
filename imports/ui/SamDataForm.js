@@ -9,6 +9,8 @@ const samQuery = gql`
     $limit: Int,
     $one_of: Int,
     $member: String,
+    $educational_attainment: String,
+    $asthma: String,
     $race: String,
     $dist: Float,
     $coords: [Float]
@@ -17,6 +19,8 @@ const samQuery = gql`
       limit: $limit,
       one_of: $one_of,
       member: $member,
+      educational_attainment: $educational_attainment,
+      asthma: $asthma,
       race: $race,
       dist: $dist,
       coords: $coords
@@ -25,6 +29,9 @@ const samQuery = gql`
       member
       race
       age
+      one_of
+      educational_attainment
+      asthma
       coords
     }
   }
@@ -52,7 +59,7 @@ class SamDataForm extends Component {
         <MapBox
           onMapChange={this.props.onMapChange}
           setToolInfo={this.props.setToolInfo}
-          data={this.props.samprops.zoom <13 ? this.state.jsonsam : this.props.samcity}
+          data={this.props.samprops.zoom <14 ? this.state.jsonsam : this.props.samcity}
           mapprops={this.props.mapprops}
           samprops={this.props.samprops}
           />

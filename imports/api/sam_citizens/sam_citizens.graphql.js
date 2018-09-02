@@ -3,6 +3,8 @@ type SamCitizen {
   _id: String!
   one_of: Int
   member: String
+  educational_attainment: String
+  asthma: String
   age: Int
   race: String
   coords: [Float]
@@ -14,7 +16,7 @@ type Factor {
 }
 
 type Query {
-  samcity(limit:Int,one_of:Int,member:String,race:String,dist:Float,coords:[Float]):[SamCitizen],
+  samcity(limit:Int,one_of:Int,member:String,race:String,educational_attainment:String,asthma:String,dist:Float,coords:[Float]):[SamCitizen],
   factorlist(category:String):[Factor]
 }
 

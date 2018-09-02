@@ -40,9 +40,10 @@ export default class LegendBox extends Component {
             </div>
 
             <div style={{position:'absolute',marginLeft:'15%',zIndex:'3',width:'50%'}}>
-              
+
               <PullDown
                 onChangetoShow={this.props.onChangetoShow}
+                onCatChange={this.props.onCatChange}
                 samprops={this.props.samprops}
               ></PullDown>
               <Slide

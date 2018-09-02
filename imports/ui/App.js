@@ -3,7 +3,7 @@ import React, {Component} from "react";
 // import { graphql } from "react-apollo";
 import RegisterForm from "./RegisterForm";
 import LoginForm from "./LoginForm";
-import SidePane from "./side-pane"; //would liftup twice for components under SidePane
+//import SidePane from "./side-pane"; //would liftup twice for components under SidePane
 
 import asyncComponent from './asyncComponent'; //may not use - still testing
 import SamDataForm from './SamDataForm'; //change to just samdatamap??
@@ -35,7 +35,7 @@ const toShow = [{category: 'race', factors: [{factorName:'white',factorColor:3},
   {category: 'educational_attainment', factors: [{factorName:'High School Graduate',factorColor:3},{factorName:'Graduate or Professional Degree',factorColor:2},
     {factorName:"Bachelor's Degree",factorColor:1},{factorName:"Associate's degree",factorColor:5},{factorName:"Some College, no degree",factorColor:5},
     {factorName:"Less than 9th grade",factorColor:1},{factorName:"9th to 12th grade, no diploma",factorColor:5}]},
-    {category: 'asthma', factors: [{factorName:'Yes',factorColor:3},{factorName:'No',factorColor:2}]}
+  {category: 'asthma', factors: [{factorName:'Yes',factorColor:3},{factorName:'No',factorColor:2}]}
 ];
 // async getJSONnames => {
 //   const res = await fetch('/json/unique_names.json')
@@ -84,7 +84,8 @@ const samprops = {
   allcolors: allcolors,
   toShow: toShow,
   forColors: assignColors(toShow[0]),
-  catShow: 'race',
+  categIndex: 0,
+  catShow: 'race', //faster color in map-box-app
   cloudOrPlot: 'Plot' //scatterplot or cloud on map
   //this logic will apply to everything we want to show - component should feed whole object here
 };
@@ -92,6 +93,7 @@ export default class App extends Component {
    constructor(props) {
        super(props);
        this.handlePopulationChange = this.handlePopulationChange.bind(this);
+       this.onCatChange = this.onCatChange.bind(this);
        this.onChangetoShow = this.onChangetoShow.bind(this);
        this.onMapChange = this.onMapChange.bind(this);
        //bbox is NW,NE,SE,SW
@@ -119,6 +121,17 @@ export default class App extends Component {
     samprops.limit = limit;
     this.setState({samprops});
   };
+  onCatChange = function(event){
+    var samprops = {...this.state.samprops}
+    samprops.toShow.forEach(function(row,r){
+      if(row.category == event.target.value){
+        samprops.categIndex = r;
+        samprops.catShow = row.category;
+        samprops.forColors = assignColors(samprops.toShow[r]);
+      }
+    })
+    this.setState({samprops});
+  }
 
   onChangetoShow = function(showObj){
      var samprops = {...this.state.samprops}
@@ -172,8 +185,8 @@ export default class App extends Component {
     if(mapstuff.zoom > 13){
       samprops.radiusMaxPixels = 1000
       samprops.opacity = 0.25
-      samprops.strokeWidth = 2
-      samprops.radiusScale = 10
+      samprops.strokeWidth = 1
+      samprops.radiusScale = 8
       samprops.one_of = 1
     }
     this.setState({samprops});
@@ -213,18 +226,12 @@ export default class App extends Component {
             <LegendBox
               samprops={this.state.samprops}
               onPopChange={this.handlePopulationChange}
+              onCatChange={this.onCatChange}
               onChangetoShow={this.onChangetoShow}
               onMapChange={this.onMapChange}
               setToolInfo={this.setToolInfo}
             />
 
-            <SidePane
-              samprops={this.state.samprops}
-              onPopChange={this.handlePopulationChange}
-              onChangetoShow={this.onChangetoShow}
-              onMapChange={this.onMapChange}
-              setToolInfo={this.setToolInfo}
-            />
             <SamDataForm
               mapprops={this.state.mapprops}
               samprops={this.state.samprops}
