@@ -126,7 +126,7 @@ export default class App extends Component {
     samprops.toShow.forEach(function(row,r){
       if(row.category == event.target.value){
         samprops.categIndex = r;
-        samprops.catShow = row.category;
+        samprops.catShow = row.category; //only used in map-box right now
         samprops.forColors = assignColors(samprops.toShow[r]);
       }
     })
@@ -141,8 +141,9 @@ export default class App extends Component {
            if (factorRow.factorName == showObj.factorName){
              factorRow.factorColor = showObj.factorColor;
              samprops.toShow[i].factors[j] = factorRow;
+             samprops.allcolors = samprops.allcolors;
              samprops.forColors = assignColors(samprops.toShow[i]); //may be able to make this smoother
-             samprops.catShow = samprops.toShow[i].category;
+             samprops.catShow = samprops.toShow[i].category; //only used in map-box right now
            };
          });
        };
