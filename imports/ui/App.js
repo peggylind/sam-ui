@@ -68,7 +68,7 @@ const samprops = {
   limit: 6000,
   one_of: 10,
   member: "Adult",
-  race: "white",
+  race: "black",
   age: 55,
   longitude: -95.29,
   latitude: 29.7,

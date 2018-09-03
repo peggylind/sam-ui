@@ -41,7 +41,7 @@ export default {
          },
          one_of:{$gte : args.one_of},
         //  member:args.member,
-        //race:args.race
+          race:args.race
         },
          {limit:args.limit}
        ).fetch();
