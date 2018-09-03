@@ -4,7 +4,7 @@ import React, {Component} from 'react';
 const SelectText = ({allcolors, onChange, factor}) => {
   return (
   <select onChange={onChange} id={factor.factorName}
-      style={{backgroundColor:"#f8f8ff",marginLeft:"40%"}}
+      style={{backgroundColor:"#f8f8ff",marginLeft:"10%"}}
       defaultValue={factor.factorColor}>
       {allcolors.map((color,i) => <option
         key={i+'_'+color.name} value={i}>
@@ -13,6 +13,14 @@ const SelectText = ({allcolors, onChange, factor}) => {
     </select>
   )
 }
+const Input = props => <input
+   type="radio"
+   name="showOnly"
+   value="xl"
+   checked="false"
+   onChange={this.onChangetoShow}
+/>
+//the input button would show only that factor - turning it to the subset, with && as search, etc. 
 //pull in other choices of things to show in other component
 //this should only be per category, although chloropleths and scatterplots should both work
 export default class PullDown extends Component {
@@ -43,7 +51,8 @@ export default class PullDown extends Component {
     return (
       <div>
       <div style={{fontSize:"2em"}}>
-        <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"40%"}}
+      Showing:
+        <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".7em",width:"90%"}}
             defaultValue={this.state.samprops.toShow[this.state.samprops.categIndex].category}>
             {this.state.samprops.toShow.map((cat,k) => <option
               key={cat+k} value={this.state.samprops.toShow[k].category}>
@@ -51,6 +60,7 @@ export default class PullDown extends Component {
               </option>)
             }
         </select>
+        <hr/>
       </div>
       <div style={{fontSize:"1em", overflow:"scroll"}}>
         {this.state.samprops.toShow[this.state.samprops.categIndex].factors.map((factor,ind) => <div key={ind}
@@ -59,7 +69,12 @@ export default class PullDown extends Component {
               borderWidth: "3px", borderStyle:"dashed", height:"2em"}}>
             {factor.factorName}
             {this.props.samprops.changeColors &&
-            <SelectText allcolors={this.state.samprops.allcolors} onChange={this.onChangetoShow} factor={factor}/>}
+              <div>
+
+            <SelectText allcolors={this.state.samprops.allcolors} onChange={this.onChangetoShow} factor={factor}/>
+            <Input/>
+              </div>
+            }
           </div>)}
       </div>
   </div>

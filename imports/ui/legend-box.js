@@ -20,7 +20,7 @@ export default class LegendBox extends Component {
       const boxStyle = {
         marginTop: '10%',
         position: 'absolute',
-        zindex: '2',
+        zindex: '3',
         width: '25%',
         height: '80%',
         backgroundColor: 'white',
@@ -32,10 +32,20 @@ export default class LegendBox extends Component {
         width: '100%'
       };
         return (
+
           <div style={boxStyle}>
+          {!this.state.isBoxOpen &&
+          <div style={boxButtonStyle}>
+                  <button onClick={() => this.setState({ isBoxOpen: true })}>
+                    Show Legend
+                  </button>
+          </div>
+          }
+          {this.state.isBoxOpen &&
+            <div>
             <div style={boxButtonStyle}>
-                    <button onClick={() => this.setState({ isBoxOpen: !this.state.isBoxOpen })}>
-                      Legend/selector
+                    <button onClick={() => this.setState({ isBoxOpen: false })}>
+                      Hide Legend
                     </button>
             </div>
 
@@ -46,6 +56,7 @@ export default class LegendBox extends Component {
                 onCatChange={this.props.onCatChange}
                 samprops={this.props.samprops}
               ></PullDown>
+              <hr/>
               <Slide
                 onChange={this.props.onPopChange}
                 min={100}
@@ -54,6 +65,8 @@ export default class LegendBox extends Component {
               ></Slide>
               <h1>put GeoJSON selector here</h1>
             </div>
+            </div>
+          }
 
           </div>
 )}};
