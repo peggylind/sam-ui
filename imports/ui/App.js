@@ -84,6 +84,7 @@ const samprops = {
   allcolors: allcolors,
   toShow: toShow,
   forColors: assignColors(toShow[0]),
+  changeColors: true, //let's you turn off select for colors on factors
   categIndex: 0,
   catShow: 'race', //faster color in map-box-app
   cloudOrPlot: 'Plot' //scatterplot or cloud on map

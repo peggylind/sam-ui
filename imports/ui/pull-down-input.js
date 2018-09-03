@@ -1,5 +1,18 @@
 import React, {Component} from 'react';
 
+
+const SelectText = ({allcolors, onChange, factor}) => {
+  return (
+  <select onChange={onChange} id={factor.factorName}
+      style={{backgroundColor:"#f8f8ff",marginLeft:"40%"}}
+      defaultValue={factor.factorColor}>
+      {allcolors.map((color,i) => <option
+        key={i+'_'+color.name} value={i}>
+       {color.name}
+       </option>)}
+    </select>
+  )
+}
 //pull in other choices of things to show in other component
 //this should only be per category, although chloropleths and scatterplots should both work
 export default class PullDown extends Component {
@@ -45,15 +58,8 @@ export default class PullDown extends Component {
               borderColor: this.state.samprops.allcolors[factor.factorColor].HEX,
               borderWidth: "3px", borderStyle:"dashed", height:"2em"}}>
             {factor.factorName}
-
-            <select onChange={this.onChangetoShow} id={factor.factorName}
-                style={{backgroundColor:"#f8f8ff",marginLeft:"40%"}}
-                defaultValue={factor.factorColor}>
-                {this.state.samprops.allcolors.map((color,i) => <option
-                  key={i+'_'+color.name} value={i}>
-                 {color.name}
-                 </option>)}
-            </select>
+            {this.props.samprops.changeColors &&
+            <SelectText allcolors={this.state.samprops.allcolors} onChange={this.onChangetoShow} factor={factor}/>}
           </div>)}
       </div>
   </div>
