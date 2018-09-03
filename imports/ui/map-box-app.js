@@ -93,7 +93,8 @@ const ScatterMap = new ScatterplotLayer({
     radiusScale: this.props.samprops.radiusScale,
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
-    onHover: ({object}) => this.setToolInfo(object?`${object.race}\n${object.total_income}`:null)
+    onHover: ({object}) => this.setToolInfo(object),
+    onClick: ({object}) => this.setToolInfo(object)
   });
   const layers = [
      ScatterMap

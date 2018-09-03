@@ -86,7 +86,7 @@ const samprops = {
   forColors: assignColors(toShow[0]),
   changeColors: true, //let's you turn off select for colors on factors
   categIndex: 0,
-  catShow: 'race', //faster color in map-box-app
+  catShow: 'race', //faster color in map-box-app - if can also read opacity off of toShow[categIndex], then have per color control.
   cloudOrPlot: 'Plot' //scatterplot or cloud on map
   //this logic will apply to everything we want to show - component should feed whole object here
 };
@@ -97,9 +97,11 @@ export default class App extends Component {
        this.onCatChange = this.onCatChange.bind(this);
        this.onChangetoShow = this.onChangetoShow.bind(this);
        this.onMapChange = this.onMapChange.bind(this);
+       this.setToolInfo = this.setToolInfo.bind(this);
        //bbox is NW,NE,SE,SW
        const bbox = [[-95.91,28.93],[-94.67,28.93],[-94.67,30.47],[-95.91,30.47]];
        this.state = {
+         toolTipInfo : {text:'Hover over features or sam citizens for info.'},
          samprops : samprops,
          mapprops : {
               bbox: bbox, //may use later for searches - now based on geonear in circle
@@ -202,7 +204,12 @@ export default class App extends Component {
   }
 //use to populate sidepane? or popup? this is the tooltip
   setToolInfo = function(info){
-    console.log(info)
+    var toolTipInfo = {...this.state.toolTipInfo}
+    toolTipInfo.info = info
+    toolTipInfo.text = ''
+    console.log(toolTipInfo)
+    console.log(toolTipInfo.account)
+    this.setState({toolTipInfo})
   }
 
   // componentWillUnmount(){
@@ -213,18 +220,36 @@ export default class App extends Component {
       //if (loading) return null;
       return (
           <div>
-          <div style={{position:"absolute",width:"100%",fontSize:"4em",textAlign:"center", zIndex:"3"}}>Sam City</div>
+            <div style={{position:"absolute",width:"100%",fontSize:"4em",textAlign:"center", zIndex:"3"}}>Sam City</div>
 
-          <div style={{position:"absolute",marginLeft:"90%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
-          <span>
-            <img style={{width:"100%"}} src='/images/DASHlogo.png' />
-          </span>
-          <hr/>
-          <span>
-            <img style={{width:"100%"}} src='/images/honors-the-honors-college-primary.png' />
-          </span>
+            <div style={{position:"absolute",marginLeft:"90%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
+              <hr/>
+              <span>
+                <img style={{width:"100%"}} src='/images/DASHlogo.png' />
+              </span>
+              <hr/>
+              <span>
+                <img style={{width:"100%"}} src='/images/honors-the-honors-college-primary.png' />
+              </span>
+            </div>
+            <span style={{position:"absolute",width:"25%",marginLeft:"75%",marginTop:"14%",backgroundColor:"#f8f8ff",zIndex:"4"}}>
+              {this.state.toolTipInfo.text}
+              {this.state.toolTipInfo.info
+                ? <div style={{position:"relative"}}>
+                  <div> Account -  {this.state.toolTipInfo.info.account} </div>
+                  <div> Age -  {this.state.toolTipInfo.info.age} </div>
+                  <div> Asthma -  {this.state.toolTipInfo.info.asthma} </div>
+                  <div> Citizen -  {this.state.toolTipInfo.info.citizenship} </div>
+                  <div> Education -  {this.state.toolTipInfo.info.educational_attainment} </div>
+                  <div> Employment -  {this.state.toolTipInfo.info.employment} </div>
+                  <div> Sex -  {this.state.toolTipInfo.info.sex} </div>
+                  <div> Race -  {this.state.toolTipInfo.info.race} </div>
+                  <div> Household Income -  {this.state.toolTipInfo.info.household_income} </div>
+                  <div> Household Type -  {this.state.toolTipInfo.info.household_type} </div>
+                  </div>
+                : null}
+            </span>
 
-          </div>
             <LegendBox
               samprops={this.state.samprops}
               onPopChange={this.handlePopulationChange}
@@ -244,12 +269,3 @@ export default class App extends Component {
       );
     };
   };
-  // export default graphql(factorQuery,
-  //   {
-  //     options: props => ({
-  //       variables: {
-  //         category:  'race'
-  //       }
-  //     }),
-  //     props: ({ data }) => ({ ...data })
-  //   })(App)

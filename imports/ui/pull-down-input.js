@@ -4,7 +4,7 @@ import React, {Component} from 'react';
 const SelectText = ({allcolors, onChange, factor}) => {
   return (
   <select onChange={onChange} id={factor.factorName}
-      style={{backgroundColor:"#f8f8ff",marginLeft:"10%"}}
+      style={{backgroundColor:"#f8f8ff",marginLeft:"10%",width:"40%"}}
       defaultValue={factor.factorColor}>
       {allcolors.map((color,i) => <option
         key={i+'_'+color.name} value={i}>
@@ -15,23 +15,25 @@ const SelectText = ({allcolors, onChange, factor}) => {
 }
 const Input = props => <input
    type="radio"
-   name="showOnly"
    value="xl"
-   checked="false"
-   onChange={this.onChangetoShow}
+   onChange={this.onFactortoShow}
 />
-//the input button would show only that factor - turning it to the subset, with && as search, etc. 
+//the input button would show only that factor - turning it to the subset, with && as search, etc.
 //pull in other choices of things to show in other component
 //this should only be per category, although chloropleths and scatterplots should both work
 export default class PullDown extends Component {
   constructor(props) {
     super(props);
+    this.onFactortoShow = this.onFactortoShow.bind(this);
     this.onCatChange = this.onCatChange.bind(this);
     this.onChangetoShow = this.onChangetoShow.bind(this);
     this.state = {
       samprops : this.props.samprops
     }
   };
+  onFactortoShow(ev){
+    console.log(ev)
+  }
   onCatChange(event) { //if you take value of index, it does the map function differently - very odd
     this.props.onCatChange(event);
   }
@@ -72,7 +74,7 @@ export default class PullDown extends Component {
               <div>
 
             <SelectText allcolors={this.state.samprops.allcolors} onChange={this.onChangetoShow} factor={factor}/>
-            <Input/>
+            (show):<Input name={factor.factorName+'_show'}/>
               </div>
             }
           </div>)}
