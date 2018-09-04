@@ -19,6 +19,7 @@ export default class MapBox extends Component {
       super(props);
       this.SamControls = new SamMapControls();
       this.setToolInfo = this.props.setToolInfo;
+      this.setClick = this.props.setClick;
       this.state = {
             mapboxApiAccessToken: 'pk.eyJ1IjoibWRjaW90dGkiLCJhIjoiY2l1cWdyamw5MDAxcTJ2bGFmdzJxdGFyNyJ9.2b6aTKZNlT1_DEJiJ9l3hw',
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
@@ -94,7 +95,7 @@ const ScatterMap = new ScatterplotLayer({
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
     onHover: ({object}) => this.setToolInfo(object),
-    onClick: ({object}) => this.setToolInfo(object)
+    onClick: ({object}) => this.setClick(object)
   });
   const layers = [
      ScatterMap

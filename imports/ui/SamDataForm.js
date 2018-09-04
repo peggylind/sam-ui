@@ -59,6 +59,7 @@ class SamDataForm extends Component {
         <MapBox
           onMapChange={this.props.onMapChange}
           setToolInfo={this.props.setToolInfo}
+          setClick={this.props.setClick}
           data={this.props.samprops.zoom <14 ? this.state.jsonsam : this.props.samcity}
           mapprops={this.props.mapprops}
           samprops={this.props.samprops}

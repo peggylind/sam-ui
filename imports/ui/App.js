@@ -98,10 +98,12 @@ export default class App extends Component {
        this.onChangetoShow = this.onChangetoShow.bind(this);
        this.onMapChange = this.onMapChange.bind(this);
        this.setToolInfo = this.setToolInfo.bind(this);
+       this.setClick = this.setClick.bind(this);
        //bbox is NW,NE,SE,SW
        const bbox = [[-95.91,28.93],[-94.67,28.93],[-94.67,30.47],[-95.91,30.47]];
        this.state = {
          toolTipInfo : {text:'Hover over features or sam citizens for info.'},
+         explanation : {text: <span>We can have any number of things here.</span>},
          samprops : samprops,
          mapprops : {
               bbox: bbox, //may use later for searches - now based on geonear in circle
@@ -182,11 +184,18 @@ export default class App extends Component {
     }
     if(mapstuff.zoom > 12){
       samprops.radiusMaxPixels = 1000
-      samprops.opacity = 0.25
+      samprops.opacity = 0.35
       samprops.strokeWidth = 2
       samprops.radiusScale = 40
     }
     if(mapstuff.zoom > 13){
+      samprops.radiusMaxPixels = 1000
+      samprops.opacity = 0.30
+      samprops.strokeWidth = 1
+      samprops.radiusScale = 18
+      samprops.one_of = 1
+    }
+    if(mapstuff.zoom > 14){
       samprops.radiusMaxPixels = 1000
       samprops.opacity = 0.25
       samprops.strokeWidth = 1
@@ -211,6 +220,23 @@ export default class App extends Component {
     console.log(toolTipInfo.account)
     this.setState({toolTipInfo})
   }
+  setClick = function(info){
+    var toolTipInfo = {...this.state.toolTipInfo}
+    toolTipInfo.info = info
+    toolTipInfo.text = ''
+    console.log(toolTipInfo)
+    console.log('toolTipInfo.account')
+    this.setState({toolTipInfo})
+  }
+
+  formatDollars = function(number){
+    if (number!=undefined){
+        var numstring = number.toString();
+      return '$'+numstring+'/year'
+    }else{
+      return 'undefined'
+    }
+  }
 
   // componentWillUnmount(){
   //   client.resetStore();
@@ -220,36 +246,42 @@ export default class App extends Component {
       //if (loading) return null;
       return (
           <div>
-            <div style={{position:"absolute",width:"100%",fontSize:"4em",textAlign:"center", zIndex:"3"}}>Sam City</div>
+              <div style={{position:"absolute",width:"100%",fontSize:"4em",textAlign:"center", zIndex:"3"}}>
+                Sam City
+              </div>
+              <div style={{position:"absolute",marginLeft:"2%",width:"10%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
+                <hr/>
+                <span>
+                  <img style={{width:"100%"}} src='/images/DASHlogo.png' />
+                </span>
+                <hr/>
+                <span>
+                  <img style={{width:"100%"}} src='/images/honors-the-honors-college-primary.png' />
+                </span>
+              </div>
+              <div style={{position:"absolute",width:"25%",marginLeft:"75%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
 
-            <div style={{position:"absolute",marginLeft:"90%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
-              <hr/>
-              <span>
-                <img style={{width:"100%"}} src='/images/DASHlogo.png' />
-              </span>
-              <hr/>
-              <span>
-                <img style={{width:"100%"}} src='/images/honors-the-honors-college-primary.png' />
-              </span>
-            </div>
-            <span style={{position:"absolute",width:"25%",marginLeft:"75%",marginTop:"14%",backgroundColor:"#f8f8ff",zIndex:"4"}}>
-              {this.state.toolTipInfo.text}
-              {this.state.toolTipInfo.info
-                ? <div style={{position:"relative"}}>
-                  <div> Account -  {this.state.toolTipInfo.info.account} </div>
-                  <div> Age -  {this.state.toolTipInfo.info.age} </div>
-                  <div> Asthma -  {this.state.toolTipInfo.info.asthma} </div>
-                  <div> Citizen -  {this.state.toolTipInfo.info.citizenship} </div>
-                  <div> Education -  {this.state.toolTipInfo.info.educational_attainment} </div>
-                  <div> Employment -  {this.state.toolTipInfo.info.employment} </div>
-                  <div> Sex -  {this.state.toolTipInfo.info.sex} </div>
-                  <div> Race -  {this.state.toolTipInfo.info.race} </div>
-                  <div> Household Income -  {this.state.toolTipInfo.info.household_income} </div>
-                  <div> Household Type -  {this.state.toolTipInfo.info.household_type} </div>
-                  </div>
-                : null}
-            </span>
-
+                <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"4"}}>
+                <div><hr/><div>
+                  {this.state.explanation.text}
+                </div><hr/></div>
+                  {this.state.toolTipInfo.text}
+                  {this.state.toolTipInfo.info
+                    ? <div style={{position:"relative"}}>
+                      <div> Account -  {this.state.toolTipInfo.info.account} </div>
+                      <div> Age -  {this.state.toolTipInfo.info.age} </div>
+                      <div> Asthma -  {this.state.toolTipInfo.info.asthma} </div>
+                      <div> Citizen -  {this.state.toolTipInfo.info.citizenship} </div>
+                      <div> Education -  {this.state.toolTipInfo.info.educational_attainment} </div>
+                      <div> Employment -  {this.state.toolTipInfo.info.employment} </div>
+                      <div> Sex -  {this.state.toolTipInfo.info.sex} </div>
+                      <div> Race -  {this.state.toolTipInfo.info.race} </div>
+                      <div> Household Income -  {this.formatDollars(this.state.toolTipInfo.info.household_income)} </div>
+                      <div> Household Type -  {this.state.toolTipInfo.info.household_type} </div>
+                      </div>
+                    : null}
+                </span>
+              </div>
             <LegendBox
               samprops={this.state.samprops}
               onPopChange={this.handlePopulationChange}
@@ -264,6 +296,7 @@ export default class App extends Component {
               samprops={this.state.samprops}
               onMapChange={this.onMapChange}
               setToolInfo={this.setToolInfo}
+              setClick={this.setClick}
               />
           </div>
       );

@@ -8,7 +8,7 @@ const SelectText = ({allcolors, onChange, factor}) => {
       defaultValue={factor.factorColor}>
       {allcolors.map((color,i) => <option
         key={i+'_'+color.name} value={i}>
-       {color.name}
+       {color.name.substring(0,10)}
        </option>)}
     </select>
   )
@@ -58,7 +58,7 @@ export default class PullDown extends Component {
             defaultValue={this.state.samprops.toShow[this.state.samprops.categIndex].category}>
             {this.state.samprops.toShow.map((cat,k) => <option
               key={cat+k} value={this.state.samprops.toShow[k].category}>
-              {this.state.samprops.toShow[k].category}
+              {this.state.samprops.toShow[k].category.substring(0,8)}
               </option>)
             }
         </select>
@@ -69,7 +69,7 @@ export default class PullDown extends Component {
             style={{backgroundColor: this.state.samprops.allcolors[factor.factorColor].HEX,
               borderColor: this.state.samprops.allcolors[factor.factorColor].HEX,
               borderWidth: "3px", borderStyle:"dashed", height:"2em"}}>
-            {factor.factorName}
+            {factor.factorName.substring(0,10)}
             {this.props.samprops.changeColors &&
               <div>
 

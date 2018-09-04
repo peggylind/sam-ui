@@ -18,7 +18,7 @@ export default class LegendBox extends Component {
 //index for toShow category could be here - and then it could do a number of types.
     render() {
       const boxStyle = {
-        marginTop: '10%',
+        marginTop: '15%',
         position: 'absolute',
         zindex: '3',
         width: '25%',
