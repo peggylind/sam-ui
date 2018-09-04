@@ -10,8 +10,13 @@ const samQuery = gql`
     $one_of: Int,
     $member: String,
     $educational_attainment: String,
+    $employment: String,
+    $household_income: Int,
+    $household_type: String,
     $asthma: String,
+    $citizenship: String,
     $race: String,
+    $veteran_status: String,
     $dist: Float,
     $coords: [Float]
   ) {
@@ -20,8 +25,13 @@ const samQuery = gql`
       one_of: $one_of,
       member: $member,
       educational_attainment: $educational_attainment,
+      employment: $employment,
+      household_income: $household_income,
+      household_type: $household_type,
       asthma: $asthma,
+      citizenship: $citizenship,
       race: $race,
+      veteran_status: $veteran_status,
       dist: $dist,
       coords: $coords
     ) {
@@ -29,13 +39,42 @@ const samQuery = gql`
       member
       race
       age
+      citizenship
+      employment
+      household_income
+      household_type
       one_of
       educational_attainment
+      veteran_status
       asthma
       coords
     }
   }
 `;
+
+// _id: String!
+// individual_id: Int
+// age: Int
+// bracket_age: String
+// asthma: String
+// citizenship: String
+// coords: [Float]
+// date_erected: String
+// disability: String
+// educational_attainment: String
+// employment: String
+// english_speaking_skills: String
+// health_insurance: String
+// household_income: Int
+// household_type: String
+// limit: Int
+// member: String
+// nativity: String
+// one_of: Int
+// race: String
+// sex: String
+// size: Int
+// veteran_status: String
 
 class SamDataForm extends Component {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter

@@ -1,14 +1,28 @@
 export default `\
 type SamCitizen {
   _id: String!
-  one_of: Int
-  member: String
-  educational_attainment: String
-  asthma: String
+  individual_id: Int
   age: Int
-  race: String
+  bracket_age: String
+  asthma: String
+  citizenship: String
   coords: [Float]
+  date_erected: String
+  disability: String
+  educational_attainment: String
+  employment: String
+  english_speaking_skills: String
+  health_insurance: String
+  household_income: Int
+  household_type: String
   limit: Int
+  member: String
+  nativity: String
+  one_of: Int
+  race: String
+  sex: String
+  size: Int
+  veteran_status: String
 }
 
 type Factor {
@@ -16,7 +30,29 @@ type Factor {
 }
 
 type Query {
-  samcity(limit:Int,one_of:Int,member:String,race:String,educational_attainment:String,asthma:String,dist:Float,coords:[Float]):[SamCitizen],
+  samcity(
+      limit:Int,
+      one_of:Int,
+      individual_id: Int,
+      age: Int,
+      bracket_age: String,
+      citizenship: String,
+      member:String,
+      race:String,
+      educational_attainment:String,
+      employment: String,
+      english_speaking_skills: String,
+      nativity: String,
+      health_insurance: String,
+      household_income: Int,
+      household_type: String,
+      asthma:String,
+      dist:Float,
+      sex: String,
+      size: Int,
+      veteran_status: String,
+      coords:[Float]
+    ):[SamCitizen],
   factorlist(category:String):[Factor]
 }
 
