@@ -15,6 +15,7 @@ type SamCitizen {
   health_insurance: String
   household_income: Int
   household_type: String
+  quality_description: String
   limit: Int
   member: String
   nativity: String
@@ -44,6 +45,7 @@ type Query {
       employment: String,
       english_speaking_skills: String,
       nativity: String,
+      quality_description: String,
       health_insurance: String,
       household_income: Int,
       household_type: String,

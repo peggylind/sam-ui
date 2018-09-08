@@ -40,8 +40,11 @@ const toShow = [{category: 'race', type: 'factor', factors: [{factorName:'white'
     {factorName:"Less than 9th grade",factorColor:1},{factorName:"9th to 12th grade, no diploma",factorColor:5}]},
   {category: 'employment', type: 'factor', factors: [{factorName:'Not in labor force',factorColor:3},{factorName:'Employed',factorColor:2},
     {factorName:'Unemployed',factorColor:1},{factorName:'In Armed Forces',factorColor:6}]},
+  {category: 'quality_description', type: 'factor', factors: [{factorName:'Average',factorColor:3},{factorName:'Good',factorColor:2},
+    {factorName:'Excellent',factorColor:1},{factorName:'Poor',factorColor:6},{factorName:"Superior",factorColor:1},{factorName:"Very Low",factorColor:5}]},
   {category: 'disability', type: 'factor', factors: [{factorName:'No Disabilities',factorColor:3},{factorName:'With One Type of Disability',factorColor:2},
     {factorName:'With Two or More Types of Disabilities',factorColor:1}]},
+  {category: 'veteran_status', type: 'factor', factors: [{factorName:'Nonveteran',factorColor:3},{factorName:'Veteran',factorColor:2}]},
   {category: 'asthma', type: 'factor', factors: [{factorName:'Yes',factorColor:3},{factorName:'No',factorColor:2}]}
 ];
 // async getJSONnames => {
@@ -287,6 +290,7 @@ export default class App extends Component {
                       <div> Race -  {this.state.toolTipInfo.info.race} </div>
                       <div> Household Income -  {this.formatDollars(this.state.toolTipInfo.info.household_income)} </div>
                       <div> Household Type -  {this.state.toolTipInfo.info.household_type} </div>
+                      <div> House Quality -  {this.state.toolTipInfo.info.quality_description} </div>
                       </div>
                     : null}
                 </span>

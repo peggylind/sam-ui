@@ -43,19 +43,24 @@ export default class MapBox extends Component {
         }else{
           var low = this.props.samprops.toShow[this.props.samprops.categIndex].low;
           var high = this.props.samprops.toShow[this.props.samprops.categIndex].high;
-          var r = 0;
-          var g = 0;
-          var b = 255;
-          var s = (b/high)*factor;
-          if (s>255){s=255};
-          var RGB = [r+s,g,b-s];
+          var lowrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[0].factorColor].RGB
+          var highrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[1].factorColor].RGB
+          var r = lowrgb[0]+((highrgb[0]-lowrgb[0])/high)*factor;
+          if (r>255){r=255}
+          if (r<0){r=0}
+          var g = lowrgb[1]+((highrgb[1]-lowrgb[1])/high)*factor;
+          if (g>255){g=255}
+          if (g<0){g=0}
+          var b = lowrgb[2]+((highrgb[2]-lowrgb[2])/high)*factor;
+          if (b>255){b=255}
+          if (b<0){b=0}
+          var RGB = [Math.round(r),Math.round(g),Math.round(b)];
           return RGB
         }
       }
 
 
     componentDidUpdate(prevProps, prevState) {
-      console.log('this.props.samprops.forColors '+JSON.stringify(this.props.samprops.forColors) + '  ' + this.props.samprops.categIndex)
       if (this.props.data && prevState.waiting == 1){
         this.setState({samdata: this.props.data, waiting: 0});
       };
