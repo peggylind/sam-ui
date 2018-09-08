@@ -8,7 +8,7 @@ const SelectText = ({allcolors, onChange, factor}) => {
       defaultValue={factor.factorColor}>
       {allcolors.map((color,i) => <option
         key={i+'_'+color.name} value={i}>
-       {color.name.substring(0,10)}
+       {color.name.substring(0,12)}
        </option>)}
     </select>
   )
@@ -54,11 +54,11 @@ export default class PullDown extends Component {
       <div>
       <div style={{fontSize:"2em"}}>
       Showing:
-        <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".7em",width:"90%"}}
+        <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
             defaultValue={this.state.samprops.toShow[this.state.samprops.categIndex].category}>
             {this.state.samprops.toShow.map((cat,k) => <option
               key={cat+k} value={this.state.samprops.toShow[k].category}>
-              {this.state.samprops.toShow[k].category.substring(0,8)}
+              {this.state.samprops.toShow[k].category.substring(0,15)}
               </option>)
             }
         </select>
@@ -69,7 +69,7 @@ export default class PullDown extends Component {
             style={{backgroundColor: this.state.samprops.allcolors[factor.factorColor].HEX,
               borderColor: this.state.samprops.allcolors[factor.factorColor].HEX,
               borderWidth: "3px", borderStyle:"dashed", height:"2em"}}>
-            {factor.factorName.substring(0,10)}
+            {factor.factorName.substring(0,20)}
             {this.props.samprops.changeColors &&
               <div>
 

@@ -39,6 +39,7 @@ type Query {
       citizenship: String,
       member:String,
       race:String,
+      disability: String,
       educational_attainment:String,
       employment: String,
       english_speaking_skills: String,

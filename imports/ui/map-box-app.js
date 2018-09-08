@@ -26,16 +26,36 @@ export default class MapBox extends Component {
             time: 0,
             samdata: [coords,age,race],
             waiting: 1,
-            toShow: this.props.samprops.toShow[0],
+            //toShow: this.props.samprops.toShow[0],
             toTest: {white:[230,159,0],black:[213,94,0]},
             forColors: this.props.samprops.forColors //maybe have in toShow - have to draw the flow again
         };
   //      this.handleEvent = this.handleEvent.bind(this);
   //      this.emitChangeDebounced = debounce(this.emitChange, 250);
       }
+      returnColors (factor) {
+        //do color array here for ranges
+        //if "factor" is a string, then ...; else {
+          //or have things saved on app.js that let us know how to do the interpolation?
+        //console.log('in ' +'this.props.samprops.forColors[factor]')
+        if(this.props.samprops.toShow[this.props.samprops.categIndex].type == 'factor'){
+          return this.props.samprops.forColors[factor]
+        }else{
+          var low = this.props.samprops.toShow[this.props.samprops.categIndex].low;
+          var high = this.props.samprops.toShow[this.props.samprops.categIndex].high;
+          var r = 0;
+          var g = 0;
+          var b = 255;
+          var s = (b/high)*factor;
+          if (s>255){s=255};
+          var RGB = [r+s,g,b-s];
+          return RGB
+        }
+      }
 
 
     componentDidUpdate(prevProps, prevState) {
+      console.log('this.props.samprops.forColors '+JSON.stringify(this.props.samprops.forColors) + '  ' + this.props.samprops.categIndex)
       if (this.props.data && prevState.waiting == 1){
         this.setState({samdata: this.props.data, waiting: 0});
       };
@@ -59,9 +79,11 @@ export default class MapBox extends Component {
       };
     };
 
+
 //https://github.com/uber-common/viewport-mercator-project/blob/master/docs/api-reference/web-mercator-utils.md
 
   render() {
+
 
 // const PointCloudMap = new PointCloudLayer({
 //   id: 'point-cloud-layer',
@@ -85,8 +107,7 @@ const ScatterMap = new ScatterplotLayer({
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
 		getPosition: d => [d.coords[0], d.coords[1]],
-    getColor: d => this.props.samprops.forColors[d[this.props.samprops.catShow]],
-    //getColor: d => this.props.samprops.forColors[d[showCat]],
+    getColor: d => this.returnColors(d[this.props.samprops.catShow]),
     opacity: this.props.samprops.opacity,
     radiusMinPixels: this.props.samprops.radiusMinPixels,
     radiusMaxPixels: this.props.samprops.radiusMaxPixels,

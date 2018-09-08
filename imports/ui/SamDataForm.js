@@ -14,6 +14,7 @@ const samQuery = gql`
     $household_income: Int,
     $household_type: String,
     $asthma: String,
+    $disability: String,
     $citizenship: String,
     $race: String,
     $veteran_status: String,
@@ -26,6 +27,7 @@ const samQuery = gql`
       member: $member,
       educational_attainment: $educational_attainment,
       employment: $employment,
+      disability: $disability,
       household_income: $household_income,
       household_type: $household_type,
       asthma: $asthma,
@@ -46,6 +48,7 @@ const samQuery = gql`
       one_of
       educational_attainment
       veteran_status
+      disability
       asthma
       coords
     }

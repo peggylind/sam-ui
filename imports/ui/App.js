@@ -25,17 +25,24 @@ const color6 = {name: 'vermillion', RGB: [213, 94, 0], CMYK: [0, 80, 100, 0], HE
 const color7 = {name: 'reddish purple', RGB: [204, 121, 167], CMYK: [10,70,0,0], HEX: '#e64dff', indexnumber:7};
 const color8 = {name: 'black', RGB: [0,0,0], CMYK: [0,0,0,100], HEX: '#000000', indexnumber:8};
 const color9 = {name: 'white', RGB: [255,255,255], CMYK: [0,0,0,0], HEX: '#ffffff', indexnumber:9};
-const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color8,color9];
+const color10 = {name: 'red', RGB: [255,0,0], CMYK: [0,0,0,0], HEX: '#FF0000', indexnumber:10};
+const color11 = {name: 'blue', RGB: [0,0,255], CMYK: [0,0,0,0], HEX: '#0000FF', indexnumber:11};
+const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color8,color9,color10,color11];
 //as list means we can resort to match data
-const toShow = [{category: 'race', factors: [{factorName:'white',factorColor:3},{factorName:'asian',factorColor:2},
+const toShow = [{category: 'race', type: 'factor', factors: [{factorName:'white',factorColor:3},{factorName:'asian',factorColor:2},
     {factorName:'black',factorColor:1},{factorName:'hispanic',factorColor:5},{factorName:'other.race',factorColor:4},
     {factorName:'multiracial',factorColor:0}]},
-  {category: 'member', factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2},
+  {category: 'member', type: 'factor', factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2},
     {factorName:'Householder',factorColor:1},{factorName:'Wife',factorColor:6}]},
-  {category: 'educational_attainment', factors: [{factorName:'High School Graduate',factorColor:3},{factorName:'Graduate or Professional Degree',factorColor:2},
+  {category: 'household_income', type: 'range', low: 30000, high:150000, factors: [{factorName:'low',factorColor:11},{factorName:'high',factorColor:10}]},
+  {category: 'educational_attainment', type: 'factor', factors: [{factorName:'High School Graduate',factorColor:3},{factorName:'Graduate or Professional Degree',factorColor:2},
     {factorName:"Bachelor's Degree",factorColor:1},{factorName:"Associate's degree",factorColor:5},{factorName:"Some College, no degree",factorColor:5},
     {factorName:"Less than 9th grade",factorColor:1},{factorName:"9th to 12th grade, no diploma",factorColor:5}]},
-  {category: 'asthma', factors: [{factorName:'Yes',factorColor:3},{factorName:'No',factorColor:2}]}
+  {category: 'employment', type: 'factor', factors: [{factorName:'Not in labor force',factorColor:3},{factorName:'Employed',factorColor:2},
+    {factorName:'Unemployed',factorColor:1},{factorName:'In Armed Forces',factorColor:6}]},
+  {category: 'disability', type: 'factor', factors: [{factorName:'No Disabilities',factorColor:3},{factorName:'With One Type of Disability',factorColor:2},
+    {factorName:'With Two or More Types of Disabilities',factorColor:1}]},
+  {category: 'asthma', type: 'factor', factors: [{factorName:'Yes',factorColor:3},{factorName:'No',factorColor:2}]}
 ];
 // async getJSONnames => {
 //   const res = await fetch('/json/unique_names.json')
@@ -44,12 +51,14 @@ const toShow = [{category: 'race', factors: [{factorName:'white',factorColor:3},
 // }
 
 function assignColors (newColors) {
-  let forColors = {};
-  newColors.factors.forEach(function (factor, i){
-    forColors[factor.factorName] = allcolors[factor.factorColor].RGB
-  })
+    let forColors = {};
+  //  if(newColors.factors){
+      newColors.factors.forEach(function (factor, i){
+        forColors[factor.factorName] = allcolors[factor.factorColor].RGB
+    })
+  //};
   return forColors
-}
+};
 //for factors, maybe ensure only get 10 or fewer??
 // const factorQuery = gql`
 //   query SamCitizens(
@@ -65,7 +74,7 @@ function assignColors (newColors) {
 
 
 const samprops = {
-  limit: 6000,
+  limit: 18000,
   one_of: 10,
   member: "Adult",
   race: "black",
