@@ -26,8 +26,10 @@ export default {
     //   // return await SamCitizens.distinct(args.category);
     // },
     async samcity(obj, args, { _id }){
-      console.log('in async samcity obj '+JSON.stringify(obj))
+      console.log('in async samcity obj '+JSON.stringify(args.pipe))
       console.log('in async samcity args '+JSON.stringify(args))
+      //var pipe = {one_of:{$gte : args.one_of}};
+      var testit = false
        return await SamCitizens.find( {
          coords: {
            $near: {
@@ -39,9 +41,10 @@ export default {
              $minDistance: 10
            }
          },
-         //one_of:{$gte : args.one_of},
-        //  member:args.member,
-          //race:args.race
+        // pipe
+         one_of:{$gte : args.one_of},
+         // member:args.member,
+         // race:args.race
         },
          {limit:args.limit}
        ).fetch();

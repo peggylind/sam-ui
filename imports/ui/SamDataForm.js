@@ -97,6 +97,7 @@ class SamDataForm extends Component {
    // componentWillUnmount(){
    //   client.resetStore();
    // }
+   //data={this.props.samprops.zoom <14 ? this.state.jsonsam : this.props.samcity}
     render(){
 
     return (
@@ -104,8 +105,9 @@ class SamDataForm extends Component {
         <MapBox
           onMapChange={this.props.onMapChange}
           setToolInfo={this.props.setToolInfo}
+          handlePopulationChange={this.props.handlePopulationChange}
           setClick={this.props.setClick}
-          data={this.props.samprops.zoom <14 ? this.state.jsonsam : this.props.samcity}
+          data={this.props.samcity}
           mapprops={this.props.mapprops}
           samprops={this.props.samprops}
           />
@@ -118,13 +120,12 @@ export default graphql(samQuery,
   {
     options: props => ({
       variables: {
-      //  toShow: props.samprops.toShow, //object with array for factors and colors
         limit:  props.samprops.limit,
         member: props.samprops.member,
         one_of: props.samprops.one_of,
         race: props.samprops.race,
         dist: props.samprops.dist,
-        coords: [props.samprops.longitude,props.samprops.latitude] || [-95.29,29.7]
+        coords: [props.samprops.longitude,props.samprops.latitude] || [-95.35,29.75]
       }
     }),
     props: ({ data }) => ({ ...data })

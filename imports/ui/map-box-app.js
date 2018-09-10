@@ -20,6 +20,7 @@ export default class MapBox extends Component {
       this.SamControls = new SamMapControls();
       this.setToolInfo = this.props.setToolInfo;
       this.setClick = this.props.setClick;
+      this.handlePopulationChange = this.props.handlePopulationChange;
       this.state = {
             mapboxApiAccessToken: 'pk.eyJ1IjoibWRjaW90dGkiLCJhIjoiY2l1cWdyamw5MDAxcTJ2bGFmdzJxdGFyNyJ9.2b6aTKZNlT1_DEJiJ9l3hw',
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
@@ -45,13 +46,14 @@ export default class MapBox extends Component {
           var high = this.props.samprops.toShow[this.props.samprops.categIndex].high;
           var lowrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[0].factorColor].RGB
           var highrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[1].factorColor].RGB
-          var r = lowrgb[0]+((highrgb[0]-lowrgb[0])/high)*factor;
+          var r = lowrgb[0]+(Math.abs(highrgb[0]-lowrgb[0])/high)*factor;
           if (r>255){r=255}
           if (r<0){r=0}
-          var g = lowrgb[1]+((highrgb[1]-lowrgb[1])/high)*factor;
+          //var g = lowrgb[1]+(Math.abs(highrgb[1]-lowrgb[1])/high)*factor;
+          var g = ((lowrgb[1]+255)/high)*factor;
           if (g>255){g=255}
           if (g<0){g=0}
-          var b = lowrgb[2]+((highrgb[2]-lowrgb[2])/high)*factor;
+          var b = lowrgb[2]+(Math.abs(highrgb[2]-lowrgb[2])/high)*factor;
           if (b>255){b=255}
           if (b<0){b=0}
           var RGB = [Math.round(r),Math.round(g),Math.round(b)];
@@ -62,12 +64,18 @@ export default class MapBox extends Component {
 
     componentDidUpdate(prevProps, prevState) {
       if (this.props.data && prevState.waiting == 1){
+        console.log('set samdata '+(Date.now()))
         this.setState({samdata: this.props.data, waiting: 0});
+        if (this.props.samprops.limit < 10001){
+          this.handlePopulationChange(this.props.samprops.limit+1000)
+        }
       };
       if (this.props.data != prevState.samdata && prevState.waiting == 0){
+        console.log('set samdata again '+(Date.now()))
         this.setState({samdata: this.props.data});
-        //have to do the set state here with everything from the viewport!!!
-        //this.forceUpdate();
+        if (this.props.samprops.limit < 30001){
+          this.handlePopulationChange(this.props.samprops.limit+1000)
+        }
       };
       if (this.state.viewport != prevState.viewport){
         var scale = getDistanceScales(this.state.viewport).metersPerPixel[0];
@@ -131,7 +139,7 @@ const ScatterMap = new ScatterplotLayer({
     if (this.state.waiting){ patience =
         <div style={{position:"absolute",
         marginTop:"30%", marginLeft:"30%", color:"green", fontSize:"2em"}}>
-        Loading Data ... please wait</div>
+        Loading Data ... thank you for your patience</div>
       }
 
     return (

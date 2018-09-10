@@ -4,8 +4,8 @@ import React, {Component} from "react";
 import RegisterForm from "./RegisterForm";
 import LoginForm from "./LoginForm";
 //import SidePane from "./side-pane"; //would liftup twice for components under SidePane
-
-import asyncComponent from './asyncComponent'; //may not use - still testing
+import debounce from 'lodash.debounce'
+//import asyncComponent from './asyncComponent'; //may not use - still testing
 import SamDataForm from './SamDataForm'; //change to just samdatamap??
 import Slide from './slider-input';
 import LegendBox from './legend-box';
@@ -77,8 +77,8 @@ function assignColors (newColors) {
 
 
 const samprops = {
-  limit: 18000,
-  one_of: 10,
+  limit: 500,
+  one_of: 1000,
   member: "Adult",
   race: "black",
   age: 55,
@@ -96,12 +96,13 @@ const samprops = {
   allcolors: allcolors,
   toShow: toShow,
   forColors: assignColors(toShow[0]),
-  changeColors: true, //let's you turn off select for colors on factors
+  changeColors: true, //let's you turn off select for colors on factors - if we can change that with an input, perhaps forces reload??
   categIndex: 0,
   catShow: 'race', //faster color in map-box-app - if can also read opacity off of toShow[categIndex], then have per color control.
   cloudOrPlot: 'Plot' //scatterplot or cloud on map
   //this logic will apply to everything we want to show - component should feed whole object here
 };
+
 export default class App extends Component {
    constructor(props) {
        super(props);
@@ -115,21 +116,23 @@ export default class App extends Component {
        const bbox = [[-95.91,28.93],[-94.67,28.93],[-94.67,30.47],[-95.91,30.47]];
        this.state = {
          toolTipInfo : {text:'Hover over features or sam citizens for info.'},
-         explanation : {text: <span>We can have any number of things here.</span>},
+         explanation : {text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
          samprops : samprops,
          mapprops : {
               bbox: bbox, //may use later for searches - now based on geonear in circle
               viewport: {
                 width: window.innerWidth,
                 height: window.innerHeight,
-                longitude: -95.29,
-                latitude: 29.7,
+                longitude: -95.355,
+                latitude: 29.75,
                 zoom: samprops.zoom,//16.051394480575627, //which is zoom for 1 meter for testing
                 pitch: 20,
                 bearing: 0
               }
             }
          };
+         this.onMapChange = debounce(this.onMapChange, 2000);
+         this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
 
   //handleSamChanges(limit,member, etc. etc.; set all to the prop in the component?)
@@ -176,29 +179,34 @@ export default class App extends Component {
     samprops.longitude = mapstuff.longitude;
     samprops.zoom = mapstuff.zoom;
     samprops.dist = dist;
+    //samprops.limit = 500; //resets the whole thing 
     if(mapstuff.zoom <= 10){
       samprops.radiusMaxPixels = 1000
       samprops.opacity = 0.85
       samprops.strokeWidth = 8
       samprops.radiusScale = 80
+      samprops.one_of = 100
     }
     if(mapstuff.zoom > 10){
       samprops.radiusMaxPixels = 1000
       samprops.opacity = 0.65
       samprops.strokeWidth = 6
       samprops.radiusScale = 70
+      samprops.one_of = 100
     }
     if(mapstuff.zoom > 11){
       samprops.radiusMaxPixels = 1000
       samprops.opacity = 0.45
       samprops.strokeWidth = 4
       samprops.radiusScale = 60
+      samprops.one_of = 10
     }
     if(mapstuff.zoom > 12){
       samprops.radiusMaxPixels = 1000
       samprops.opacity = 0.35
       samprops.strokeWidth = 2
       samprops.radiusScale = 40
+      samprops.one_of = 10
     }
     if(mapstuff.zoom > 13){
       samprops.radiusMaxPixels = 1000
@@ -208,8 +216,9 @@ export default class App extends Component {
       samprops.one_of = 1
     }
     if(mapstuff.zoom > 14){
+      console.log('should be resetting')
       samprops.radiusMaxPixels = 1000
-      samprops.opacity = 0.25
+      samprops.opacity = 1 //0.25
       samprops.strokeWidth = 1
       samprops.radiusScale = 8
       samprops.one_of = 1
@@ -275,7 +284,10 @@ export default class App extends Component {
 
                 <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"4"}}>
                 <div><hr/><div>
+                  {this.state.samprops.limit*this.state.samprops.one_of}
+                <div><hr/><div>
                   {this.state.explanation.text}
+                </div><hr/></div>
                 </div><hr/></div>
                   {this.state.toolTipInfo.text}
                   {this.state.toolTipInfo.info
@@ -310,6 +322,7 @@ export default class App extends Component {
               onMapChange={this.onMapChange}
               setToolInfo={this.setToolInfo}
               setClick={this.setClick}
+              handlePopulationChange={this.handlePopulationChange}
               />
           </div>
       );
