@@ -28,7 +28,8 @@ export default class PullDown extends Component {
     this.onCatChange = this.onCatChange.bind(this);
     this.onChangetoShow = this.onChangetoShow.bind(this);
     this.state = {
-      samprops : this.props.samprops
+      samprops : this.props.samprops,
+      changeColors : this.props.samprops.changeColors
     }
   };
   onFactortoShow(ev){
@@ -62,7 +63,7 @@ export default class PullDown extends Component {
               </option>)
             }
         </select>
-        <hr/>
+        <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
       <div style={{fontSize:"1em", overflow:"scroll"}}>
         {this.state.samprops.toShow[this.state.samprops.categIndex].factors.map((factor,ind) => <div key={ind}
@@ -70,7 +71,7 @@ export default class PullDown extends Component {
               borderColor: this.state.samprops.allcolors[factor.factorColor].HEX,
               borderWidth: "3px", borderStyle:"dashed", height:"2em"}}>
             {factor.factorName.substring(0,20)}
-            {this.props.samprops.changeColors &&
+            {this.state.changeColors &&
               <div>
 
             <SelectText allcolors={this.state.samprops.allcolors} onChange={this.onChangetoShow} factor={factor}/>

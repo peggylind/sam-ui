@@ -41,7 +41,7 @@ const toShow = [{category: 'race', type: 'factor', factors: [{factorName:'white'
   {category: 'employment', type: 'factor', factors: [{factorName:'Not in labor force',factorColor:3},{factorName:'Employed',factorColor:2},
     {factorName:'Unemployed',factorColor:1},{factorName:'In Armed Forces',factorColor:6}]},
   {category: 'quality_description', type: 'factor', factors: [{factorName:'Average',factorColor:3},{factorName:'Good',factorColor:2},
-    {factorName:'Excellent',factorColor:1},{factorName:'Poor',factorColor:6},{factorName:"Superior",factorColor:1},{factorName:"Very Low",factorColor:5}]},
+    {factorName:'Excellent',factorColor:1},{factorName:'Poor',factorColor:6},{factorName:"Superior",factorColor:1},{factorName:"Low",factorColor:5}]},
   {category: 'disability', type: 'factor', factors: [{factorName:'No Disabilities',factorColor:3},{factorName:'With One Type of Disability',factorColor:2},
     {factorName:'With Two or More Types of Disabilities',factorColor:1}]},
   {category: 'veteran_status', type: 'factor', factors: [{factorName:'Nonveteran',factorColor:3},{factorName:'Veteran',factorColor:2}]},
@@ -84,19 +84,19 @@ const samprops = {
   age: 55,
   longitude: -95.29,
   latitude: 29.7,
-  zoom: 11,
-  opacity: 0.45,
+  zoom: 11.4,
+  opacity: 0.85,
   radiusMinPixels: 1.12,
   radiusMaxPixels: 1000,
   strokeWidth: 8,
-  radiusScale: 100,
+  radiusScale: 190,
   outline: false,
   pickable: true,
   dist: 140000,
   allcolors: allcolors,
   toShow: toShow,
   forColors: assignColors(toShow[0]),
-  changeColors: true, //let's you turn off select for colors on factors - if we can change that with an input, perhaps forces reload??
+  changeColors: false, //let's you turn off select for colors on factors - if we can change that with an input, perhaps forces reload??
   categIndex: 0,
   catShow: 'race', //faster color in map-box-app - if can also read opacity off of toShow[categIndex], then have per color control.
   cloudOrPlot: 'Plot' //scatterplot or cloud on map
@@ -132,6 +132,7 @@ export default class App extends Component {
             }
          };
          this.onMapChange = debounce(this.onMapChange, 2000);
+         this.setToolInfo = debounce(this.setToolInfo, 200);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
 
@@ -216,7 +217,6 @@ export default class App extends Component {
       samprops.one_of = 10
     }
     if(mapstuff.zoom > 14){
-      console.log('should be resetting')
       samprops.radiusMaxPixels = 1000
       samprops.opacity = 1 //0.25
       samprops.strokeWidth = 1
