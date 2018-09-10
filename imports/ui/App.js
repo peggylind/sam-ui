@@ -84,7 +84,7 @@ const samprops = {
   age: 55,
   longitude: -95.29,
   latitude: 29.7,
-  zoom: 10,
+  zoom: 11,
   opacity: 0.45,
   radiusMinPixels: 1.12,
   radiusMaxPixels: 1000,
@@ -179,41 +179,41 @@ export default class App extends Component {
     samprops.longitude = mapstuff.longitude;
     samprops.zoom = mapstuff.zoom;
     samprops.dist = dist;
-    //samprops.limit = 500; //resets the whole thing 
+    //samprops.limit = 500; //resets the whole thing
     if(mapstuff.zoom <= 10){
       samprops.radiusMaxPixels = 1000
       samprops.opacity = 0.85
       samprops.strokeWidth = 8
-      samprops.radiusScale = 80
-      samprops.one_of = 100
+      samprops.radiusScale = 190
+      samprops.one_of = 1000
     }
     if(mapstuff.zoom > 10){
       samprops.radiusMaxPixels = 1000
-      samprops.opacity = 0.65
-      samprops.strokeWidth = 6
-      samprops.radiusScale = 70
-      samprops.one_of = 100
+      samprops.opacity = 0.85
+      samprops.strokeWidth = 8
+      samprops.radiusScale = 190
+      samprops.one_of = 1000
     }
     if(mapstuff.zoom > 11){
       samprops.radiusMaxPixels = 1000
-      samprops.opacity = 0.45
+      samprops.opacity = 0.65
       samprops.strokeWidth = 4
-      samprops.radiusScale = 60
-      samprops.one_of = 10
+      samprops.radiusScale = 160
+      samprops.one_of = 1000
     }
     if(mapstuff.zoom > 12){
       samprops.radiusMaxPixels = 1000
-      samprops.opacity = 0.35
-      samprops.strokeWidth = 2
+      samprops.opacity = 0.45
+      samprops.strokeWidth = 3
       samprops.radiusScale = 40
-      samprops.one_of = 10
+      samprops.one_of = 100
     }
     if(mapstuff.zoom > 13){
       samprops.radiusMaxPixels = 1000
       samprops.opacity = 0.30
-      samprops.strokeWidth = 1
+      samprops.strokeWidth = 2
       samprops.radiusScale = 18
-      samprops.one_of = 1
+      samprops.one_of = 10
     }
     if(mapstuff.zoom > 14){
       console.log('should be resetting')

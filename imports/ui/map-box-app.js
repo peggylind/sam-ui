@@ -67,14 +67,14 @@ export default class MapBox extends Component {
         console.log('set samdata '+(Date.now()))
         this.setState({samdata: this.props.data, waiting: 0});
         if (this.props.samprops.limit < 10001){
-          this.handlePopulationChange(this.props.samprops.limit+1000)
+          this.handlePopulationChange(this.props.samprops.limit+500)
         }
       };
       if (this.props.data != prevState.samdata && prevState.waiting == 0){
         console.log('set samdata again '+(Date.now()))
         this.setState({samdata: this.props.data});
-        if (this.props.samprops.limit < 30001){
-          this.handlePopulationChange(this.props.samprops.limit+1000)
+        if (this.props.samprops.limit < 40001){
+          this.handlePopulationChange(this.props.samprops.limit+500)
         }
       };
       if (this.state.viewport != prevState.viewport){
@@ -88,7 +88,7 @@ export default class MapBox extends Component {
         }else{
           var dist4search = worldWidth
         };
-        this.props.onMapChange(this.state.viewport,dist4search);
+        this.props.onMapChange(this.state.viewport,dist4search*1.8);
       };
     };
 
