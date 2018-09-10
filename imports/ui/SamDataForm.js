@@ -98,6 +98,7 @@ class SamDataForm extends Component {
    //   client.resetStore();
    // }
    //data={this.props.samprops.zoom <14 ? this.state.jsonsam : this.props.samcity}
+   //how can we get them both as part of the same data stream, and not reloading when you do search on new data characteristics?
     render(){
 
     return (
@@ -107,7 +108,7 @@ class SamDataForm extends Component {
           setToolInfo={this.props.setToolInfo}
           handlePopulationChange={this.props.handlePopulationChange}
           setClick={this.props.setClick}
-          data={this.props.samcity}
+          data={this.props.samprops.zoom <10 ? this.state.jsonsam : this.props.samcity}
           mapprops={this.props.mapprops}
           samprops={this.props.samprops}
           />
