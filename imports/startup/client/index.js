@@ -6,6 +6,7 @@ import { ApolloLink, from } from "apollo-link";
 import { ApolloClient } from "apollo-client";
 import { HttpLink } from "apollo-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
+import { DDPLink } from 'meteor/swydo:ddp-apollo';
 
 import App from "../../ui/App";
 
@@ -26,7 +27,8 @@ const authLink = new ApolloLink((operation, forward) => {
 const cache = new InMemoryCache();
 
 const client = new ApolloClient({
-  link: from([authLink, httpLink]),
+//  link: from([authLink, httpLink]),
+  link: new DDPLink(),
   shouldBatch: true,
   cache
 });
