@@ -2,12 +2,11 @@ library(mongolite)
 library(rjson)
 
 #mongod open on my local, but connect as needed
-sam <- readRDS("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData/complete_sample_set2018-08-02.RDS")
+sam <- readRDS("/Users/dprice3/Downloads/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData/complete_sample_set2018-08-02.RDS")
 
 #mongo doesn't like . in keys, so have to clean them out - they're still in factors.
 library(janitor)
 samc <- clean_names(sam)
-#should rm old, then replace with same name, but don't know about indices
 
 #make cvs with unique values on each column
 #use for testing and for summaries
@@ -29,6 +28,8 @@ write(toJSON(unique_names),"unique_names.json")
 #seems to have been 4or5 places with weird characters in the notes columns - 1782584,1850900,1868732,1937535
 SamCity <- mongo("samcity", url = "mongodb://localhost/SamCity");
 #remove first!!
+SamCity$drop()
+SamCity$find(limit = 5)
 #mongolite throws  Error: No method asJSON S3 class: sfg , so tried an extra toJSON
 for (row in 1:nrow(samc)){
   SamCity$insert(toJSON(samc[row,]))
