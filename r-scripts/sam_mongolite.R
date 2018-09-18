@@ -26,13 +26,17 @@ write(toJSON(unique_names),"unique_names.json")
 #Error in toJSON(samc[row, ]) : 
 #unable to escape string. String is not utf8
 #seems to have been 4or5 places with weird characters in the notes columns - 1782584,1850900,1868732,1937535
+#find them or just delete whole notes column:
+library (dplyr)
+samc_no_notes <- samc %>% select(-note)
+
 SamCity <- mongo("samcity", url = "mongodb://localhost/SamCity");
 #remove first!!
 SamCity$drop()
 SamCity$find(limit = 5)
 #mongolite throws  Error: No method asJSON S3 class: sfg , so tried an extra toJSON
-for (row in 1:nrow(samc)){
-  SamCity$insert(toJSON(samc[row,]))
+for (row in 1:nrow(samc_no_notes)){
+  SamCity$insert(toJSON(samc_no_notes[row,]))
 }
 SamCity$index(add = '{"coords" : "2dsphere"}')
 SamCity$index(add = '{"one_of" : 1 }')
