@@ -47,7 +47,7 @@ export default {
          // race:args.race
         },
          {limit:args.limit}
-       ).fetch();
+       );//.fetch();
     }//,
     // async jsonsam(obj, args, { _id }){
     //   return await fetch("/json/one_of100.json");

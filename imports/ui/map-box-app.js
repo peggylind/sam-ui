@@ -74,7 +74,7 @@ export default class MapBox extends Component {
         console.log('set samdata again '+(Date.now()))
         this.setState({samdata: this.props.data});
         if (this.props.samprops.limit < 40001){
-          this.handlePopulationChange(this.props.samprops.limit+500)
+          this.handlePopulationChange(this.props.samprops.limit+7000)
         }
       };
       if (this.state.viewport != prevState.viewport){
