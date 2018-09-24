@@ -108,7 +108,8 @@ class SamDataForm extends Component {
           setToolInfo={this.props.setToolInfo}
           handlePopulationChange={this.props.handlePopulationChange}
           setClick={this.props.setClick}
-          data={this.props.samprops.zoom <10 ? this.state.jsonsam : this.props.samcity}
+          data={this.props.samcity}
+          //data={this.props.samprops.zoom <10 ? this.state.jsonsam : this.props.samcity}
           mapprops={this.props.mapprops}
           samprops={this.props.samprops}
           />

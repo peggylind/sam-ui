@@ -74,25 +74,36 @@ function assignColors (newColors) {
 //     }
 //   }
 // `;
+// calcOpacity = function(zoom){
+//   return 1 - (zoom/25);
+// }
+const firstzoom = 11.1;
+const calcOpacity = (zoom) => { return 1 - (zoom/25)};
+const calcStrokeWidth = (zoom) =>
+  (zoom *1.3) < 20 ? 20 - (zoom * 1.3) : 1;
+const calcRadiusScale = (zoom) =>
+  (zoom *13) < 180 ? 186 - (zoom * 13) : 6;
+const calcOneOf = (zoom) =>
+  zoom > 13 ? 1 : zoom < 12 ? 100 : 10;
 
 
-const samprops = {
-  limit: 500,
-  one_of: 1000,
+const samprops = { //have all decided with same logic??
+  limit: 10000,
+  one_of: calcOneOf(firstzoom),
   member: "Adult",
   race: "black",
   age: 55,
-  longitude: -95.29,
-  latitude: 29.7,
-  zoom: 11.4,
-  opacity: 0.85,
+  longitude: -95.32,
+  latitude: 29.75,
+  zoom: firstzoom,
+  opacity: calcOpacity(firstzoom),
   radiusMinPixels: 1.12,
   radiusMaxPixels: 1000,
-  strokeWidth: 8,
-  radiusScale: 190,
+  strokeWidth: calcStrokeWidth(firstzoom),
+  radiusScale: calcRadiusScale(firstzoom),
   outline: false,
   pickable: true,
-  dist: 140000,
+  dist: 170000,
   allcolors: allcolors,
   toShow: toShow,
   forColors: assignColors(toShow[0]),
@@ -180,49 +191,11 @@ export default class App extends Component {
     samprops.longitude = mapstuff.longitude;
     samprops.zoom = mapstuff.zoom;
     samprops.dist = dist;
-    //samprops.limit = 500; //resets the whole thing
-    if(mapstuff.zoom <= 10){
-      samprops.radiusMaxPixels = 1000
-      samprops.opacity = 0.85
-      samprops.strokeWidth = 8
-      samprops.radiusScale = 190
-      samprops.one_of = 1000
-    }
-    if(mapstuff.zoom > 10){
-      samprops.radiusMaxPixels = 1000
-      samprops.opacity = 0.85
-      samprops.strokeWidth = 8
-      samprops.radiusScale = 190
-      samprops.one_of = 1000
-    }
-    if(mapstuff.zoom > 11){
-      samprops.radiusMaxPixels = 1000
-      samprops.opacity = 0.65
-      samprops.strokeWidth = 4
-      samprops.radiusScale = 160
-      samprops.one_of = 1000
-    }
-    if(mapstuff.zoom > 12){
-      samprops.radiusMaxPixels = 1000
-      samprops.opacity = 0.45
-      samprops.strokeWidth = 3
-      samprops.radiusScale = 40
-      samprops.one_of = 100
-    }
-    if(mapstuff.zoom > 13){
-      samprops.radiusMaxPixels = 1000
-      samprops.opacity = 0.30
-      samprops.strokeWidth = 2
-      samprops.radiusScale = 18
-      samprops.one_of = 10
-    }
-    if(mapstuff.zoom > 14){
-      samprops.radiusMaxPixels = 1000
-      samprops.opacity = 1 //0.25
-      samprops.strokeWidth = 1
-      samprops.radiusScale = 8
-      samprops.one_of = 1
-    }
+    //samprops.radiusMaxPixels = 1000;
+    samprops.opacity = calcOpacity(mapstuff.zoom);
+    samprops.strokeWidth = calcStrokeWidth(mapstuff.zoom);
+    samprops.radiusScale = calcRadiusScale(mapstuff.zoom);
+    samprops.one_of = calcOneOf(mapstuff.zoom);
     this.setState({samprops});
   };
 
