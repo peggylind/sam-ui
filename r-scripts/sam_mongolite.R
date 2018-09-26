@@ -39,7 +39,7 @@ for (row in 1:nrow(samc_no_notes)){
   SamCity$insert(toJSON(samc_no_notes[row,]))
 }
 SamCity$index(add = '{"coords" : "2dsphere"}')
-SamCity$index(add = '{"one_of" : 1 }')
+SamCity$index(add = '{"one_of" : -1 }')
 #do both together?
 #SamCity$index(remove = 'one_of_1')
 #add more! income, race, member, etc.
