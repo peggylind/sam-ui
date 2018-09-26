@@ -195,7 +195,7 @@ export default class App extends Component {
     samprops.opacity = calcOpacity(mapstuff.zoom);
     samprops.strokeWidth = calcStrokeWidth(mapstuff.zoom);
     samprops.radiusScale = calcRadiusScale(mapstuff.zoom);
-    samprops.one_of = calcOneOf(mapstuff.zoom);
+    samprops.one_of = mapstuff.zoom > 13 ? 1 : mapstuff.zoom < 12 ? 100 : 10; //calcOneOf(mapstuff.zoom);
     this.setState({samprops});
   };
 
