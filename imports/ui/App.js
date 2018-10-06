@@ -29,6 +29,7 @@ const color10 = {name: 'red', RGB: [255,0,0], CMYK: [0,0,0,0], HEX: '#FF0000', i
 const color11 = {name: 'blue', RGB: [0,0,255], CMYK: [0,0,0,0], HEX: '#0000FF', indexnumber:11};
 const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color8,color9,color10,color11];
 //as list means we can resort to match data
+//should add a title for showing pretty?
 const toShow = [{category: 'race', type: 'factor', factors: [{factorName:'white',factorColor:3},{factorName:'asian',factorColor:2},
     {factorName:'black',factorColor:1},{factorName:'hispanic',factorColor:5},{factorName:'other.race',factorColor:4},
     {factorName:'multiracial',factorColor:0}]},
@@ -77,17 +78,18 @@ function assignColors (newColors) {
 // calcOpacity = function(zoom){
 //   return 1 - (zoom/25);
 // }
-const firstzoom = 11.1;
+const firstzoom = 11.5;
 const calcOpacity = (zoom) => { return 1 - (zoom/25)};
 const calcStrokeWidth = (zoom) =>
   (zoom *1.3) < 20 ? 20 - (zoom * 1.3) : 1;
 const calcRadiusScale = (zoom) =>
   (zoom *13) < 180 ? 186 - (zoom * 13) : 6;
 const calcOneOf = (zoom) =>
-  zoom > 13 ? 1 : zoom < 12 ? 100 : 10;
+  zoom > 13 ? 1 : zoom < 12 ? zoom < 11 ? 1000 : 100 : 10;
 
 
 const samprops = { //have all decided with same logic??
+  geojson_title: 'Harvey_Houston.geojson',
   limit: 10000,
   one_of: calcOneOf(firstzoom),
   member: "Adult",
@@ -153,6 +155,11 @@ export default class App extends Component {
     samprops.limit = limit;
     this.setState({samprops});
   };
+  handleGeoJSONChange = function(geojson_title) {
+    var samprops = {...this.state.samprops}
+    samprops.geojson_title = geojson_title;
+    this.setState({samprops});
+  };
   onCatChange = function(event){
     var samprops = {...this.state.samprops}
     samprops.toShow.forEach(function(row,r){
@@ -183,7 +190,6 @@ export default class App extends Component {
      this.setState({samprops});
   };
 
-
   onMapChange = function(mapstuff,dist){
     console.log("mapstuff"+JSON.stringify(mapstuff.zoom))
     var samprops = {...this.state.samprops}
@@ -195,7 +201,8 @@ export default class App extends Component {
     samprops.opacity = calcOpacity(mapstuff.zoom);
     samprops.strokeWidth = calcStrokeWidth(mapstuff.zoom);
     samprops.radiusScale = calcRadiusScale(mapstuff.zoom);
-    samprops.one_of = mapstuff.zoom > 13 ? 1 : mapstuff.zoom < 12 ? 100 : 10; //calcOneOf(mapstuff.zoom);
+    samprops.one_of = mapstuff.zoom > 13 ? 1 : mapstuff.zoom < 12 ? mapstuff.zoom < 11 ? 1000: 100 : 10;
+    //samprops.one_of = calcOneOf(mapstuff.zoom);
     this.setState({samprops});
   };
 

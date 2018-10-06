@@ -86,13 +86,18 @@ class SamDataForm extends Component {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
        super(props);
        this.state = {
-         jsonsam : ['age':'','race':'']
+//         jsonsam : ['age':'','race':''], //load json data faster than mongodb
+          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
        }
    }
    async componentDidMount() {
-     const res = await fetch('/json/sam_of_100.json')
-     const jsonsam = await res.json()
-     this.setState({jsonsam})
+     const retrn = await fetch('/json/'+this.props.samprops.geojson_title)
+     const geojsonsam = await retrn.json()
+     console.log(geojsonsam)
+     this.setState({geojsonsam})
+     // const res = await fetch('/json/sam_of_100.json') //only if loading json for faster process
+     // const jsonsam = await res.json()
+     //this.setState({jsonsam})
    }
    // componentWillUnmount(){
    //   client.resetStore();
@@ -110,6 +115,7 @@ class SamDataForm extends Component {
           setClick={this.props.setClick}
           data={this.props.samcity}
           //data={this.props.samprops.zoom <10 ? this.state.jsonsam : this.props.samcity}
+          geojsonsam={this.state.geojsonsam}
           mapprops={this.props.mapprops}
           samprops={this.props.samprops}
           />

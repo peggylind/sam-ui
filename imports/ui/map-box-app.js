@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import DeckGL, { ScatterplotLayer, ArcLayer, LineLayer, PointCloudLayer, MapController, Controller } from 'deck.gl';
+import DeckGL, { GeoJsonLayer, ScatterplotLayer, ArcLayer, LineLayer, PointCloudLayer, MapController, Controller } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import WebMercatorViewport, {getDistanceScales} from 'viewport-mercator-project';
 //import debounce from 'lodash.debounce';
@@ -13,6 +13,24 @@ const coords = [[east,south],[west,north]];
 const age = [];
 const race = [];
 
+const LIGHT_SETTINGS = {
+  lightsPosition: [-125, 50.5, 5000, -122.8, 48.5, 8000],
+  ambientRatio: 0.2,
+  diffuseRatio: 0.5,
+  specularRatio: 0.3,
+  lightsStrength: [1.0, 0.0, 2.0, 0.0],
+  numberOfLights: 2
+};
+const firstgeojson = {
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [125.6, 10.1]
+  },
+  "properties": {
+    "name": "Dinagat Islands"
+  }
+};
 
 export default class MapBox extends Component {
   constructor(props) {
@@ -26,6 +44,7 @@ export default class MapBox extends Component {
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
             time: 0,
             samdata: [coords,age,race],
+          //  geojsonsam: [firstgeojson],
             waiting: 1,
             //toShow: this.props.samprops.toShow[0],
             toTest: {white:[230,159,0],black:[213,94,0]},
@@ -60,10 +79,17 @@ export default class MapBox extends Component {
           return RGB
         }
       }
-
+    componentDidMount(){
+      //this.setState({geojsonsam:this.props.geojsonsam})
+    }
 
     componentDidUpdate(prevProps, prevState) {
+      if (this.props.geojsonsam != prevProps.geojsonsam){
+        console.log(this.props.geojsonsam)
+         this.setState({geojsonsam:this.props.geojsonsam})
+       };
       if (this.props.data && prevState.waiting == 1){
+      //  this.setState({geojsonsam:this.props.geojsonsam})
         console.log('set samdata '+(Date.now()))
         this.setState({samdata: this.props.data, waiting: 0});
         if (this.props.samprops.limit < 10001){
@@ -96,7 +122,30 @@ export default class MapBox extends Component {
 //https://github.com/uber-common/viewport-mercator-project/blob/master/docs/api-reference/web-mercator-utils.md
 
   render() {
+    //const data = this.state.geojsonsam;
+    //this.props.geojsonsam
+const GeoMap = new GeoJsonLayer({
+  id: 'geojson-layer',
+  data: this.state.geojsonsam,
+  pickable: true,
+    stroked: false,
+    filled: true,
+    extruded: true,
+    lineWidthScale: 20,
+    lineWidthMinPixels: 2,
+    getFillColor: [160, 160, 180, 200],
+//    getLineColor: d => colorToRGBArray(d.properties.color),
+    getRadius: 100,
+    getLineWidth: 10,
+    getElevation: 30,
+//    onHover: ({object}) => setTooltip(object.properties.name || object.properties.station),
 
+  //getElevation: f => Math.sqrt(f.properties.valuePerSqm) * 10,
+  //getFillColor: f => COLOR_SCALE(f.properties.growth),
+  getLineColor: [255, 255, 255],
+  //lightSettings: LIGHT_SETTINGS,
+
+})
 
 // const PointCloudMap = new PointCloudLayer({
 //   id: 'point-cloud-layer',
@@ -132,6 +181,7 @@ const ScatterMap = new ScatterplotLayer({
     onClick: ({object}) => this.setClick(object)
   });
   const layers = [
+     GeoMap,
      ScatterMap
     //PointCloudMap
   ];

@@ -1,4 +1,5 @@
 #fram Garrett Gowe on Aug 4th, 2018
+#goes race, age, then sex
 
 Asthma=sapply(1:nrow(sample_sam), function(i) switch(sample_sam[i,]$race,
                                                      "white"=switch(sample_sam[i,]$bracket.age,
