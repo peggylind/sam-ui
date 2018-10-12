@@ -6,10 +6,9 @@
 exp_sam <- readRDS("exp_sam_1.RDS")
 exp_sam_test <- sample_n(exp_sam,5000,replace = TRUE)
 
-View(exp_sam_test)
 
 #rewrite for mutate
-exp_sam_preg_autism <- exp_sam_test %>% 
+exp_sam_preg_autism <- test_sam %>% 
   mutate(
     pregnant = case_when(
       age >=15 & age <= 17 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.024, 0.976)),
@@ -26,10 +25,61 @@ exp_sam_preg_autism <- exp_sam_test %>%
       pregnant == "yes" & age >=30 & age <= 44 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.433, 0.567)),
       pregnant == "yes" & age >=45 & age <= 64 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.031, 0.969)),
       age < 15 | age > 64 ~ 'no'
-    ),
+    )
     
   )
   #mutate(pregnant = ifelse(age > 14 & age < 18, sample(c("yes", "no"), size = 100000, replace = TRUE, prob = c(0.024, 0.976)),"no"))
+
+
+Pregnancy Rates
+## probably per 1000 mistake?
+Age
+15 to 17     3.6 %
+18 to 19     10.6 %
+20 to 24     15.4 %
+25 to 29     16.2 %
+30 to 34     13.8 %
+35 to 44     7.7 %
+45 to 54     1.9 %
+55 to 64     1.9 %
+
+I think this information might be more credible for the prenatal care ages:
+  
+  Under 15 Years: 32.9 %
+15-19 Years: 54.3 %
+20-24 Years: 63.2 %
+25-29 Years: 73.9 %
+30-34 Years: 79.1 %
+35-39 Years: 79.2 %
+40-44 Years: 76.3 %
+https://mchb.hrsa.gov/chusa11/hsfu/pages/312pc.html
+
+
+CRH 
+
+Prenatal Care Received
+Yes 
+
+Gestational Age (wks)                                  CRH Levels (pg/mL)
+15                                                                         12
+20                                                                         25
+25                                                                         50
+30                                                                         250
+32                                                                         225                                                                         
+34                                                                         140
+36                                                                         100
+38                                                                         80
+40                                                                         75
+42                                                                          60
+#her code, below
+
+Probability of an ASD Diagnosis by Gestational Age 
+
+Gestational Age                                      ASD 
+Early Pre-Term ( <33 weeks)                  2.08 %
+Late Pre-Term (34-36 weeks)                 1.32 %
+Term                                                        1.09 %
+Post-Term                                                0.94 %
 
 
 

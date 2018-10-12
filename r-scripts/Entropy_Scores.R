@@ -6,8 +6,10 @@
 library(dplyr)
 library(sf)
 library(readr)
-sf_sam <- st_as_sf(sample_sam, crs=3674)
-sf_sam$coords <- sf_sam$ptcoords # how to get rid of coords!!
+#sf_sam <- st_as_sf(sample_sam, crs=3674)
+#sf_sam$coords <- sf_sam$ptcoords # how to get rid of coords!!
+
+#exp_sam <- st_transform(exp_sam, 4326) #did this below, because I was dumb about the crs
 
 #Anoushka's is: Pregnancy_Autism.R
 #Merina's is: Low_Birth_Rate.R
@@ -15,15 +17,15 @@ sf_sam$coords <- sf_sam$ptcoords # how to get rid of coords!!
 
 #Tom and Aditya's entropy scores
 # gives each person their score for tract level racial diversity [and do the others, too?]
-expanded_sam <- sf_sam %>%
-  filter(!is.na(ACCOUNT)) %>%
+sam <- sam %>%
+#  filter(!is.na(ACCOUNT)) %>%
   group_by_at(vars(tract)) %>%
   mutate(tracttotal = n()) %>%
   group_by_at(vars(tract,race)) %>%
   mutate(racetotal = n(),percent_race = racetotal/tracttotal,racial_entropy_index = -log(tracttotal/racetotal)*percent_race)
 
-exp_sam <- expanded_sam %>%
-  group_by_at(vars(tract,educational.attainment)) %>%
+sam <- sam %>%
+  group_by_at(vars(tract,educational_attainment)) %>%
   mutate(education_total = n(),percent_education = education_total/tracttotal,education_entropy_index = -log(tracttotal/education_total)*percent_education)
 
 
@@ -52,4 +54,22 @@ summed_sam_employment <- exp_sam %>%
   group_by_at(vars(tract,employment)) %>%
   summarize(employ = n())
 write_rds(summed_sam_employment, "summed_employment.RDS") 
+
+#testing functions
+sam_summarize <- function(df, group_var,factor_var){
+  var_name <- quo_name(factor_var)
+  df %>%
+    group_by_at(vars(!!group_var,!!factor_var)) %>%
+    summarize(cnt=n())
+}
+sam_ts <- sam_summarize(sam_coord,quo(tract),quo(employment))
+
+#better 
+#https://edwinth.github.io/blog/dplyr-recipes/
+  
+  #summarize(employ = n(), percent=employ/tracttotal)
+write_rds(summed_sam_employment, "summed_employment.RDS") 
+
+
+
 
