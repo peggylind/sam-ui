@@ -6,7 +6,8 @@ const SelectText = ({allcolors, onChange, factor}) => {
   <select onChange={onChange} id={factor.factorName}
       style={{backgroundColor:"#f8f8ff",marginLeft:"10%",width:"40%"}}
       defaultValue={factor.factorColor}>
-      {allcolors.map((color,i) => <option
+      {allcolors.map((color,i) =>
+        <option onClick="alert('click')"
         key={i+'_'+color.name} value={i}>
        {color.name.substring(0,12)}
        </option>)}
