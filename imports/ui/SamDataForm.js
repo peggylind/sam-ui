@@ -8,6 +8,7 @@ const samQuery = gql`
   query SamCitizens(
     $limit: Int,
     $one_of: Int,
+    $fnd: [String],
     $member: String,
     $educational_attainment: String,
     $employment: String,
@@ -25,6 +26,7 @@ const samQuery = gql`
     samcity(
       limit: $limit,
       one_of: $one_of,
+      fnd: $fnd,
       member: $member,
       educational_attainment: $educational_attainment,
       employment: $employment,

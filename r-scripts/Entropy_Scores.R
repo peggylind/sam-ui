@@ -9,6 +9,8 @@ library(readr)
 sf_sam <- st_as_sf(sample_sam, crs=3674)
 sf_sam$coords <- sf_sam$ptcoords # how to get rid of coords!!
 
+exp_sam <- st_transform(exp_sam, 4326) #did this below, because I was dumb about the crs
+
 #Anoushka's is: Pregnancy_Autism.R
 #Merina's is: Low_Birth_Rate.R
 

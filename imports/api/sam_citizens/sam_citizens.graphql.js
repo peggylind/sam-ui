@@ -35,6 +35,7 @@ type Query {
       limit:Int,
       one_of:Int,
       individual_id: Int,
+      fnd: [String],
       age: Int,
       bracket_age: String,
       citizenship: String,

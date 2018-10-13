@@ -1,6 +1,8 @@
 library(mongolite)
 library(rjson)
 
+
+
 #mongod open on my local, but connect as needed
 sam <- readRDS("/Users/dprice3/Downloads/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData/complete_sample_set2018-08-02.RDS")
 
@@ -30,16 +32,20 @@ write(toJSON(unique_names),"unique_names.json")
 library (dplyr)
 samc_no_notes <- samc %>% select(-note)
 
+Sys.time()
 SamCity <- mongo("samcity", url = "mongodb://localhost/SamCity");
 #remove first!!
 SamCity$drop()
-SamCity$find(limit = 5)
+#SamCity$find(limit = 5)
 #mongolite throws  Error: No method asJSON S3 class: sfg , so tried an extra toJSON
-for (row in 1:nrow(samc_no_notes)){
-  SamCity$insert(toJSON(samc_no_notes[row,]))
+for (row in 1:nrow(samc)){
+  SamCity$insert(toJSON(samc[row,]))
 }
+Sys.time()
 SamCity$index(add = '{"coords" : "2dsphere"}')
 SamCity$index(add = '{"one_of" : -1 }')
+SamCity$index(add = '{"race" : 1 }')
+Sys.time()
 #do both together?
 #SamCity$index(remove = 'one_of_1')
 #add more! income, race, member, etc.

@@ -26,9 +26,11 @@ export default {
     //   // return await SamCitizens.distinct(args.category);
     // },
     async samcity(obj, args, { _id }){
-      console.log('in async samcity obj '+JSON.stringify(args.pipe))
+      //console.log('in async samcity obj '+JSON.stringify(args.pipe))
       console.log('in async samcity args '+JSON.stringify(args))
-      //var pipe = {one_of:{$gte : args.one_of}};
+      console.log('to replace fnd '+JSON.stringify(args.fnd))
+      var pipe = {one_of:{$gte : args.one_of}};
+      //if length(args.fnd>0){for (f in args.find) {pipe[f] : args.find[f]}}
       var testit = false
        return await SamCitizens.find( {
          coords: {
@@ -41,8 +43,9 @@ export default {
              $minDistance: 10
            }
          },
-        // pipe
+          //pipe
          one_of:{$gte : args.one_of},
+         //if this works take out factors from the gql
          // member:args.member,
          // race:args.race
         },
