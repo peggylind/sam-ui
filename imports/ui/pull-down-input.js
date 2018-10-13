@@ -7,8 +7,7 @@ const SelectText = ({allcolors, onChange, factor}) => {
       style={{backgroundColor:"#f8f8ff",marginLeft:"10%",width:"40%"}}
       defaultValue={factor.factorColor}>
       {allcolors.map((color,i) =>
-        <option onClick="alert('click')"
-        key={i+'_'+color.name} value={i}>
+        <option key={i+'_'+color.name} value={i}>
        {color.name.substring(0,12)}
        </option>)}
     </select>
@@ -33,8 +32,10 @@ export default class PullDown extends Component {
       changeColors : this.props.samprops.changeColors
     }
   };
-  onFactortoShow(ev){
-    console.log(ev)
+  onFactortoShow(e){
+    this.props.onFactortoShow(e)
+    // console.log('this is:', this);
+    // console.log(e)
   }
   onCatChange(event) { //if you take value of index, it does the map function differently - very odd
     this.props.onCatChange(event);
@@ -68,6 +69,7 @@ export default class PullDown extends Component {
       </div>
       <div style={{fontSize:"1em", overflow:"scroll"}}>
         {this.state.samprops.toShow[this.state.samprops.categIndex].factors.map((factor,ind) => <div key={ind}
+            onClick={(e) => this.onFactortoShow(factor)}
             style={{backgroundColor: this.state.samprops.allcolors[factor.factorColor].HEX,
               borderColor: this.state.samprops.allcolors[factor.factorColor].HEX,
               borderWidth: "3px", borderStyle:"dashed", height:"2em"}}>

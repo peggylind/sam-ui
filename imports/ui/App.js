@@ -111,6 +111,7 @@ export default class App extends Component {
        super(props);
        this.handlePopulationChange = this.handlePopulationChange.bind(this);
        this.onCatChange = this.onCatChange.bind(this);
+       this.onFactortoShow = this.onFactortoShow.bind(this);
        this.onChangetoShow = this.onChangetoShow.bind(this);
        this.onMapChange = this.onMapChange.bind(this);
        this.setToolInfo = this.setToolInfo.bind(this);
@@ -134,7 +135,7 @@ export default class App extends Component {
               }
             }
          };
-         this.onMapChange = debounce(this.onMapChange, 2000);
+         this.onMapChange = debounce(this.onMapChange, 200);
          this.setToolInfo = debounce(this.setToolInfo, 200);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
@@ -161,8 +162,25 @@ export default class App extends Component {
     })
     this.setState({samprops});
   }
+  onFactortoShow = function(e){
+    console.log(e)
+    var samprops = {...this.state.samprops}
+    samprops.toShow.forEach(function(row,r){
+      console.log(row)
+      console.log(samprops.categIndex)
+      console.log(r)
+      if(samprops.categIndex == r){
+        console.log(samprops.toShow[r].category)
+        console.log(e.factorName)
+        //also need to change the categoryIndex to whatever default we want
+        //assign to pipe factorName and
+      }
+    })
+    this.setState({samprops});
+  }
 
   onChangetoShow = function(showObj){
+    console.log(showObj)
      var samprops = {...this.state.samprops}
      samprops.toShow.forEach(function (catRow, i){
        if (catRow.category==showObj.catName){
@@ -281,6 +299,7 @@ export default class App extends Component {
               samprops={this.state.samprops}
               onPopChange={this.handlePopulationChange}
               onCatChange={this.onCatChange}
+              onFactortoShow={this.onFactortoShow}
               onChangetoShow={this.onChangetoShow}
               onMapChange={this.onMapChange}
               setToolInfo={this.setToolInfo}

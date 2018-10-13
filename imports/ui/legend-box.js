@@ -54,6 +54,7 @@ export default class LegendBox extends Component {
               <PullDown
                 onChangetoShow={this.props.onChangetoShow}
                 onCatChange={this.props.onCatChange}
+                onFactortoShow={this.props.onFactortoShow}
                 samprops={this.props.samprops}
               ></PullDown>
               <hr/>
