@@ -30,12 +30,20 @@ type Factor {
   factorName: [String]
 }
 
+type Category {
+  categoryName: [String]
+}
+
+type FindFactors {
+  category: Category
+  factor: Factor
+}
+
 type Query {
   samcity(
       limit:Int,
       one_of:Int,
       individual_id: Int,
-      fnd: [String],
       age: Int,
       bracket_age: String,
       citizenship: String,

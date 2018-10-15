@@ -8,22 +8,29 @@ library(ggplot2)
 
 
 #add new column called stresslevelrace (using rnorm)
-sam_lbw <- sam %>%
-  mutate(stresslevelrace = ifelse(race == "white", rnorm(1000, mean = 15.70, sd = 7.51), 
-                                  ifelse(race == "black", rnorm(1000, mean = 15.68, sd = 7.51), 
-                                         ifelse(race == "hispanic", rnorm(1000, mean = 17.80, sd = 7.45), 
-                                                rnorm(1000, mean = 17.44, sd = 7.67)))),
-         stresslevelincome = ifelse(household.income < 25000, rnorm(1000, mean = 17.77, sd = 7.60), 
-                                    ifelse(household.income >= 25,000 & household.income < 34,999, rnorm(1000, mean = 16.69, sd = 7.72),
-                                           ifelse(household.income >= 35,000 & household.income < 49,999, rnorm(1000, mean = 16.37, sd = 8.27),
-                                                  ifelse(household.income >= 50,000 & household.income < 74,999, rnorm(1000, mean = 15.26, sd = 7.54), 
-                                                         rnorm(1000, mean = 14.74, sd = 6.88))))),
-         lowbirthweightbyrace = ifelse(race == "white", sample(c("yes", "no"), size = 100000, replace = TRUE, prob = c(0.31, 0.69)), 
-                                      ifelse(race == "black", sample(c("yes", "no"), size = 100000, replace = TRUE, prob = c(0.19, 0.81)), 
-                                             ifelse(race == "hispanic", sample(c("yes", "no"), size = 100000, replace = TRUE, prob = c(0.45, 0.55)), 
-                                                     sample(c("yes", "no"), size = 100000, replace = TRUE, prob = c(0.06, 0.94)))))
+#https://www.dshs.texas.gov/healthytexasbabies/Documents/HTBDatabook_2017.pdf
+#13.5% for blacks, 9.0% for other, (about) 8.2% for Hispanics, and 7.2% for whites
+sam <- sam %>%
+  mutate(stresslevelrace = 
+           ifelse(race == "white", rnorm(1000, mean = 15.70, sd = 7.51), 
+            ifelse(race == "black", rnorm(1000, mean = 15.68, sd = 7.51), 
+              ifelse(race == "hispanic", rnorm(1000, mean = 17.80, sd = 7.45), 
+                  rnorm(1000, mean = 17.44, sd = 7.67)))),
+         stresslevelincome = 
+           ifelse(household_income < 25000, rnorm(1000, mean = 17.77, sd = 7.60), 
+             ifelse(household_income >= 25000 & household_income < 34999, rnorm(1000, mean = 16.69, sd = 7.72),
+               ifelse(household_income >= 35000 & household_income < 49999, rnorm(1000, mean = 16.37, sd = 8.27),
+                 ifelse(household_income >= 50000 & household_income < 74999, rnorm(1000, mean = 15.26, sd = 7.54), 
+                     rnorm(1000, mean = 14.74, sd = 6.88))))),
+         lowbirthweightbyrace = 
+           ifelse(race == "white", sample(c("yes", "no"), size = 100000, replace = TRUE, prob = c(0.072, 0.928)), 
+             ifelse(race == "black", sample(c("yes", "no"), size = 100000, replace = TRUE, prob = c(0.135, 0.865)), 
+               ifelse(race == "hispanic", sample(c("yes", "no"), size = 100000, replace = TRUE, prob = c(0.082, 0.918)), 
+                  sample(c("yes", "no"), size = 100000, replace = TRUE, prob = c(0.06, 0.94)))))
          )
 
+
+#below is original code.
 #add new column called stresslevelincome (using rnorm)
 complete_15_45_fem_sam_age_years_40k_2018_06_24 <- complete_15_45_fem_sam_age_years_40k_2018_06_24 %>%
   mutate(stresslevelincome = ifelse(household.income == "less than 10,000"| household.income == "10,000 to 14,999" | household.income == "15,000 to 19,999" | household.income == "20,000 to 24,999", rnorm(1000, mean = 17.77, sd = 7.60), 

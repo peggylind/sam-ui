@@ -16,9 +16,17 @@ export default class LegendBox extends Component {
     };
 
 //index for toShow category could be here - and then it could do a number of types.
+//slider works reasonably well, but need to debug
+// <Slide
+//   onChange={this.props.onPopChange}
+//   min={100}
+//   max={100000}
+//   step={1000}
+// ></Slide>
+
     render() {
       const boxStyle = {
-        marginTop: '15%',
+        marginTop: '12%',
         position: 'absolute',
         zindex: '3',
         width: '25%',
@@ -45,7 +53,7 @@ export default class LegendBox extends Component {
             <div>
             <div style={boxButtonStyle}>
                     <button onClick={() => this.setState({ isBoxOpen: false })}>
-                      Hide Legend
+                      Hide
                     </button>
             </div>
 
@@ -58,12 +66,7 @@ export default class LegendBox extends Component {
                 samprops={this.props.samprops}
               ></PullDown>
               <hr/>
-              <Slide
-                onChange={this.props.onPopChange}
-                min={100}
-                max={100000}
-                step={1000}
-              ></Slide>
+
               <h1>put GeoJSON selector here</h1>
             </div>
             </div>

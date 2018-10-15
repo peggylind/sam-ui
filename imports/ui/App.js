@@ -53,21 +53,38 @@ const toShow = [{category: 'race', type: 'factor', factors: [{factorName:'white'
   {category: 'veteran_status', type: 'factor', factors: [{factorName:'Nonveteran',factorColor:3},{factorName:'Veteran',factorColor:2}],fnd:''},
   {category: 'asthma', type: 'factor', factors: [{factorName:'Yes',factorColor:3},{factorName:'No',factorColor:2}],fnd:''}
 ];
-// async getJSONnames => {
-//   const res = await fetch('/json/unique_names.json')
-//   const jsonnames = await res.json()
-//   return jsonnames
-// }
 
 function assignColors (newColors) {
     let forColors = {};
-  //  if(newColors.factors){
       newColors.factors.forEach(function (factor, i){
         forColors[factor.factorName] = allcolors[factor.factorColor].RGB
-    })
-  //};
+    });
   return forColors
 };
+
+function makePlotColors (showCategories) {
+  let plotColors = [];
+  showCategories.forEach(function (row){
+    let rowObj = {'category':row.category, 'factorcolors':assignColors(row)};
+    //rowObj[row.category] = assignColors(row)
+    //plotColors[row.category] = assignColors(row);
+    plotColors.push(rowObj)
+  })
+  return plotColors
+  //return ({'category':row.category, 'factorColors':plotColors})
+};
+function list4plots (plots) {
+  let plotList = [];
+  plots.forEach(function (categ){
+    toShow.forEach(function (row){
+      if (row.category == categ){
+        plotList.push(row)
+      }
+    })
+  })
+  return makePlotColors(plotList) //which is a list of objects from toShow
+}
+
 const firstzoom = 11.5;
 const calcOpacity = (zoom) => { return 1 - (zoom/25)};
 const calcStrokeWidth = (zoom) =>
@@ -82,8 +99,8 @@ const samprops = { //have all decided with same logic??
   geojson_title: 'Harvey_Houston.geojson',
   limit: 10000,
   one_of: calcOneOf(firstzoom),
-  member: "Adult",
-  race: "black",
+  member: "",
+  race: "",
   age: 55,
   longitude: -95.32,
   latitude: 29.75,
@@ -102,11 +119,12 @@ const samprops = { //have all decided with same logic??
   changeColors: false, //let's you turn off select for colors on factors - if we can change that with an input, perhaps forces reload??
   categIndex: 0,
   catShow: 'race', //faster color in map-box-app - if can also read opacity off of toShow[categIndex], then have per color control.
-  cloudOrPlot: 'Plot' //scatterplot or cloud on map
+  cloudOrPlot: 'Plot', //scatterplot or cloud on map
+  plotFactorColors: list4plots(['race','educational_attainment','employment'])
   //this logic will apply to everything we want to show - component should feed whole object here
 };
 
-export default class App extends Component {
+export default class App extends React.PureComponent {
    constructor(props) {
        super(props);
        this.handlePopulationChange = this.handlePopulationChange.bind(this);
@@ -140,7 +158,7 @@ export default class App extends Component {
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
 
-  //handleSamChanges(limit,member, etc. etc.; set all to the prop in the component?)
+  //this lets you step up on data in scatter and mapbox; not just slider
   handlePopulationChange = function(limit) {
     var samprops = {...this.state.samprops}
     samprops.limit = limit;
@@ -163,15 +181,15 @@ export default class App extends Component {
     this.setState({samprops});
   }
   onFactortoShow = function(e){
-    console.log(e)
     var samprops = {...this.state.samprops}
     samprops.toShow.forEach(function(row,r){
-      console.log(row)
-      console.log(samprops.categIndex)
-      console.log(r)
+      // console.log(row)
+      // console.log(samprops.categIndex)
+      // console.log(r)
       if(samprops.categIndex == r){
         console.log(samprops.toShow[r].category)
         console.log(e.factorName)
+        samprops[samprops.toShow[r].category] = e.factorName;
         //also need to change the categoryIndex to whatever default we want
         //assign to pipe factorName and
       }
@@ -237,7 +255,6 @@ export default class App extends Component {
     console.log('toolTipInfo.account')
     this.setState({toolTipInfo})
   }
-
   formatDollars = function(number){
     if (number!=undefined){
         var numstring = number.toString();
