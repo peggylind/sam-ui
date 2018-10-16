@@ -1,0 +1,8 @@
+Notes
+Final version follows from sam_mongolite.R
+
+Begin with Manale's from 9-22 (sam_manale <- readRDS('/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData/complete_sample_set2018-09-22.RDS'))
+Try on sample size of 100000
+
+Try to write a function that creates the right type of output
+
