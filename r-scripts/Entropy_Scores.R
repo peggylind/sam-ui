@@ -6,6 +6,7 @@
 library(dplyr)
 library(sf)
 library(readr)
+library(forcats)
 #sf_sam <- st_as_sf(sample_sam, crs=3674)
 #sf_sam$coords <- sf_sam$ptcoords # how to get rid of coords!!
 
@@ -54,6 +55,14 @@ summed_sam_employment <- exp_sam %>%
   group_by_at(vars(tract,employment)) %>%
   summarize(employ = n())
 write_rds(summed_sam_employment, "summed_employment.RDS") 
+
+#fix the NAs in citizenship
+sam_10_13_insertable$citizenship <- forecats::fct_explicit_na(sam_10_13_insertable$citizenship, "NotAnswered")
+summed_sam_citizen <- sam_10_13_insertable %>%
+  group_by_at(vars(tract,citizenship)) %>%
+  summarize(tract_citizen_num = n()) %>%
+  complete(citizenship, fill = list(tract_citizen_num = 0))
+write_rds(summed_sam_citizen, "summed_citizens.RDS") 
 
 #testing functions
 sam_summarize <- function(df, group_var,factor_var){
