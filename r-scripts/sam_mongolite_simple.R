@@ -37,15 +37,13 @@ testSam$coords <- lapply(1:nrow(testSam),function(i) cbind(testSam[i,]$long,test
 tstSam$coords <- lapply(1:nrow(tstSam),function(i) c(tstSam[i,]$long,tstSam[i,]$lat))
 
 
-test1 <- lapply(1:nrow(tstSam),function(i) is.na))
-
 
 SamCity <- mongo("samcity", url = "mongodb://localhost/SamCity");
 #remove first!!
 SamCity$drop()
 SamCity$find(limit = 5)
 #mongolite throws  Error: No method asJSON S3 class: sfg , so tried an extra toJSON
-sam2insert <- sam_10_10
+sam2insert <- sam_10_13_insertable
 
 Sys.time()
 for (row in 1:nrow(sam2insert)){
@@ -66,9 +64,20 @@ sam_1_of_1k <- samc[samc$one_of>200,]
 sam_1_of100 <- sam_1_of_100 %>% select(-"curr_owner",-"note",-"appraised_by",
             -"rcnld","nbhd_factor")
 
-for (row in 1:nrow(sam_1_of100)){
-  write(toJSON(sam_1_of100[row,]),file = 'sam_of_100.json',append=TRUE)
+
+Sys.time()
+for (row in 1:nrow(dashtestsam)){
+  write(toJSON(dashtestsam[row,]),file = 'dashtestsam.json',append=TRUE)
 }
+Sys.time()
+
+Sys.time()
+fh <- file("dashtestsam.json", "w")
+for (i in 1:nrow(dashtestsam)) {
+  write(toJSON(dashtestsam[i,]), fh)
+}
+close(fh)
+Sys.time()
 #then manually replaced all on } to }, (except last)
 #then added square brackets
 
