@@ -11,47 +11,48 @@ import SamCitizens from "./sam_citizens";
 
 export default {
   Query: {
-    // async samcity2(obj, args, { _id }){
-    //   console.log('return in sam_citizens/resolvers')
-    //   //const pipeline =  [ {$sample: { size:1000}} ]
-    //   //const pipeline = [ ... ];
-    //  const options = {  };
+    //should be able to speed it up by creating an aggregate pipeline, but not sure what I'm doing wrong.
     //  //return await SamCitizens.rawCollection().aggregate(pipeline, options).fetch();
-    //  return await SamCitizens.find( {}, {limit:4000} ).fetch();
-    //   //return await SamCitizens.find( {_id: /[0]$/}, {limit:10000} ).fetch();
-    // },
-    // async factorlist(obj, args, { _id }){
-    //   console.log('in async factolist'+JSON.stringify(args))
-    //
-    //   // return await SamCitizens.distinct(args.category);
-    // },
+
     async samcity(obj, args, { _id }){
-      console.log('in async samcity obj '+JSON.stringify(args.pipe))
-      console.log('in async samcity args '+JSON.stringify(args))
-      //var pipe = {one_of:{$gte : args.one_of}};
-      var testit = false
-       return await SamCitizens.find( {
-         coords: {
-           $near: {
-             $geometry: {
-               type: "Point" ,
-               coordinates: args.coords
-             },
-             $maxDistance: args.dist, //in meters
-             $minDistance: 10
-           }
-         },
-        // pipe
-         one_of:{$gte : args.one_of},
-         // member:args.member,
-         // race:args.race
+      var qdb = {
+        coords: {
+          $near: {
+            $geometry: {
+              type: "Point" ,
+              coordinates: args.coords
+            },
+            $maxDistance: args.dist, //in meters
+            $minDistance: 10
+          }
         },
+        one_of:{$gte : args.one_of},
+      };
+      const factor_vars = ['race','member','citizenship',
+        'employment','quality_description','educational_attainment',
+        'veteran_status','disability','asthma'];
+      const range_vars = ['household_income','age']; //finish later
+      for (var arg in args){
+        if(factor_vars.indexOf(arg) >=0){
+          if(args[arg]){
+            console.log(args[arg])
+            qdb[arg] = args[arg];
+          }
+        }
+        if(range_vars.indexOf(arg) >=0){
+          if(args[arg]){
+          //  qdb[arg] = args[arg];
+          // and some mechanism for obj with $gte, etc.
+          }
+        }
+        //console.log(qdb)
+      }
+
+    return await SamCitizens.find(
+         qdb,
          {limit:args.limit}
        );//.fetch();
-    }//,
-    // async jsonsam(obj, args, { _id }){
-    //   return await fetch("/json/one_of100.json");
-    // }
+    }
   },
 
   SamCitizen: {

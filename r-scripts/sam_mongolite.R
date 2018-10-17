@@ -5,6 +5,7 @@ library(rjson)
 #mongod open on my local, but connect as needed
 sam <- readRDS("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData/complete_sample_set2018-09-22.RDS")
 library(dplyr)
+
 test_sam <- sample_n(sam,100000)
 #mongo doesn't like . in keys, so have to clean them out - they're still in factors.
 library(janitor)
@@ -31,28 +32,51 @@ sam <- sam %>% select(-coords)
 #Akash?
 #wait on numbers from Anoushka
 #after doing operations that require 1d atomic vectors, but before insert
-#this version doesn't work on group quarters.sam$coords <- cbind(sam$long,sam$lat)
-
-testSam$coords <- lapply(1:nrow(testSam),function(i) cbind(testSam[i,]$long,testSam[i,]$lat))
-tstSam$coords <- lapply(1:nrow(tstSam),function(i) c(tstSam[i,]$long,tstSam[i,]$lat))
+sam <- sam_10_10 %>% ungroup()
+library("sp")
+sam$coords <- SpatialPoints(cbind(sam$long,sam$lat))
+sam$coords <- coordinates(sam$coords)
+#testSam$coords <- lapply(1:nrow(testSam),function(i) cbind(testSam[i,]$long,testSam[i,]$lat))
+#test_sam$coords <- lapply(1:nrow(test_sam),function(i) c(test_sam[i,]$long,test_sam[i,]$lat))
+#test_sam$coords <- lapply(1:nrow(test_sam),function(i) test_sam$coords[[i]])
+sam <- as.data.frame(sam)
+#test_sam <- split(test_sam,seq(nrow(test_sam)))
 
 SamCity <- mongo("samcity", url = "mongodb://localhost/SamCity");
 #remove first!!
 SamCity$drop()
-SamCity$find(limit = 5)
+SamCity$find(limit = 2)
 #mongolite throws  Error: No method asJSON S3 class: sfg , so tried an extra toJSON
-sam2insert <- tstSam
+sam2insert <- sam
+
 Sys.time()
 for (row in 1:nrow(sam2insert)){
-  SamCity$insert(toJSON(sam2insert[row,]))
+  SamCity$insert(rjson::toJSON(sam2insert[row,]))
 }
 Sys.time()
-  
+#OR
+library(doParallel)
+no_cores <- detectCores()
+cl <- makeCluster(no_cores-2)
+registerDoParallel(cl)
+Sys.time()
+foreach(row=1:nrow(sam2insert) %dopar%
+    SamCity$insert(rjson::toJSON(sam2insert[row,]))
+)
+Sys.time()
+stopCluster(cl)
+
 
 SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1}')
 Sys.time()
-SamCity$index(add = '{"one_of" : -1 }')
-#do both together?
+
+#these don't work from mongolite, but do from mongo command line?
+SamCity$stats()
+SamCity$collStats()
+SamCity$totalIndexSize()
+SamCity$serverStatus() 
+
+#if there's a problem, could be whatever caused jsonlite to say Error: Argument 'data' contains strings that are not JSON objects at elements: 1
 #SamCity$index(remove = 'one_of_1')
 #add more! income, race, member, etc.
 

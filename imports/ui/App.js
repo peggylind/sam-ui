@@ -30,54 +30,61 @@ const color11 = {name: 'blue', RGB: [0,0,255], CMYK: [0,0,0,0], HEX: '#0000FF', 
 const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color8,color9,color10,color11];
 //as list means we can resort to match data
 //should add a title for showing pretty?
+//move into separate file
+//tofind should be what would be inserted in the pipe - with limit always given?
+//tofind is used in SamDataForm to filter
+//rest is sent as part of gql to resolver and made into a request
 const toShow = [{category: 'race', type: 'factor', factors: [{factorName:'white',factorColor:3},{factorName:'asian',factorColor:2},
     {factorName:'black',factorColor:1},{factorName:'hispanic',factorColor:5},{factorName:'other.race',factorColor:4},
-    {factorName:'multiracial',factorColor:0}]},
+    {factorName:'multiracial',factorColor:0}],fnd:''},
   {category: 'member', type: 'factor', factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2},
-    {factorName:'Householder',factorColor:1},{factorName:'Wife',factorColor:6}]},
-  {category: 'household_income', type: 'range', low: 30000, high:150000, factors: [{factorName:'low',factorColor:11},{factorName:'high',factorColor:10}]},
+    {factorName:'Householder',factorColor:1},{factorName:'Wife',factorColor:6}],fnd:''},
+  {category: 'household_income', type: 'range', low: 30000, high:150000, factors:
+    [{factorName:'low',factorColor:11},{factorName:'high',factorColor:10}],fnd:'',fnd_top_num:1000000,fnd_bottom_num:0},
   {category: 'educational_attainment', type: 'factor', factors: [{factorName:'High School Graduate',factorColor:3},{factorName:'Graduate or Professional Degree',factorColor:2},
     {factorName:"Bachelor's Degree",factorColor:1},{factorName:"Associate's degree",factorColor:5},{factorName:"Some College, no degree",factorColor:5},
-    {factorName:"Less than 9th grade",factorColor:1},{factorName:"9th to 12th grade, no diploma",factorColor:5}]},
+    {factorName:"Less than 9th grade",factorColor:1},{factorName:"9th to 12th grade, no diploma",factorColor:5}],fnd:''},
   {category: 'employment', type: 'factor', factors: [{factorName:'Not in labor force',factorColor:3},{factorName:'Employed',factorColor:2},
-    {factorName:'Unemployed',factorColor:1},{factorName:'In Armed Forces',factorColor:6}]},
+    {factorName:'Unemployed',factorColor:1},{factorName:'In Armed Forces',factorColor:6}],fnd:''},
   {category: 'quality_description', type: 'factor', factors: [{factorName:'Average',factorColor:3},{factorName:'Good',factorColor:2},
-    {factorName:'Excellent',factorColor:1},{factorName:'Poor',factorColor:6},{factorName:"Superior",factorColor:1},{factorName:"Low",factorColor:5}]},
+    {factorName:'Excellent',factorColor:1},{factorName:'Poor',factorColor:6},{factorName:"Superior",factorColor:1},{factorName:"Low",factorColor:5}],fnd:''},
   {category: 'disability', type: 'factor', factors: [{factorName:'No Disabilities',factorColor:3},{factorName:'With One Type of Disability',factorColor:2},
-    {factorName:'With Two or More Types of Disabilities',factorColor:1}]},
-  {category: 'veteran_status', type: 'factor', factors: [{factorName:'Nonveteran',factorColor:3},{factorName:'Veteran',factorColor:2}]},
-  {category: 'asthma', type: 'factor', factors: [{factorName:'Yes',factorColor:3},{factorName:'No',factorColor:2}]}
+    {factorName:'With Two or More Types of Disabilities',factorColor:1}],fnd:''},
+  {category: 'veteran_status', type: 'factor', factors: [{factorName:'Nonveteran',factorColor:3},{factorName:'Veteran',factorColor:2}],fnd:''},
+  {category: 'asthma', type: 'factor', factors: [{factorName:'Yes',factorColor:3},{factorName:'No',factorColor:2}],fnd:''}
 ];
-// async getJSONnames => {
-//   const res = await fetch('/json/unique_names.json')
-//   const jsonnames = await res.json()
-//   return jsonnames
-// }
 
 function assignColors (newColors) {
     let forColors = {};
-  //  if(newColors.factors){
       newColors.factors.forEach(function (factor, i){
         forColors[factor.factorName] = allcolors[factor.factorColor].RGB
-    })
-  //};
+    });
   return forColors
 };
-//for factors, maybe ensure only get 10 or fewer??
-// const factorQuery = gql`
-//   query SamCitizens(
-//     $category: String
-//   ) {
-//     factorlist(
-//       category: $category
-//     ) {
-//       Factor
-//     }
-//   }
-// `;
-// calcOpacity = function(zoom){
-//   return 1 - (zoom/25);
-// }
+
+function makePlotColors (showCategories) {
+  let plotColors = [];
+  showCategories.forEach(function (row){
+    let rowObj = {'category':row.category, 'factorcolors':assignColors(row)};
+    //rowObj[row.category] = assignColors(row)
+    //plotColors[row.category] = assignColors(row);
+    plotColors.push(rowObj)
+  })
+  return plotColors
+  //return ({'category':row.category, 'factorColors':plotColors})
+};
+function list4plots (plots) {
+  let plotList = [];
+  plots.forEach(function (categ){
+    toShow.forEach(function (row){
+      if (row.category == categ){
+        plotList.push(row)
+      }
+    })
+  })
+  return makePlotColors(plotList) //which is a list of objects from toShow
+}
+
 const firstzoom = 11.5;
 const calcOpacity = (zoom) => { return 1 - (zoom/25)};
 const calcStrokeWidth = (zoom) =>
@@ -92,8 +99,8 @@ const samprops = { //have all decided with same logic??
   geojson_title: 'Harvey_Houston.geojson',
   limit: 10000,
   one_of: calcOneOf(firstzoom),
-  member: "Adult",
-  race: "black",
+  member: "",
+  race: "",
   age: 55,
   longitude: -95.32,
   latitude: 29.75,
@@ -112,15 +119,17 @@ const samprops = { //have all decided with same logic??
   changeColors: false, //let's you turn off select for colors on factors - if we can change that with an input, perhaps forces reload??
   categIndex: 0,
   catShow: 'race', //faster color in map-box-app - if can also read opacity off of toShow[categIndex], then have per color control.
-  cloudOrPlot: 'Plot' //scatterplot or cloud on map
+  cloudOrPlot: 'Plot', //scatterplot or cloud on map
+  plotFactorColors: list4plots(['race','educational_attainment','employment'])
   //this logic will apply to everything we want to show - component should feed whole object here
 };
 
-export default class App extends Component {
+export default class App extends React.PureComponent {
    constructor(props) {
        super(props);
        this.handlePopulationChange = this.handlePopulationChange.bind(this);
        this.onCatChange = this.onCatChange.bind(this);
+       this.onFactortoShow = this.onFactortoShow.bind(this);
        this.onChangetoShow = this.onChangetoShow.bind(this);
        this.onMapChange = this.onMapChange.bind(this);
        this.setToolInfo = this.setToolInfo.bind(this);
@@ -144,12 +153,12 @@ export default class App extends Component {
               }
             }
          };
-         this.onMapChange = debounce(this.onMapChange, 2000);
+         this.onMapChange = debounce(this.onMapChange, 200);
          this.setToolInfo = debounce(this.setToolInfo, 200);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
 
-  //handleSamChanges(limit,member, etc. etc.; set all to the prop in the component?)
+  //this lets you step up on data in scatter and mapbox; not just slider
   handlePopulationChange = function(limit) {
     var samprops = {...this.state.samprops}
     samprops.limit = limit;
@@ -171,8 +180,25 @@ export default class App extends Component {
     })
     this.setState({samprops});
   }
+  onFactortoShow = function(e){
+    var samprops = {...this.state.samprops}
+    samprops.toShow.forEach(function(row,r){
+      // console.log(row)
+      // console.log(samprops.categIndex)
+      // console.log(r)
+      if(samprops.categIndex == r){
+        console.log(samprops.toShow[r].category)
+        console.log(e.factorName)
+        samprops[samprops.toShow[r].category] = e.factorName;
+        //also need to change the categoryIndex to whatever default we want
+        //assign to pipe factorName and
+      }
+    })
+    this.setState({samprops});
+  }
 
   onChangetoShow = function(showObj){
+    console.log(showObj)
      var samprops = {...this.state.samprops}
      samprops.toShow.forEach(function (catRow, i){
        if (catRow.category==showObj.catName){
@@ -229,7 +255,6 @@ export default class App extends Component {
     console.log('toolTipInfo.account')
     this.setState({toolTipInfo})
   }
-
   formatDollars = function(number){
     if (number!=undefined){
         var numstring = number.toString();
@@ -291,6 +316,7 @@ export default class App extends Component {
               samprops={this.state.samprops}
               onPopChange={this.handlePopulationChange}
               onCatChange={this.onCatChange}
+              onFactortoShow={this.onFactortoShow}
               onChangetoShow={this.onChangetoShow}
               onMapChange={this.onMapChange}
               setToolInfo={this.setToolInfo}

@@ -43,7 +43,7 @@ export default class MapBox extends Component {
             mapboxApiAccessToken: 'pk.eyJ1IjoibWRjaW90dGkiLCJhIjoiY2l1cWdyamw5MDAxcTJ2bGFmdzJxdGFyNyJ9.2b6aTKZNlT1_DEJiJ9l3hw',
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
             time: 0,
-            samdata: [coords,age,race],
+            samdata: this.props.samdata || [],
           //  geojsonsam: [firstgeojson],
             waiting: 1,
             //toShow: this.props.samprops.toShow[0],
@@ -53,8 +53,9 @@ export default class MapBox extends Component {
   //      this.handleEvent = this.handleEvent.bind(this);
   //      this.emitChangeDebounced = debounce(this.emitChange, 250);
       }
+
       returnColors (factor) {
-        //do color array here for ranges
+        //do color array here for ranges - also in scatterdata
         //if "factor" is a string, then ...; else {
           //or have things saved on app.js that let us know how to do the interpolation?
         //console.log('in ' +'this.props.samprops.forColors[factor]')
@@ -92,14 +93,14 @@ export default class MapBox extends Component {
       //  this.setState({geojsonsam:this.props.geojsonsam})
         console.log('set samdata '+(Date.now()))
         this.setState({samdata: this.props.data, waiting: 0});
-        if (this.props.samprops.limit < 10001){
-          this.handlePopulationChange(this.props.samprops.limit+500)
-        }
+        // if (this.props.samprops.limit < 10001){
+        //   this.handlePopulationChange(this.props.samprops.limit+500)
+        // }
       };
       if (this.props.data != prevState.samdata && prevState.waiting == 0){
-        console.log('set samdata again '+(Date.now()))
+        //console.log('set samdata again '+(Date.now()))
         this.setState({samdata: this.props.data});
-        if (this.props.samprops.limit < 40001){
+        if (this.props.samprops.limit < 10001){ //instead of 40001
           this.handlePopulationChange(this.props.samprops.limit+7000)
         }
       };
@@ -180,7 +181,7 @@ const ScatterMap = new ScatterplotLayer({
     onHover: ({object}) => this.setToolInfo(object),
     onClick: ({object}) => this.setClick(object)
   });
-  const layers = [
+  const main_layers = [
      GeoMap,
      ScatterMap
     //PointCloudMap
@@ -205,9 +206,10 @@ const ScatterMap = new ScatterplotLayer({
           {...this.state.viewport}
           initialViewState={this.state.viewport}
           onViewportChange={(viewport) => this.setState({viewport})}
-          layers={layers}
-        >
-        </DeckGL>
+          layers={main_layers}
+          >
+          </DeckGL>
+
       </ReactMapGL>
     );
   }

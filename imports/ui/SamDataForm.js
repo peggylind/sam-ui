@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 import MapBox from "./map-box-app";
+import D3Scatter from "./d3-scatter";
+//import asyncComponent from "./asyncComponent";
 //import Sam20k from '../api/sam_citizens/sam_20k';
 
 const samQuery = gql`
@@ -58,81 +60,123 @@ const samQuery = gql`
   }
 `;
 
-// _id: String!
-// individual_id: Int
-// age: Int
-// bracket_age: String
-// asthma: String
-// citizenship: String
-// coords: [Float]
-// date_erected: String
-// disability: String
-// educational_attainment: String
-// employment: String
-// english_speaking_skills: String
-// health_insurance: String
-// household_income: Int
-// household_type: String
-// limit: Int
-// member: String
-// nativity: String
-// one_of: Int
-// race: String
-// sex: String
-// size: Int
-// veteran_status: String
-
-class SamDataForm extends Component {
+class SamDataForm extends React.PureComponent {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
        super(props);
+       this.plotcontain = React.createRef();
        this.state = {
-//         jsonsam : ['age':'','race':''], //load json data faster than mongodb
-          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
+         plotOpen : false,
+         plotOpen2 : false,
+         plotWidth: '8%',
+         plotHeight: '4%',
+         containerwidth: '8',
+         containerheight: '4',
+         geojsonsam : {"type":"FeatureCollection","features":"tbd"}
        }
    }
    async componentDidMount() {
      const retrn = await fetch('/json/'+this.props.samprops.geojson_title)
      const geojsonsam = await retrn.json()
      console.log(geojsonsam)
+
      this.setState({geojsonsam})
      // const res = await fetch('/json/sam_of_100.json') //only if loading json for faster process
      // const jsonsam = await res.json()
      //this.setState({jsonsam})
    }
-   // componentWillUnmount(){
-   //   client.resetStore();
-   // }
+   componentDidUpdate(prevProps, prevState) {
+     if(prevState.plotOpen && !prevState.plotOpen2){ //trying to get window to open first - might be able to keep it from reloading
+       this.setState({plotOpen2:true})
+     };
+     if(!prevState.plotOpen && prevState.plotOpen2){
+       this.setState({plotOpen2:false})
+     };
+     //this was not setting in time for the plot
+     if (prevState.containerwidth != this.plotcontain.current.offsetWidth ||
+         prevState.containerheight != this.plotcontain.current.offsetHeight ){
+             this.setState({containerwidth:this.plotcontain.current.offsetWidth,
+             containerheight:this.plotcontain.current.offsetHeight});
+     };
+   }
    //data={this.props.samprops.zoom <14 ? this.state.jsonsam : this.props.samcity}
    //how can we get them both as part of the same data stream, and not reloading when you do search on new data characteristics?
     render(){
+      const plotStyle = {
+        position: 'absolute',
+        left: '20%',
+        bottom: '0',
+        zindex: '3',
+        backgroundColor: 'white', //transparent
+        overflow: 'scroll'
+      };
+      const plotButtonStyle = {
+        position: 'absolute',
+        left: '50%',
+        zIndex: '10',
+        backgroundColor: 'white',
+        bottom: '0'
+      };
 
     return (
       <div>
-        <MapBox
-          onMapChange={this.props.onMapChange}
-          setToolInfo={this.props.setToolInfo}
-          handlePopulationChange={this.props.handlePopulationChange}
-          setClick={this.props.setClick}
-          data={this.props.samcity}
-          //data={this.props.samprops.zoom <10 ? this.state.jsonsam : this.props.samcity}
-          geojsonsam={this.state.geojsonsam}
-          mapprops={this.props.mapprops}
-          samprops={this.props.samprops}
-          />
-      </div>
-    );
-  }
-}
+        <div>
+          <MapBox
+            onMapChange={this.props.onMapChange}
+            setToolInfo={this.props.setToolInfo}
+            handlePopulationChange={this.props.handlePopulationChange}
+            setClick={this.props.setClick}
+            data={this.props.samcity}
+            //data={this.props.samprops.zoom <10 ? this.state.jsonsam : this.props.samcity}
+            geojsonsam={this.state.geojsonsam}
+            mapprops={this.props.mapprops}
+            samprops={this.props.samprops}
+            />
+          </div>
 
+          <div>
+      {!this.state.plotOpen && (
+      <div style={plotButtonStyle}>
+              <button onClick={() => this.setState({ plotOpen: true, plotHeight: '75%', plotWidth: '75%' })}>
+                Show Plots
+              </button>
+      </div>)}
+      {this.state.plotOpen && (
+        <div style={plotButtonStyle}>
+                <button onClick={() => this.setState({ plotOpen: false, plotHeight: '4%', plotWidth: '8%' })}>
+                  Hide Plots
+                </button>
+        </div>
+      )}
+      <div style={plotStyle} ref={this.plotcontain}>
+      {this.state.plotOpen && (
+          <div id="plotcontainer">
+          <D3Scatter
+              setToolInfo={this.props.setToolInfo}
+              handlePopulationChange={this.props.handlePopulationChange}
+              setClick={this.props.setClick}
+              data={this.props.samcity}
+              plotFactorColors={this.props.samprops.plotFactorColors}
+              containerwidth={1200}
+              containerheight={500}
+          /></div>
+        )}
+        </div>
+        </div>
+    </div>
+  )
+};
+};
+
+//can't seem to create this variable list dynamically
 export default graphql(samQuery,
   {
     options: props => ({
       variables: {
-        limit:  props.samprops.limit,
         member: props.samprops.member,
-        one_of: props.samprops.one_of,
         race: props.samprops.race,
         dist: props.samprops.dist,
+        limit:  props.samprops.limit,
+        one_of: props.samprops.one_of,
         coords: [props.samprops.longitude,props.samprops.latitude] || [-95.35,29.75]
       }
     }),
