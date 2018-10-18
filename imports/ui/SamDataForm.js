@@ -157,7 +157,7 @@ class SamDataForm extends React.PureComponent {
               data={this.props.samcity}
               plotFactorColors={this.props.samprops.plotFactorColors}
               containerwidth={1200}
-              containerheight={500}
+              containerheight={600}
           /></div>
         )}
         </div>

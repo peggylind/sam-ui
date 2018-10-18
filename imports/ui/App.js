@@ -9,6 +9,7 @@ import debounce from 'lodash.debounce'
 import SamDataForm from './SamDataForm'; //change to just samdatamap??
 import Slide from './slider-input';
 import LegendBox from './legend-box';
+import {model_explanations} from "./model_explanations";
 // var DASHlogo = require('/public/images/DASHlogo.png');
 // var UHLogo = require('/public/images/honors-the-honors-college-tertiary2.png');
 
@@ -85,24 +86,25 @@ function list4plots (plots) {
   return makePlotColors(plotList) //which is a list of objects from toShow
 }
 
-const firstzoom = 11.5;
+const firstzoom = 11.3;
 const calcOpacity = (zoom) => { return 1 - (zoom/25)};
 const calcStrokeWidth = (zoom) =>
-  (zoom *1.3) < 20 ? 20 - (zoom * 1.3) : 1;
+  (zoom *1.3) < 22 ? 23 - (zoom * 1.3) : 1;
 const calcRadiusScale = (zoom) =>
-  (zoom *13) < 180 ? 186 - (zoom * 13) : 6;
+  (zoom *13) < 210 ? 216 - (zoom * 13) : 6;
 const calcOneOf = (zoom) =>
-  zoom > 13 ? 1 : zoom < 12 ? zoom < 11 ? 1000 : 100 : 10;
+  zoom > 12.7 ? 1 : zoom < 12 ? zoom > 11 ? 100 : 10 : 10;
 
 
 const samprops = { //have all decided with same logic??
-  geojson_title: 'Harvey_Houston.geojson',
-  limit: 10000,
+  explainIndex: 0,
+  geojson_title: '',// 'Harvey_Houston.geojson',
+  limit: 20000,
   one_of: calcOneOf(firstzoom),
   member: "",
   race: "",
   age: 55,
-  longitude: -95.32,
+  longitude: -95.315,
   latitude: 29.75,
   zoom: firstzoom,
   opacity: calcOpacity(firstzoom),
@@ -134,19 +136,21 @@ export default class App extends React.PureComponent {
        this.onMapChange = this.onMapChange.bind(this);
        this.setToolInfo = this.setToolInfo.bind(this);
        this.setClick = this.setClick.bind(this);
+       this.setExplanation = this.setExplanation.bind(this);
+
        //bbox is NW,NE,SE,SW
        const bbox = [[-95.91,28.93],[-94.67,28.93],[-94.67,30.47],[-95.91,30.47]];
        this.state = {
          toolTipInfo : {text:'Hover over features or sam citizens for info.'},
-         explanation : {text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
+         //explanation : model_explanations()[samprops.explainIndex],//{text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
          samprops : samprops,
          mapprops : {
               bbox: bbox, //may use later for searches - now based on geonear in circle
               viewport: {
                 width: window.innerWidth,
                 height: window.innerHeight,
-                longitude: -95.355,
-                latitude: 29.75,
+                longitude: samprops.longitude, //-95.315,
+                latitude: samprops.latitude, //29.75,
                 zoom: samprops.zoom,//16.051394480575627, //which is zoom for 1 meter for testing
                 pitch: 20,
                 bearing: 0
@@ -157,7 +161,6 @@ export default class App extends React.PureComponent {
          this.setToolInfo = debounce(this.setToolInfo, 200);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
-
   //this lets you step up on data in scatter and mapbox; not just slider
   handlePopulationChange = function(limit) {
     var samprops = {...this.state.samprops}
@@ -227,7 +230,7 @@ export default class App extends React.PureComponent {
     samprops.opacity = calcOpacity(mapstuff.zoom);
     samprops.strokeWidth = calcStrokeWidth(mapstuff.zoom);
     samprops.radiusScale = calcRadiusScale(mapstuff.zoom);
-    samprops.one_of = mapstuff.zoom > 13 ? 1 : mapstuff.zoom < 12 ? mapstuff.zoom < 11 ? 1000: 100 : 10;
+    samprops.one_of = mapstuff.zoom > 13 ? 1 : mapstuff.zoom < 12 ? mapstuff.zoom < 10 ? 1000: 10 : 100;
     //samprops.one_of = calcOneOf(mapstuff.zoom);
     this.setState({samprops});
   };
@@ -237,8 +240,17 @@ export default class App extends React.PureComponent {
     samprops.toShow = datactrls.toShow;
     samprops.mapOrPlot = datactrls.mapOrPlot;//also use to set map to 80 degrees??May need to turn off map??
     this.setState({samprops});
-  }
-//use to populate sidepane? or popup? this is the tooltip
+  };
+  //expl should be an object {text: valid_html} - will usually be set from model selector
+  setExplanation = function(e){
+    console.log(e.target.value) //should have a target - should set the explainIndex, and the explanation?? pull in model_explanation.js??
+    var samprops = {...this.state.samprops}
+    samprops.explainIndex = e.target.value;
+    //explanation = expl
+    this.setState({samprops})
+    //could also set the toShow, etc. to go along with different models, if the pull-downs are too long
+  };
+//this is the tooltip
   setToolInfo = function(info){
     var toolTipInfo = {...this.state.toolTipInfo}
     toolTipInfo.info = info
@@ -246,7 +258,7 @@ export default class App extends React.PureComponent {
     console.log(toolTipInfo)
     console.log(toolTipInfo.account)
     this.setState({toolTipInfo})
-  }
+  };
   setClick = function(info){
     var toolTipInfo = {...this.state.toolTipInfo}
     toolTipInfo.info = info
@@ -254,7 +266,7 @@ export default class App extends React.PureComponent {
     console.log(toolTipInfo)
     console.log('toolTipInfo.account')
     this.setState({toolTipInfo})
-  }
+  };
   formatDollars = function(number){
     if (number!=undefined){
         var numstring = number.toString();
@@ -262,7 +274,7 @@ export default class App extends React.PureComponent {
     }else{
       return 'undefined'
     }
-  }
+  };
 
   // componentWillUnmount(){
   //   client.resetStore();
@@ -273,26 +285,24 @@ export default class App extends React.PureComponent {
       return (
           <div>
               <div style={{position:"absolute",width:"100%",fontSize:"4em",textAlign:"center", zIndex:"3"}}>
-                Sam City
+                <span title="Houston on a first name basis" style={{backgroundColor:"#7f7f7f33",borderRadius:"25px"}}>Sam City</span>
               </div>
-              <div style={{position:"absolute",marginLeft:"2%",width:"10%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
+              <div style={{position:"absolute",top:"75%",left:"85%",width:"10%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
                 <hr/>
-                <span>
+                <span title="Data Analytics in Student Hands">
                   <img style={{width:"100%"}} src='/images/DASHlogo.png' />
                 </span>
                 <hr/>
-                <span>
+                <span title="The Honors College at the University of Houston">
                   <img style={{width:"100%"}} src='/images/honors-the-honors-college-primary.png' />
                 </span>
               </div>
               <div style={{position:"absolute",width:"25%",marginLeft:"75%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
 
-                <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"4"}}>
+                <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"4",borderRadius:"25px"}}>
+
                 <div><hr/><div>
-                  {this.state.samprops.limit*this.state.samprops.one_of}
-                <div><hr/><div>
-                  {this.state.explanation.text}
-                </div><hr/></div>
+                  {model_explanations(this.state.samprops.explainIndex).text}
                 </div><hr/></div>
                   {this.state.toolTipInfo.text}
                   {this.state.toolTipInfo.info
@@ -319,6 +329,7 @@ export default class App extends React.PureComponent {
               onFactortoShow={this.onFactortoShow}
               onChangetoShow={this.onChangetoShow}
               onMapChange={this.onMapChange}
+              setExplanation={this.setExplanation}
               setToolInfo={this.setToolInfo}
             />
 
