@@ -89,7 +89,7 @@ function getAnnotations(plotClass) {
 			<span
 				key="0"
 				className="chart-title"
-				style={{position: "absolute", left: 5, top: 10, width: 200}}>
+				style={{position: "absolute", left: 25, top: -20, width: 200}}>
 				"{plotClass.category}"
 			</span>
 		),
@@ -97,7 +97,7 @@ function getAnnotations(plotClass) {
 			<span
 				key="1"
 				className="axis-label"
-				style={{position: "absolute", left: 149, top: 182}}>
+				style={{position: "absolute", left: 149, top: 200}}>
 				"{plotClass.category}"
 			</span>
 		),
@@ -105,7 +105,7 @@ function getAnnotations(plotClass) {
 			<span
 				key="2"
 				className="axis-label"
-				style={{position: "absolute", left: 100, top: 134, width: 200,
+				style={{position: "absolute", left: 800, top: 134, width: 200,
 								MsTransform: "rotate(90deg)",
 								WebkitTransform: "rotate(90deg)",
 								transform: "rotate(90deg)"}}>

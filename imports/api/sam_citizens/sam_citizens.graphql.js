@@ -16,6 +16,7 @@ type SamCitizen {
   household_income: Int
   household_type: String
   quality_description: String
+  racial_entropy_index: Float
   limit: Int
   member: String
   nativity: String
@@ -63,6 +64,7 @@ type Query {
       sex: String,
       size: Int,
       veteran_status: String,
+      racial_entropy_index: Float,
       coords:[Float]
     ):[SamCitizen],
   factorlist(category:String):[Factor]

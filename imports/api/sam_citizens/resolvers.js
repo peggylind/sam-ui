@@ -41,11 +41,14 @@ export default {
         }
         if(range_vars.indexOf(arg) >=0){
           if(args[arg]){
-          //  qdb[arg] = args[arg];
+            qdb[arg] = {$gte : args['bottom_range'],$lte : args['top_range']};
           // and some mechanism for obj with $gte, etc.
           }
         }
-        //console.log(qdb)
+        console.log(SamCitizens.find(
+             qdb,
+             {limit:args.limit}
+           ).count())
       }
 
     return await SamCitizens.find(

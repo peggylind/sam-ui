@@ -22,6 +22,7 @@ const samQuery = gql`
     $race: String,
     $veteran_status: String,
     $dist: Float,
+    $racial_entropy_index: Float,
     $coords: [Float]
   ) {
     samcity(
@@ -37,7 +38,9 @@ const samQuery = gql`
       asthma: $asthma,
       citizenship: $citizenship,
       race: $race,
+      age: $age,
       veteran_status: $veteran_status,
+      racial_entropy_index: $racial_entropy_index,
       dist: $dist,
       coords: $coords
     ) {
@@ -65,7 +68,7 @@ class SamDataForm extends React.PureComponent {
        super(props);
        this.plotcontain = React.createRef();
        this.state = {
-         plotOpen : false,
+         plotOpen : false,  //plot stuff is just turned off at the button with a !
          plotOpen2 : false,
          plotWidth: '8%',
          plotHeight: '4%',
@@ -134,7 +137,7 @@ class SamDataForm extends React.PureComponent {
           </div>
 
           <div>
-      {!this.state.plotOpen && (
+      {this.state.plotOpen && (
       <div style={plotButtonStyle}>
               <button onClick={() => this.setState({ plotOpen: true, plotHeight: '75%', plotWidth: '75%' })}>
                 Show Plots
@@ -157,7 +160,7 @@ class SamDataForm extends React.PureComponent {
               data={this.props.samcity}
               plotFactorColors={this.props.samprops.plotFactorColors}
               containerwidth={1200}
-              containerheight={500}
+              containerheight={600}
           /></div>
         )}
         </div>
@@ -174,8 +177,11 @@ export default graphql(samQuery,
       variables: {
         member: props.samprops.member,
         race: props.samprops.race,
+        age: props.samprops.age,
         dist: props.samprops.dist,
         limit:  props.samprops.limit,
+        bottom_range: props.samprops.bottom_range,
+        top_range: props.samprops.top_range,
         one_of: props.samprops.one_of,
         coords: [props.samprops.longitude,props.samprops.latitude] || [-95.35,29.75]
       }

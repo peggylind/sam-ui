@@ -9,6 +9,7 @@ import debounce from 'lodash.debounce'
 import SamDataForm from './SamDataForm'; //change to just samdatamap??
 import Slide from './slider-input';
 import LegendBox from './legend-box';
+import {model_explanations} from "./model_explanations";
 // var DASHlogo = require('/public/images/DASHlogo.png');
 // var UHLogo = require('/public/images/honors-the-honors-college-tertiary2.png');
 
@@ -37,21 +38,29 @@ const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color
 const toShow = [{category: 'race', type: 'factor', factors: [{factorName:'white',factorColor:3},{factorName:'asian',factorColor:2},
     {factorName:'black',factorColor:1},{factorName:'hispanic',factorColor:5},{factorName:'other.race',factorColor:4},
     {factorName:'multiracial',factorColor:0}],fnd:''},
-  {category: 'member', type: 'factor', factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2},
-    {factorName:'Householder',factorColor:1},{factorName:'Wife',factorColor:6}],fnd:''},
-  {category: 'household_income', type: 'range', low: 30000, high:150000, factors:
-    [{factorName:'low',factorColor:11},{factorName:'high',factorColor:10}],fnd:'',fnd_top_num:1000000,fnd_bottom_num:0},
+  {category: 'educational_attainment', type: 'factor', factors: [{factorName:'High School Graduate',factorColor:3},{factorName:'Graduate or Professional Degree',factorColor:2},
+    {factorName:"Bachelor's Degree",factorColor:1},{factorName:"Associate's degree",factorColor:5},{factorName:"Some College, no degree",factorColor:5},
+    {factorName:"Less than 9th grade",factorColor:1},{factorName:"9th to 12th grade, no diploma",factorColor:5}],fnd:''},
+
+  {category: 'racial_entropy_index', type: 'range', low: -.01, high:-.13, factors:
+    [{factorName:'low',factorColor:3},{factorName:'high',factorColor:6}],fnd:'',fnd_top_num:1000000,fnd_bottom_num:0},
+  // {category: 'member', type: 'factor', factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2},
+  //   {factorName:'Householder',factorColor:1},{factorName:'Wife',factorColor:6}],fnd:''},
+  {category: 'household_income', type: 'range', low: 30000, high:70000, factors:
+    [{factorName:'low',factorColor:5},{factorName:'high',factorColor:1}],fnd:'',fnd_top_num:1000000,fnd_bottom_num:0},
+  // {category: 'sex', type: 'factor', factors: [{factorName:'Male',factorColor:5},{factorName:'Female',factorColor:1}],fnd:''},
+  {category: 'age', type: 'range', low: 0, high:120, factors:
+    [{factorName:'low',factorColor:11},{factorName:'high',factorColor:10}],fnd:'',fnd_top_num:100,fnd_bottom_num:0},
   {category: 'educational_attainment', type: 'factor', factors: [{factorName:'High School Graduate',factorColor:3},{factorName:'Graduate or Professional Degree',factorColor:2},
     {factorName:"Bachelor's Degree",factorColor:1},{factorName:"Associate's degree",factorColor:5},{factorName:"Some College, no degree",factorColor:5},
     {factorName:"Less than 9th grade",factorColor:1},{factorName:"9th to 12th grade, no diploma",factorColor:5}],fnd:''},
   {category: 'employment', type: 'factor', factors: [{factorName:'Not in labor force',factorColor:3},{factorName:'Employed',factorColor:2},
     {factorName:'Unemployed',factorColor:1},{factorName:'In Armed Forces',factorColor:6}],fnd:''},
-  {category: 'quality_description', type: 'factor', factors: [{factorName:'Average',factorColor:3},{factorName:'Good',factorColor:2},
-    {factorName:'Excellent',factorColor:1},{factorName:'Poor',factorColor:6},{factorName:"Superior",factorColor:1},{factorName:"Low",factorColor:5}],fnd:''},
+  // {category: 'quality_description', type: 'factor', factors: [{factorName:'Average',factorColor:3},{factorName:'Good',factorColor:2},
+  //   {factorName:'Excellent',factorColor:1},{factorName:'Poor',factorColor:6},{factorName:"Superior",factorColor:1},{factorName:"Low",factorColor:5}],fnd:''},
   {category: 'disability', type: 'factor', factors: [{factorName:'No Disabilities',factorColor:3},{factorName:'With One Type of Disability',factorColor:2},
     {factorName:'With Two or More Types of Disabilities',factorColor:1}],fnd:''},
-  {category: 'veteran_status', type: 'factor', factors: [{factorName:'Nonveteran',factorColor:3},{factorName:'Veteran',factorColor:2}],fnd:''},
-  {category: 'asthma', type: 'factor', factors: [{factorName:'Yes',factorColor:3},{factorName:'No',factorColor:2}],fnd:''}
+  {category: 'veteran_status', type: 'factor', factors: [{factorName:'Nonveteran',factorColor:1},{factorName:'Veteran',factorColor:11}],fnd:''}
 ];
 
 function assignColors (newColors) {
@@ -85,24 +94,28 @@ function list4plots (plots) {
   return makePlotColors(plotList) //which is a list of objects from toShow
 }
 
-const firstzoom = 11.5;
+const firstzoom = 11.3;
 const calcOpacity = (zoom) => { return 1 - (zoom/25)};
 const calcStrokeWidth = (zoom) =>
-  (zoom *1.3) < 20 ? 20 - (zoom * 1.3) : 1;
+  (zoom *1.3) < 22 ? 23 - (zoom * 1.3) : 1;
 const calcRadiusScale = (zoom) =>
-  (zoom *13) < 180 ? 186 - (zoom * 13) : 6;
+  (zoom *13) < 210 ? 216 - (zoom * 13) : 6;
 const calcOneOf = (zoom) =>
-  zoom > 13 ? 1 : zoom < 12 ? zoom < 11 ? 1000 : 100 : 10;
+  zoom > 12.7 ? 1 : zoom < 12 ? zoom > 11 ? 100 : 10 : 10;
 
 
 const samprops = { //have all decided with same logic??
-  geojson_title: 'Harvey_Houston.geojson',
-  limit: 10000,
+  //racial_entropy_index: '',
+  explainIndex: 0,
+  geojson_title: '',//'Super_Neighborhoods.geojson',// 'Harvey_Houston.geojson',
+  limit: 20000,
   one_of: calcOneOf(firstzoom),
   member: "",
   race: "",
   age: 55,
-  longitude: -95.32,
+  bottom_range: 0,
+  top_range: 100,
+  longitude: -95.315,
   latitude: 29.75,
   zoom: firstzoom,
   opacity: calcOpacity(firstzoom),
@@ -134,19 +147,21 @@ export default class App extends React.PureComponent {
        this.onMapChange = this.onMapChange.bind(this);
        this.setToolInfo = this.setToolInfo.bind(this);
        this.setClick = this.setClick.bind(this);
+       this.setExplanation = this.setExplanation.bind(this);
+
        //bbox is NW,NE,SE,SW
        const bbox = [[-95.91,28.93],[-94.67,28.93],[-94.67,30.47],[-95.91,30.47]];
        this.state = {
          toolTipInfo : {text:'Hover over features or sam citizens for info.'},
-         explanation : {text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
+         //explanation : model_explanations()[samprops.explainIndex],//{text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
          samprops : samprops,
          mapprops : {
               bbox: bbox, //may use later for searches - now based on geonear in circle
               viewport: {
                 width: window.innerWidth,
                 height: window.innerHeight,
-                longitude: -95.355,
-                latitude: 29.75,
+                longitude: samprops.longitude, //-95.315,
+                latitude: samprops.latitude, //29.75,
                 zoom: samprops.zoom,//16.051394480575627, //which is zoom for 1 meter for testing
                 pitch: 20,
                 bearing: 0
@@ -157,7 +172,6 @@ export default class App extends React.PureComponent {
          this.setToolInfo = debounce(this.setToolInfo, 200);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
-
   //this lets you step up on data in scatter and mapbox; not just slider
   handlePopulationChange = function(limit) {
     var samprops = {...this.state.samprops}
@@ -183,15 +197,8 @@ export default class App extends React.PureComponent {
   onFactortoShow = function(e){
     var samprops = {...this.state.samprops}
     samprops.toShow.forEach(function(row,r){
-      // console.log(row)
-      // console.log(samprops.categIndex)
-      // console.log(r)
-      if(samprops.categIndex == r){
-        console.log(samprops.toShow[r].category)
-        console.log(e.factorName)
+      if(samprops.categIndex == r){ //if "all" is the factorName = '', then all will be returned
         samprops[samprops.toShow[r].category] = e.factorName;
-        //also need to change the categoryIndex to whatever default we want
-        //assign to pipe factorName and
       }
     })
     this.setState({samprops});
@@ -227,7 +234,7 @@ export default class App extends React.PureComponent {
     samprops.opacity = calcOpacity(mapstuff.zoom);
     samprops.strokeWidth = calcStrokeWidth(mapstuff.zoom);
     samprops.radiusScale = calcRadiusScale(mapstuff.zoom);
-    samprops.one_of = mapstuff.zoom > 13 ? 1 : mapstuff.zoom < 12 ? mapstuff.zoom < 11 ? 1000: 100 : 10;
+    samprops.one_of = mapstuff.zoom > 13 ? 1 : mapstuff.zoom < 12 ? mapstuff.zoom < 10 ? 1000: 10 : 100;
     //samprops.one_of = calcOneOf(mapstuff.zoom);
     this.setState({samprops});
   };
@@ -237,8 +244,17 @@ export default class App extends React.PureComponent {
     samprops.toShow = datactrls.toShow;
     samprops.mapOrPlot = datactrls.mapOrPlot;//also use to set map to 80 degrees??May need to turn off map??
     this.setState({samprops});
-  }
-//use to populate sidepane? or popup? this is the tooltip
+  };
+  //expl should be an object {text: valid_html} - will usually be set from model selector
+  setExplanation = function(e){
+    console.log(e.target.value) //should have a target - should set the explainIndex, and the explanation?? pull in model_explanation.js??
+    var samprops = {...this.state.samprops}
+    samprops.explainIndex = e.target.value;
+    //explanation = expl
+    this.setState({samprops})
+    //could also set the toShow, etc. to go along with different models, if the pull-downs are too long
+  };
+//this is the tooltip
   setToolInfo = function(info){
     var toolTipInfo = {...this.state.toolTipInfo}
     toolTipInfo.info = info
@@ -246,7 +262,7 @@ export default class App extends React.PureComponent {
     console.log(toolTipInfo)
     console.log(toolTipInfo.account)
     this.setState({toolTipInfo})
-  }
+  };
   setClick = function(info){
     var toolTipInfo = {...this.state.toolTipInfo}
     toolTipInfo.info = info
@@ -254,7 +270,7 @@ export default class App extends React.PureComponent {
     console.log(toolTipInfo)
     console.log('toolTipInfo.account')
     this.setState({toolTipInfo})
-  }
+  };
   formatDollars = function(number){
     if (number!=undefined){
         var numstring = number.toString();
@@ -262,7 +278,7 @@ export default class App extends React.PureComponent {
     }else{
       return 'undefined'
     }
-  }
+  };
 
   // componentWillUnmount(){
   //   client.resetStore();
@@ -273,43 +289,61 @@ export default class App extends React.PureComponent {
       return (
           <div>
               <div style={{position:"absolute",width:"100%",fontSize:"4em",textAlign:"center", zIndex:"3"}}>
-                Sam City
+                <span title="Houston on a first name basis" style={{backgroundColor:"#7f7f7f33",borderRadius:"25px"}}>Sam City</span>
               </div>
-              <div style={{position:"absolute",marginLeft:"2%",width:"10%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
+              <div style={{position:"absolute",top:"75%",left:"85%",width:"10%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
                 <hr/>
-                <span>
+                <span title="Data Analytics in Student Hands">
                   <img style={{width:"100%"}} src='/images/DASHlogo.png' />
                 </span>
                 <hr/>
-                <span>
+                <span title="The Honors College at the University of Houston">
                   <img style={{width:"100%"}} src='/images/honors-the-honors-college-primary.png' />
                 </span>
               </div>
-              <div style={{position:"absolute",width:"25%",marginLeft:"75%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
+              <div style={{position:"absolute",width:model_explanations(this.state.samprops.explainIndex).div_width,
+                            left:model_explanations(this.state.samprops.explainIndex).div_left,
+                            overflow: "auto",backgroundColor:"#f8f8ff",zIndex:"3"}}>
 
-                <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"4"}}>
-                <div><hr/><div>
-                  {this.state.samprops.limit*this.state.samprops.one_of}
-                <div><hr/><div>
-                  {this.state.explanation.text}
-                </div><hr/></div>
-                </div><hr/></div>
+                <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"4",borderRadius:"25px"}}>
+
+                {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/></div>}
+                  <h2 style={{textAlign:"center"}}>{model_explanations(this.state.samprops.explainIndex).h2_title}</h2>
+                  <div style={{textAlign:"center",fontWeight: "bold"}}>{model_explanations(this.state.samprops.explainIndex).author}</div>
+                  {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/><br/></div>}
+                  <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).text}</div>
+                  {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/><br/></div>}
+                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img} />
+                  <p style={{textAlign:"center",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).img_title}</p>
+                  <h3>{model_explanations(this.state.samprops.explainIndex).div2}</h3>
+                  <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).text2}</div>
+                  <h3>{model_explanations(this.state.samprops.explainIndex).div3}</h3>
+                  <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).text3}</div>
+                {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/></div>}
                   {this.state.toolTipInfo.text}
-                  {this.state.toolTipInfo.info
-                    ? <div style={{position:"relative"}}>
-                      <div> Account -  {this.state.toolTipInfo.info.account} </div>
-                      <div> Age -  {this.state.toolTipInfo.info.age} </div>
-                      <div> Asthma -  {this.state.toolTipInfo.info.asthma} </div>
-                      <div> Citizen -  {this.state.toolTipInfo.info.citizenship} </div>
-                      <div> Education -  {this.state.toolTipInfo.info.educational_attainment} </div>
-                      <div> Employment -  {this.state.toolTipInfo.info.employment} </div>
-                      <div> Sex -  {this.state.toolTipInfo.info.sex} </div>
-                      <div> Race -  {this.state.toolTipInfo.info.race} </div>
-                      <div> Household Income -  {this.formatDollars(this.state.toolTipInfo.info.household_income)} </div>
-                      <div> Household Type -  {this.state.toolTipInfo.info.household_type} </div>
-                      <div> House Quality -  {this.state.toolTipInfo.info.quality_description} </div>
+                  {this.state.toolTipInfo.info ?
+                    <div style={{position:"relative"}}>
+                      {this.state.toolTipInfo.info.age != "NA" & this.state.toolTipInfo.info.age != ""   &&
+                        <div> Age -  {this.state.toolTipInfo.info.age} </div>}
+                      {this.state.toolTipInfo.info.citizenship != "NA" & this.state.toolTipInfo.info.citizenship != "" &&
+                        <div> Citizen -  {this.state.toolTipInfo.info.citizenship} </div>}
+                      {this.state.toolTipInfo.info.educational_attainment != "NA" & this.state.toolTipInfo.info.educational_attainment != "" &&
+                        <div> Education -  {this.state.toolTipInfo.info.educational_attainment} </div>}
+                      {this.state.toolTipInfo.info.employment != "NA" & this.state.toolTipInfo.info.employment != "" &&
+                        <div> Employment -  {this.state.toolTipInfo.info.employment} </div>}
+                      {this.state.toolTipInfo.info.sex != "NA" & this.state.toolTipInfo.info.sex != "" &&
+                        <div> Sex -  {this.state.toolTipInfo.info.sex} </div>}
+                      {this.state.toolTipInfo.info.race != "NA" & this.state.toolTipInfo.info.race != "" &&
+                        <div> Race -  {this.state.toolTipInfo.info.race} </div>}
+                      {this.state.toolTipInfo.info.household_income != "NA" & this.state.toolTipInfo.info.household_income != "" &&
+                        <div> Household Income -  {this.formatDollars(this.state.toolTipInfo.info.household_income)} </div>}
+                      {this.state.toolTipInfo.info.household_type != "NA" & this.state.toolTipInfo.info.household_type != "" &&
+                        <div> Household Type -  {this.state.toolTipInfo.info.household_type} </div>}
+                      {this.state.toolTipInfo.info.quality_description != "NA" & this.state.toolTipInfo.info.quality_description != "" &&
+                        <div> HCAD Quality Rating -  {this.state.toolTipInfo.info.quality_description} </div>}
                       </div>
-                    : null}
+                      : null
+                    }
                 </span>
               </div>
             <LegendBox
@@ -319,6 +353,7 @@ export default class App extends React.PureComponent {
               onFactortoShow={this.onFactortoShow}
               onChangetoShow={this.onChangetoShow}
               onMapChange={this.onMapChange}
+              setExplanation={this.setExplanation}
               setToolInfo={this.setToolInfo}
             />
 
