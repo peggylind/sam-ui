@@ -1,29 +1,28 @@
 export function model_explanations(index) {
   const models = [
-{
+    {
   model_name: 'Sam City',
-  author: 'Dan Price and Manale Henini',
+  div_width: '25%',
+  div_left: '75%',
+  author: 'Carol Upchurch and Manale Henini',
   h2_title: 'What is Sam?',
   text: `
-  We can have any number of things here.
-  Start with why health disparities research requires understanding how individual
-  people contribute to the whole (and are not just statistics).
+  We have simulated residents for all the houses in Harris County (don't look for yourself!) so that we can model community health at the individual scale
+  and then allow patterns to emerge. Sam is a visual tool that helps us understand community interventions and their effects.
+  Carol and Manale did the R implementation of the data and the user interface is Dan Price's fault.
   `,
+  img: '/images/sam_uh.png',
+  img_title: 'South Campus and Neighbors',
   search_terms: {},
   notes: `Have to decide - could make text have subobjects with paragraphs, etc.
   should add a place for source code and explanation of sources.
   `,
-  tooltip_terms: {},
-  hrefs: 'links here; perhaps an order to things? perhaps in the click function??',
-  image_links: 'internal?'
-},
-{
-  model_name: 'asthma',
-  author: 'Garrett Gowe',
-  text: `Need to change`
+  tooltip_terms: {}
 },
 {
   model_name: 'Birthweight and Autism',
+  div_width: '65%',
+  div_left: '35%',
   author: 'Anoushka Gokhale',
   h2_title: 'Modeling Effects of Maternal Age, Access to Prenatal Care, and Stress on Birthweight',
   notes: `She has images for CRH that could be included - have to run it again
@@ -32,7 +31,7 @@ export function model_explanations(index) {
   `,
   hrefs: 'links here; perhaps an order to things? perhaps in the click function??',
   image_links: 'internal?',
-  search_terms: {sex:'female',age:{low:15,high:45}},
+  search_terms: {sex:'female',age:{low:15,high:55}},
   text: `I am researching the correlation between prenatal care and autism prevalence,
 varying by maternal age. Using hypergraphs and a user interface to model this research,
 I hope to bring awareness to the importance of prenatal care during pregnancy to reduce
@@ -51,6 +50,8 @@ conception increases, the importance of prenatal care also increases. `
 },
 {
   model_name: 'Low Birthweight',
+  div_width: '35%',
+  div_left: '65%',
   author: 'Merina Thomas',
   h2_title: 'Modeling the Effect of Psychological Stress on Birthweight',
   search_terms: {sex:'female',age:{low:15,high:45}},
@@ -83,6 +84,8 @@ conception increases, the importance of prenatal care also increases. `
 },
 {
   model_name: 'Diversity Entropy',
+  div_width: '65%',
+  div_left: '35%',
   author: 'Tom Ngyuen and Aditya Mankare',
   h2_title: 'The Positive Effect of Racial Diversity in American Neighborhoods',
   text: `
@@ -266,19 +269,40 @@ Like any other research topic, this one needs to be confirmed with a larger samp
 },
 {
   model_name: 'Type 2 Diabetes',
+  div_width: '35%',
+  div_left: '65%',
   author: 'Akash Ramesh',
   contact: 'akash.skyler.ramesh@gmail.com',
   h2_title: 'The Efficacy of Screening for Prostate Cancer at Different Ages',
   search_terms: {member:'Adult',age:{low:15,high:85},BMI:{low:10,high:100}},
   text: `
-    Still need -
+  This project attempts to look at Type 2 Diabetes from a perspective that is different than the normal standard of simply using BMI to calculate the risk. Much progress has been made to include other factors such as race, sex, and household income. However, this project attempts to take this progress one step further by:
+1)	Including nutritional levels to get a better understanding of what foods affect diabetes the most
+2)	Allowing a person to be interactive with the model
+3)	Matching a person’s data, as closely as possible, to other individuals in a dataset to receive a more accurate relative risk
+
+The evaluation of the risk uses a hypergraph theory model. The hypergraph model was chosen because it allows us to look at the strengths of connections between various factors and allows us to keep the person as an individual rather than classifying them into a group. There has been a rapid increase of the use of this model in biological systems, and this project aims to be able to apply it to public health as well.
+
     `,
   citations: `
+  “Diabetes Diet, Eating, & Physical Activity.” National Institute of Diabetes and Digestive and Kidney Diseases, U.S. Department of Health and Human Services, 1 Nov. 2016, www.niddk.nih.gov/health-information/diabetes/overview/diet-eating-physical-activity.
+
+Klamt, Steffen, et al. “Hypergraphs and Cellular Networks.” NCBI, 2009, www.ncbi.nlm.nih.gov/pmc/articles/PMC2673028/pdf/pcbi.1000385.pdf.
+
+Narayan, K.M.V., et al. “Effect of BMI on Lifetime Risk for Diabetes in the U.S.” Diabetes Care, American Diabetes Association, 1 June 2007, care.diabetesjournals.org/content/30/6/1562.
+
+West, Kelly M, and John M Kalbfleisch. “Glucose Tolerance, Nutrition, and Diabetes in Uruguay, Venezuela, Malaya, and East Pakistan.” Diabetes, American Diabetes Association, 1 Jan. 1966, diabetes.diabetesjournals.org/content/15/1/9.short.
+
   a.	Ganz ML, Wintfeld N, Li Q, Alas V, Langer J, Hammer M. The association of body mass index with the risk of type 2 diabetes: a case-control study nested in an electronic health records system in the United States. Diabetol Metab Syndr. 2014;6(1):50. http://www.dmsjournal.com/content/6/1/50
+  Demo. Var: https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/DEMO_H.htm#DMDHRGND
+
+  Nutrition:  https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/DR2TOT_H.htm#Appendix_5._Variables_in_the_Total_Nutrients_Files_(DR1TOT_H_and_DR2TOT_H)_by_Position
   `
 },
 {
   model_name: 'Prostate Cancer',
+  div_width: '55%',
+  div_left: '45%',
   author: 'Raj Iyer',
   contact: 'rajiyer2012@gmail.com',
   h2_title: 'The Efficacy of Screening for Prostate Cancer at Different Ages',
@@ -292,6 +316,8 @@ While there is a lot to consider, the fact of the matter is that prostate cancer
 },
 {
   model_name: 'Breast Cancer',
+  div_width: '55%',
+  div_left: '45%',
   author: 'Sasanka Thupili',
   notes: `
   Proposed UI
@@ -305,9 +331,18 @@ There could be a summary page that indicates how many of each occurred, and whet
   contact: 'sasanka.thupili@gmail.com',
   h2_title: 'The Efficacy of Screening for Prostate Cancer at Different Ages',
   search_terms: {sex:'female',age:{low:15,high:45}},
-  text: ``,
+  text: `
+  This project’s focus is modeling breast cancer screening and outcomes. Breast cancer screening is a controversial topic as the test used in screening is sensitive and may lead to overdiagnosis. It is often debated whether the potential of screening to save lives outweighs the harm it may cause with false positive diagnoses. Using statistics from various peer-reviewed sources, this model predicts if individuals will be diagnosed with breast cancer, undergo breast cancer screening, and if their screening would result in a false positive diagnosis. Whether a patient will get breast cancer or undergo screening is predicted based off their race and age. If individuals have a false positive diagnosis, the model will further predict the outcome of breast cancer treatment and if there will be any complications as a result of treatment.
+
+  `,
   citations: ``
-}
+},
+{
+  model_name: 'none',
+  h2_title: 'Modeled Sam Citizen',
+  div_width: '15%',
+  div_left: '85%'
+},
 ];
 let retVals=models[index];
 if (index == 'names'){

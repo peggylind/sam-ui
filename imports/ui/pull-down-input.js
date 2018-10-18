@@ -65,7 +65,7 @@ export default class PullDown extends React.PureComponent {
     return (
       <div style={{backgroundColor:"#7f7f7f33"}}>
       <div title="Health Models and Interventions" style={{fontSize:"2em"}}>Models</div>
-      <div style={{fontSize:"1.2em"}}>
+      <div style={{fontSize:"2em"}}>
       <select onChange={this.setExplanation} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
           defaultValue={this.props.samprops.explainIndex}>
           {model_explanations('names').map((cat,k) => <option
@@ -77,19 +77,17 @@ export default class PullDown extends React.PureComponent {
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
       <div title="Select Boundaries to Show" style={{fontSize:"2em"}}>Geography</div>
-      <div style={{fontSize:"1.2em"}}>
+      <div style={{fontSize:"2em"}}>
         <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
-            defaultValue={this.state.samprops.toShow[this.state.samprops.categIndex].category}>
-            {this.state.samprops.toShow.map((cat,k) => <option
-              key={cat+k} value={this.state.samprops.toShow[k].category}>
-              {this.state.samprops.toShow[k].category.substring(0,15)}
-              </option>)
-            }
+            defaultValue={"Background Map"}>
+            <option>
+              Background Map
+              </option>
         </select>
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
       <div title="Categories for display with colors" style={{fontSize:"2em"}}>Categories</div>
-      <div style={{fontSize:"1.2em"}}>
+      <div style={{fontSize:"2em"}}>
         <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
             defaultValue={this.state.samprops.toShow[this.state.samprops.categIndex].category}>
             {this.state.samprops.toShow.map((cat,k) => <option
@@ -125,6 +123,15 @@ export default class PullDown extends React.PureComponent {
               </div>
             }
           </div>)}
+
+          <div key="100"
+            onClick={(e) => this.onFactortoShow('')}
+            style={{backgroundColor:'#ffffff',fontSize:"1em",
+              borderColor:'#ffffff',position:'relative',
+              borderWidth: "3px", borderStyle:"solid", height:"2em"}}>
+              Show All Factors
+          </div>
+
           <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
   </div>

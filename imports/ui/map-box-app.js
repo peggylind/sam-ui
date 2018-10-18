@@ -58,7 +58,7 @@ export default class MapBox extends Component {
         //do color array here for ranges - also in scatterdata
         //if "factor" is a string, then ...; else {
           //or have things saved on app.js that let us know how to do the interpolation?
-        //console.log('in ' +'this.props.samprops.forColors[factor]')
+        // console.log('in ' +'this.props.samprops.forColors[factor]'+factor)
         if(this.props.samprops.toShow[this.props.samprops.categIndex].type == 'factor'){
           return this.props.samprops.forColors[factor]
         }else{
@@ -66,17 +66,25 @@ export default class MapBox extends Component {
           var high = this.props.samprops.toShow[this.props.samprops.categIndex].high;
           var lowrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[0].factorColor].RGB
           var highrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[1].factorColor].RGB
-          var r = lowrgb[0]+(Math.abs(highrgb[0]-lowrgb[0])/high)*factor;
-          if (r>255){r=255}
-          if (r<0){r=0}
-          //var g = lowrgb[1]+(Math.abs(highrgb[1]-lowrgb[1])/high)*factor;
-          var g = ((lowrgb[1]+255)/high)*factor;
-          if (g>255){g=255}
-          if (g<0){g=0}
-          var b = lowrgb[2]+(Math.abs(highrgb[2]-lowrgb[2])/high)*factor;
-          if (b>255){b=255}
-          if (b<0){b=0}
-          var RGB = [Math.round(r),Math.round(g),Math.round(b)];
+          let RGB = lowrgb;
+          if(factor>1){
+            let half = (high+low)/2;
+            if (factor>half){RGB=highrgb};
+          }else{
+            console.log(factor)
+            if(factor <= -0.45){RGB=highrgb};
+          }
+          // var r = lowrgb[0]+(Math.abs(highrgb[0]-lowrgb[0])/high)*factor;
+          // if (r>255){r=255}
+          // if (r<0){r=0}
+          // //var g = lowrgb[1]+(Math.abs(highrgb[1]-lowrgb[1])/high)*factor;
+          // var g = ((lowrgb[1]+255)/high)*factor;
+          // if (g>255){g=255}
+          // if (g<0){g=0}
+          // var b = lowrgb[2]+(Math.abs(highrgb[2]-lowrgb[2])/high)*factor;
+          // if (b>255){b=255}
+          // if (b<0){b=0}
+          // var RGB = [Math.round(r),Math.round(g),Math.round(b)];
           return RGB
         }
       }
@@ -129,21 +137,21 @@ const GeoMap = new GeoJsonLayer({
   id: 'geojson-layer',
   data: this.state.geojsonsam,
   pickable: true,
-    stroked: false,
-    filled: true,
-    extruded: true,
-    lineWidthScale: 20,
-    lineWidthMinPixels: 2,
-    getFillColor: [160, 160, 180, 200],
+  stroked: false,
+  filled: true,
+  extruded: false,
+  lineWidthScale: 20,
+  lineWidthMinPixels: 2,
+//    getFillColor: [160, 160, 180, 200],
 //    getLineColor: d => colorToRGBArray(d.properties.color),
-    getRadius: 100,
-    getLineWidth: 10,
-    getElevation: 30,
-//    onHover: ({object}) => setTooltip(object.properties.name || object.properties.station),
+  getRadius: 100,
+  getLineWidth: 10,
+  getElevation: 30,
+  onHover: ({object}) => this.setToolInfo(object),
 
   //getElevation: f => Math.sqrt(f.properties.valuePerSqm) * 10,
-  //getFillColor: f => COLOR_SCALE(f.properties.growth),
-  getLineColor: [255, 255, 255],
+  getFillColor: [0, 0, 0, 0],
+  getLineColor: [0, 0, 0, 255]
   //lightSettings: LIGHT_SETTINGS,
 
 })
