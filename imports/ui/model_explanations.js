@@ -13,6 +13,8 @@ export function model_explanations(index) {
   `,
   img: '/images/sam_uh.png',
   img_title: 'South Campus and Neighbors',
+  text6: `Mea Culpa: I (Dan Price) broke the plot population characteristics button yesterday - it was very nice, and made the students' narratives work much better.
+  `,
   search_terms: {},
   notes: `Have to decide - could make text have subobjects with paragraphs, etc.
   should add a place for source code and explanation of sources.
@@ -29,8 +31,11 @@ export function model_explanations(index) {
     pregnancy rates are for 2009 - image: https://www.cdc.gov/nchs/images/databriefs/101-150/db136_fig1.png
     I produced an autism_by_age and autism_by_CRH (with prenatal care - and thus age - and race)
   `,
+  img2: '/images/stress.jpg',
+  img_title: 'Stress and Preterm Effects on Pregnancy',
+  img3: '/images/preterm.png',
+  img: '/images/stressbodies.png',
   hrefs: 'links here; perhaps an order to things? perhaps in the click function??',
-  image_links: 'internal?',
   search_terms: {sex:'female',age:{low:15,high:55}},
   text: `I am researching the correlation between prenatal care and autism prevalence,
 varying by maternal age. Using hypergraphs and a user interface to model this research,
@@ -50,36 +55,45 @@ conception increases, the importance of prenatal care also increases. `
 },
 {
   model_name: 'Low Birthweight',
-  div_width: '35%',
-  div_left: '65%',
+  div_width: '65%',
+  div_left: '35%',
   author: 'Merina Thomas',
   h2_title: 'Modeling the Effect of Psychological Stress on Birthweight',
   search_terms: {sex:'female',age:{low:15,high:45}},
+  img: '/images/LowBirthweight.png',
+  img_title: 'Social Characteristic of Pregnancy',
+  img1: '/images/stresslevelincomeByrace.png',
+  img2: '/images/stresslevelraceByRace.png',
+  img3: '/images/racebylowbirthweight.png',
   text: `
-    Stress Level by Race and by Income separately.
+    I modeled Stress Level by Race and by Income separately.
     The stress levels were measured on the Psychological Stress Scale (also called the Perceived Stress Scale).
-    This survey asks people to asses the degree to which they perceive situations in their life as stressful.
+    This survey asks people to asses the degree to which they perceive situations in their life as stressful. The final product should show on a future version of Sam (Dan says it's his fault)
   `,
+  img_title: 'Stress and Low Birthweight',
   citations: `
-    Citations
-    Who’s Stressed? Distributions of Psychological Stress in the United States in Probability Samples from 1983, 2006, and 20091
+    Who’s Stressed? Distributions of Psychological Stress in the United States in Probability Samples from 1983, 2006, and 2009
     http://www.psy.cmu.edu/~scohen/Whos_Stressed_JASP_2012.pdf
-
+`,
+  citations1:`
     2010 Pregnancy Rates Among U.S. Women
     https://www.cdc.gov/nchs/data/hestat/pregnancy/2010_pregnancy_rates.pdf
-
+`,
+  citations2:`
     Work Stress in First Trimester Causes Low Birth Weight Baby
     https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3214454/
-
+`,
+  citations3:`
     Racial/Ethnic Inequities in Low Birth Weight and Preterm Birth: The Role of Multiple Forms of Stress
     https://link.springer.com/article/10.1007%2Fs10995-018-2500-7
-
+`,
+  citations4:`
     Chronic Stress and Low Birth Weight Neonates in a Low-Income Population of Women
     https://journals.lww.com/greenjournal/Fulltext/2007/02000/Chronic_Stress_and_Low_Birth_Weight_Neonates_in_a.16.aspx
-
+`,
+  citations5:`
     Impact of Perceived Stress, Major Life Events and Pregnancy Attitudes on Low Birth Weight
     https://www.jstor.org/stable/2648197?seq=1#metadata_info_tab_contents
-
   `
 },
 {
@@ -102,7 +116,10 @@ The challenge was to measure residential segregation. To do that, we decided to 
 
 For Racial Diversity, the races we have used are “Whites”, “African Americans”, “Asians”, “Hispanic or Latino”, “Two or more races” and “Some other races”.
 
-Here is the formula for the Diversity score:
+`,
+img: '/images/Racialentropy.png',
+img_title: 'Racial Diversity Entropy Index, with lighter colors showing more entropy/diversity',
+text2: `Here is the formula for the Diversity score:
 
 Diversity Score = ∑(πri) ln[1/πri]
 
@@ -124,8 +141,6 @@ The Educational Diversity Score can also be written as:
 
 ∑(πri) ln[1/πri] = (πassociates_degree) ln[1/πassociates_degree] + (πbachelors_degree) ln[1/πbachelor’s degree] + (πgraduate_or_professional_degree) ln[1/πgraduate_or_professional_degree] + (πsome_college_no_degree) ln[1/πsome_college_no_degree]
 
-And for For Income Diversity I have used “” and “”
-
 Later, the mental health statistics were observed according to Houston zip codes, so they could be shown, along with the diversity scores on the area of map selected.
 
 Conclusion:
@@ -139,11 +154,13 @@ Like any other research topic, this one needs to be confirmed with a larger samp
   `,
   citations: `
   Iceland, J. (2004). Beyond Black and White: Metropolitan residential segregation in multi-ethnic America. Social Science Research 33(2), 248-271.
-  https://www.census.gov/hhes/www/housing/resseg/pdf/beyond_black_and_white.pdf
+  https://www.census.gov/hhes/www/housing/resseg/pdf/beyond_black_and_white.pdf`,
+  citations1: `
   LaVeist, T., Pollack, K., Thorpe, R. Jr., Fesahazion R., Gaskin D. (2011). Place, not race: disparities dissipate in southwest Baltimore when blacks and whites live under similar conditions.Health Affairs 30(11), 1880-1887.
-  https://www.healthaffairs.org/doi/pdf/10.1377/hlthaff.2011.0640
-  Kramer M., Hogue C., (2009). Is Segregation Bad for Your Health? Epidemiologic Reviews 31, 178-194.
-  https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4362512/pdf/nihms668381.pdf
+  https://www.healthaffairs.org/doi/pdf/10.1377/hlthaff.2011.0640`,
+  citations2: `Kramer M., Hogue C., (2009). Is Segregation Bad for Your Health? Epidemiologic Reviews 31, 178-194.
+  https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4362512/pdf/nihms668381.pdf`,
+  citations3: `
   SimplyAnalytics (2018). % All Types of Heart Disease 2017 .Retrieved July 18th, 2018, from SimplyAnalytics database.
   SimplyAnalytics (2018). % Hopelessness 2017 .Retrieved July 18th, 2018, from SimplyAnalytics database.
   SimplyAnalytics (2018). % Worthlessness 2017 .Retrieved July 18th, 2018, from SimplyAnalytics database.
@@ -151,6 +168,8 @@ Like any other research topic, this one needs to be confirmed with a larger samp
   SimplyAnalytics (2018). % Sadness 2017 .Retrieved July 18th, 2018, from SimplyAnalytics database.
   SimplyAnalytics (2018). % Restlessness 2017 .Retrieved July 18th, 2018, from SimplyAnalytics database.
   SimplyAnalytics (2018). % Serious psychological distress 2017 .Retrieved July 18th, 2018, from SimplyAnalytics database.
+  `,
+  note:`
   Variable MetaData for datasets from SimplyAnalytics
   Name	% All Types Heart Disease
   Year   2018
@@ -284,6 +303,10 @@ Like any other research topic, this one needs to be confirmed with a larger samp
 The evaluation of the risk uses a hypergraph theory model. The hypergraph model was chosen because it allows us to look at the strengths of connections between various factors and allows us to keep the person as an individual rather than classifying them into a group. There has been a rapid increase of the use of this model in biological systems, and this project aims to be able to apply it to public health as well.
 
     `,
+    img: `/images/BMIbycarb.png`,
+    img1: `/images/Fiber.png`,
+    img2: `/images/Protein.png`,
+    img3: `/images/B6.png`,
   citations: `
   “Diabetes Diet, Eating, & Physical Activity.” National Institute of Diabetes and Digestive and Kidney Diseases, U.S. Department of Health and Human Services, 1 Nov. 2016, www.niddk.nih.gov/health-information/diabetes/overview/diet-eating-physical-activity.
 
@@ -301,12 +324,17 @@ West, Kelly M, and John M Kalbfleisch. “Glucose Tolerance, Nutrition, and Diab
 },
 {
   model_name: 'Prostate Cancer',
-  div_width: '55%',
-  div_left: '45%',
+  div_width: '65%',
+  div_left: '35%',
   author: 'Raj Iyer',
   contact: 'rajiyer2012@gmail.com',
   h2_title: 'The Efficacy of Screening for Prostate Cancer at Different Ages',
   search_terms: {sex:'female',age:{low:15,high:45}},
+  img: `/images/HasProstateCancer.png`,
+  img1: `/images/HasScreening.png`,
+  img2: `/images/hasFalsePositive.png`,
+  img3: `/images/hasFalsePositive.png`,
+  img4: `/images/Cancer outcome.png`,
   text: `
   This project’s focus is modeling prostate cancer screening and outcomes. Prostate cancer screening, specifically the PSA test, is a controversial topic as the test used in screening is sensitive and may lead to overdiagnosis. It is often debated whether the potential of screening to save lives outweighs the harm it may cause with false positive diagnoses. Using statistics from various peer-reviewed sources, this model predicts if individuals will be diagnosed with prostate cancer, undergo prostate cancer screening, and if their screening would result in a false positive diagnosis. Whether a patient will get prostate cancer or undergo screening is predicted based off their race and age. If individuals have a false positive diagnosis, the model will further predict the outcome of prostate cancer treatment and if there will be any complications as a result of treatment.
 The obvious solution to reducing the amount of false positives would be to raise the age at which screening occurs. Raising the screening age away from 50 and closer to the average age of diagnosis, 65, could work. In general, those near 50 have a low probability of developing prostate cancer so removing the chance of a false positive may outweigh the risk of missing an actual prostate cancer diagnosis. However, raising the age is not that simple. There is no one size fits all solution to this since other factors, such as genetics/family history, play a large role in the development of prostate cancer. And since certain races are at a considerably higher risk for developing prostate cancer, some races could get away with starting screening much later than others.
@@ -319,6 +347,9 @@ While there is a lot to consider, the fact of the matter is that prostate cancer
   div_width: '55%',
   div_left: '45%',
   author: 'Sasanka Thupili',
+  h2_title: 'Breast Cancer Screening: Potential Negative Consequences',
+  img: '/images/breastcancer.png',
+  img_title: 'Breast Cancer Among all New Cancers by the CDC',
   notes: `
   Proposed UI
 Like Raj, I think that a map wouldn’t work as well for a visual. The main visual I can think of would be like his essentially. An important note is that within my code is columns denoting those who go in for screening, get successive screening, proceed to get annual screens along with columns denoting cancer detection, false positives, and false negatives within each set of screenings.
@@ -329,20 +360,17 @@ The group that goes for a second screening would have a subdivision exactly like
 There could be a summary page that indicates how many of each occurred, and whether overdiagnosis occurred (the false positives) and thus overtreatment occurred.
   `,
   contact: 'sasanka.thupili@gmail.com',
-  h2_title: 'The Efficacy of Screening for Prostate Cancer at Different Ages',
+  h2_title: 'The Efficacy of Screening for Breast Cancer at Different Ages',
   search_terms: {sex:'female',age:{low:15,high:45}},
   text: `
-  This project’s focus is modeling breast cancer screening and outcomes. Breast cancer screening is a controversial topic as the test used in screening is sensitive and may lead to overdiagnosis. It is often debated whether the potential of screening to save lives outweighs the harm it may cause with false positive diagnoses. Using statistics from various peer-reviewed sources, this model predicts if individuals will be diagnosed with breast cancer, undergo breast cancer screening, and if their screening would result in a false positive diagnosis. Whether a patient will get breast cancer or undergo screening is predicted based off their race and age. If individuals have a false positive diagnosis, the model will further predict the outcome of breast cancer treatment and if there will be any complications as a result of treatment.
-
+  As with various forms of cancer, screening for breast cancer can aid in early detection, monitoring of suspicious areas, and allow for attaining knowledge of one’s body. While there are benefits to partaking in screening and starting annual checkups, there are also drawbacks, primarily with the chance of obtaining a false positive or a false negative. As of now, the approximate annual percent of U.S. women with cancer is 12%, the rate of obtaining a false negative is 20%, meaning about one in five patients with breast cancer will not know from a screening that they have it; the rate of a false positive is approximately 10-12% for an initial screen (with some variance based on factors including breast size) with successive screenings allowing for double checking for those who attained a false positive, and unfortunately, a higher chance of a new false positive arising from other patients (Limitations, September 2018). All data regarding detection and false positive rates come from the Center of Disease Control (CDC) and the American Cancer Society (U.S., June 2018).
+  `,
+  text2: `
+  My project revolves around simulating screenings of women ages 40 and above in a hypothetical city in the R Studio program. Based on statistics specifying the proportion of certain demographics (i.e. uninsured vs. insured) that go in for screening, columns will be created denoting whether each woman was screened or didn’t go in, whether the woman actually had cancer or didn’t, whether it was correctly detected, a false negative, or a false positive, and if successive screening occurred or not. Each column will be created with R’s capacity to modify data tables based on a random number simulating the percent of each of the aforementioned conditions with the mutate, ifelse and sample commands. The visualization will denote each group of women (those with cancer and those without, the screenings they go for, and the obtaining of false positives and false negatives)
+  The simulation can then be used to examine proportions of patients harmed, helped, or unaffected by screenings. Possible expansions include forced additional screening on a known false positive/ false negative to see if the result could be corrected, examining the proportion saved by the information provided by their screenings, and perhaps examining how breast size specifically affects the false positive rate. The former two can be accomplished by similar methods to the above, the latter would be more qualitative and might require more concrete research on the topic.
   `,
   citations: ``
-},
-{
-  model_name: 'none',
-  h2_title: 'Modeled Sam Citizen',
-  div_width: '15%',
-  div_left: '85%'
-},
+}
 ];
 let retVals=models[index];
 if (index == 'names'){

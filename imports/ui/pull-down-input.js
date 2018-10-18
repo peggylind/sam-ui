@@ -114,7 +114,7 @@ export default class PullDown extends React.PureComponent {
               borderColor: this.state.samprops.allcolors[factor.factorColor].HEX,
               position:'relative',
               borderWidth: "3px", borderStyle:"dashed", height:"2em"}}>
-            {factor.factorName.substring(0,20)}
+            {factor.factorName.substring(0,24)}
             {this.state.changeColors &&
               <div>
 

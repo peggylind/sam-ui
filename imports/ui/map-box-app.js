@@ -89,10 +89,12 @@ export default class MapBox extends Component {
         }
       }
     componentDidMount(){
+
       //this.setState({geojsonsam:this.props.geojsonsam})
     }
 
     componentDidUpdate(prevProps, prevState) {
+      //console.log(JSON.stringify(this.props.samprops.catShow))
       if (this.props.geojsonsam != prevProps.geojsonsam){
         console.log(this.props.geojsonsam)
          this.setState({geojsonsam:this.props.geojsonsam})

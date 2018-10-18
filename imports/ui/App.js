@@ -52,10 +52,11 @@ const toShow = [{category: 'race', type: 'factor', factors: [{factorName:'white'
   {category: 'age', type: 'range', low: 0, high:120, factors:
     [{factorName:'low',factorColor:11},{factorName:'high',factorColor:10}],fnd:'',fnd_top_num:100,fnd_bottom_num:0},
   {category: 'educational_attainment', type: 'factor', factors: [{factorName:'High School Graduate',factorColor:3},{factorName:'Graduate or Professional Degree',factorColor:2},
-    {factorName:"Bachelor's Degree",factorColor:1},{factorName:"Associate's degree",factorColor:5},{factorName:"Some College, no degree",factorColor:5},
-    {factorName:"Less than 9th grade",factorColor:1},{factorName:"9th to 12th grade, no diploma",factorColor:5}],fnd:''},
+    {factorName:"Bachelor's Degree",factorColor:1},{factorName:"Associate's degree",factorColor:7},{factorName:"Some College, no degree",factorColor:5},
+    {factorName:"Less than 9th grade",factorColor:6},{factorName:"9th to 12th grade, no diploma",factorColor:10}],fnd:''},
   {category: 'employment', type: 'factor', factors: [{factorName:'Not in labor force',factorColor:3},{factorName:'Employed',factorColor:2},
     {factorName:'Unemployed',factorColor:1},{factorName:'In Armed Forces',factorColor:6}],fnd:''},
+  // {category: 'stresslevelincome', type: 'factor', factors: [{factorName:'yes',factorColor:5},{factorName:'no',factorColor:1}],fnd:''},
   // {category: 'quality_description', type: 'factor', factors: [{factorName:'Average',factorColor:3},{factorName:'Good',factorColor:2},
   //   {factorName:'Excellent',factorColor:1},{factorName:'Poor',factorColor:6},{factorName:"Superior",factorColor:1},{factorName:"Low",factorColor:5}],fnd:''},
   {category: 'disability', type: 'factor', factors: [{factorName:'No Disabilities',factorColor:3},{factorName:'With One Type of Disability',factorColor:2},
@@ -101,7 +102,7 @@ const calcStrokeWidth = (zoom) =>
 const calcRadiusScale = (zoom) =>
   (zoom *13) < 210 ? 216 - (zoom * 13) : 6;
 const calcOneOf = (zoom) =>
-  zoom > 12.7 ? 1 : zoom < 12 ? zoom > 11 ? 100 : 10 : 10;
+  zoom > 12.7 ? 1 : zoom < 12 ? zoom > 11 ? 100 : 10 : 1000;
 
 
 const samprops = { //have all decided with same logic??
@@ -115,6 +116,9 @@ const samprops = { //have all decided with same logic??
   age: 55,
   bottom_range: 0,
   top_range: 100,
+  educational_attainment: '',
+  stresslevelincome: '',
+  employment: '',
   longitude: -95.315,
   latitude: 29.75,
   zoom: firstzoom,
@@ -168,7 +172,7 @@ export default class App extends React.PureComponent {
               }
             }
          };
-         this.onMapChange = debounce(this.onMapChange, 200);
+         this.onMapChange = debounce(this.onMapChange, 1000);
          this.setToolInfo = debounce(this.setToolInfo, 200);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
@@ -302,8 +306,8 @@ export default class App extends React.PureComponent {
                 </span>
               </div>
               <div style={{position:"absolute",width:model_explanations(this.state.samprops.explainIndex).div_width,
-                            left:model_explanations(this.state.samprops.explainIndex).div_left,
-                            overflow: "auto",backgroundColor:"#f8f8ff",zIndex:"3"}}>
+                            left:model_explanations(this.state.samprops.explainIndex).div_left,height:"100%",
+                            overflow: "scroll",backgroundColor:"#f8f8ff",zIndex:"3"}}>
 
                 <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"4",borderRadius:"25px"}}>
 
@@ -314,11 +318,24 @@ export default class App extends React.PureComponent {
                   <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).text}</div>
                   {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/><br/></div>}
                   <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img} />
+
+                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img1} />
+                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img2} />
+                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img3} />
+                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img4} />
                   <p style={{textAlign:"center",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).img_title}</p>
                   <h3>{model_explanations(this.state.samprops.explainIndex).div2}</h3>
                   <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).text2}</div>
                   <h3>{model_explanations(this.state.samprops.explainIndex).div3}</h3>
                   <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).text3}</div>
+                {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/></div>}
+                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations}</div>
+                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations1}</div>
+                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations2}</div>
+                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations3}</div>
+                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations4}</div>
+                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations5}</div>
+
                 {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/></div>}
                   {this.state.toolTipInfo.text}
                   {this.state.toolTipInfo.info ?
