@@ -1,11 +1,11 @@
 library(jsonlite)
 library(tidyr)
 require("lazyeval")
-library(reshape2)
 
-library(rgdal)
+
 library(spdplyr)
-
+library(sf)
+library(geojsonio)
 
 
 #Takes a summary and converts it into json
@@ -41,28 +41,41 @@ creategeoJSONfromSummed <- function(summedup.df, organize_by, json.filename) {
     select(-id)
   
   #remove the NAs and collapse
-  t2 <- as.data.frame(apply(t1,2, na.omit))
+  t2 <- apply(t1,2, na.omit)
   #convert 
-  t3 <- apply(t2,2, function(x) strsplit(x, "_"))
+ #t3 <- apply(t2,2, function(x) strsplit(x, "_"))
   #save as json
  # t3 %>% jsonlite::toJSON(pretty = T) %>% writeLines(json.filename)
-  return(t3)
+  return(t2)
 }
-sf
-library(sf)
-library(geojsonsf)
+
+
+t1 <- creategeoJSONfromSummed(zip_summed_sam_race, "zip", "test.json")
+t2 <- creategeoJSONfromSummed(zip_summed_sam_race, "zip", "test.json")
+output <- data.frame(zip = colnames(t2))
+
+t3 <- t(t2)
+
+output$race <- t2[,1:ncol(t2)]
+t5 <- melt(t4)
+
+t3 <- t(t2)
+t3[[142]] <- NULL
+
 #read in all shapefiles
-zipshp <- readOGR(dsn = "USA_Zip_Code_Boundaries/Shapes/", layer = "zip_poly", verbose = FALSE)
+zipshp <- st_read(dsn = "USA_Zip_Code_Boundaries/Shapes/", layer = "zip_poly")
 
 #filter for zips in sam
-zip_in_sam <- zipshp %>% 
+sf_summed <- zipshp %>% 
   filter(ZIP_CODE  %in% zip_summed_sam_citizen$zip)
 
-#make into sf
-sf_summed <- st_as_sf(zip_in_sam)
-#convert sf to geojson
-geo <- sf_geojson(sf_summed)
-#write file
+#add zip summary data
+test <- merge(sf_summed, t3, by.x = "ZIP_CODE")
+
+#convert into geojson
+geo <- geojsonio::geojson_json(sf_summed[1, ], pretty = T)
+
+#write geojson file
 write(geo, "test4.geojson")
 
 
