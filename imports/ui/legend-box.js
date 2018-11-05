@@ -66,7 +66,7 @@ export default class LegendBox extends React.PureComponent {
           }
           <span style={boxButtonStyle}>
                   <button title="Toggle Selectors" onClick={this.handleClick}>
-                    {this.state.isBoxOpen ? 'Close' : 'Show'}
+                    {this.state.isBoxOpen ? '<' : '>'}
                   </button>
           </span>
 

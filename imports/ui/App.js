@@ -42,7 +42,7 @@ const toShow = [{category: 'race', pretty_name: 'race', type: 'factor', factors:
     {factorName:"Bachelor's Degree",factorColor:1},{factorName:"Associate's degree",factorColor:5},{factorName:"Some College, no degree",factorColor:5},
     {factorName:"Less than 9th grade",factorColor:1},{factorName:"9th to 12th grade, no diploma",factorColor:5}],fnd:''},
 
-  {category: 'racial_entropy_index', pretty_name: 'racialEI', type: 'range', low: -.01, high:-.13, factors:
+  {category: 'racial_entropy_index', pretty_name: 'racial entropy', type: 'range', low: -.01, high:-.13, factors:
     [{factorName:'low',factorColor:3},{factorName:'high',factorColor:6}],fnd:'',fnd_top_num:1000000,fnd_bottom_num:0},
   // {category: 'member', type: 'factor', factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2},
   //   {factorName:'Householder',factorColor:1},{factorName:'Wife',factorColor:6}],fnd:''},
@@ -106,7 +106,7 @@ const calcOneOf = (zoom) =>
 const samprops = { //have all decided with same logic??
   //racial_entropy_index: '',
   explainIndex: 0,
-  geojson_title: '',//'Super_Neighborhoods.geojson',// 'Harvey_Houston.geojson',
+  geojson_title: 'Super_Neighborhoods.geojson',// 'Harvey_Houston.geojson',
   limit: 40000,
   one_of: calcOneOf(firstzoom),
   member: "",

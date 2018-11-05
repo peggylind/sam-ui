@@ -147,13 +147,13 @@ const GeoMap = new GeoJsonLayer({
 //    getFillColor: [160, 160, 180, 200],
 //    getLineColor: d => colorToRGBArray(d.properties.color),
   getRadius: 100,
-  getLineWidth: 10,
+  getLineWidth: 100,
   getElevation: 30,
   onHover: ({object}) => this.setToolInfo(object),
 
   //getElevation: f => Math.sqrt(f.properties.valuePerSqm) * 10,
-  getFillColor: [0, 0, 0, 0],
-  getLineColor: [0, 0, 0, 255]
+  getFillColor: [255, 255, 255, 50],
+  getLineColor: [0, 0, 0]
   //lightSettings: LIGHT_SETTINGS,
 
 })
@@ -188,8 +188,8 @@ const ScatterMap = new ScatterplotLayer({
     //radiusScale: this.props.samprops.radiusScale,
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
-    onHover: ({object}) => this.setToolInfo(object),
-    onClick: ({object}) => this.setClick(object)
+    //onHover: ({object}) => this.setToolInfo(object),
+    onClick: ({object}) => this.setToolInfo(object) //,this.setClick(object)
   });
   const main_layers = [
      GeoMap,

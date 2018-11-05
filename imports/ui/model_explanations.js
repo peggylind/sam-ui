@@ -370,6 +370,10 @@ There could be a summary page that indicates how many of each occurred, and whet
   The simulation can then be used to examine proportions of patients harmed, helped, or unaffected by screenings. Possible expansions include forced additional screening on a known false positive/ false negative to see if the result could be corrected, examining the proportion saved by the information provided by their screenings, and perhaps examining how breast size specifically affects the false positive rate. The former two can be accomplished by similar methods to the above, the latter would be more qualitative and might require more concrete research on the topic.
   `,
   citations: ``
+},
+{
+  model_name: 'none',
+  div_width: '0%', //have to make it work for the hover
 }
 ];
 let retVals=models[index];

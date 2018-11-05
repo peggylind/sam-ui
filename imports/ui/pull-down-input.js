@@ -94,7 +94,7 @@ export default class PullDown extends React.PureComponent {
             defaultValue={this.state.samprops.toShow[this.state.samprops.categIndex].category}>
             {this.state.samprops.toShow.map((cat,k) => <option
               key={cat+k} value={this.state.samprops.toShow[k].category}>
-              {this.state.samprops.toShow[k].category.substring(0,15)}
+              {this.state.samprops.toShow[k].pretty_name.substring(0,15)}
               </option>)
             }
         </select>
@@ -126,7 +126,7 @@ export default class PullDown extends React.PureComponent {
             style={{backgroundColor:'#ffffff',fontSize:"1em",
               borderColor:'#ffffff',position:'relative',
               borderWidth: "3px", borderStyle:"solid", height:"2em"}}>
-              Show All Factors
+              show all {this.state.samprops.toShow[this.state.samprops.categIndex].pretty_name} factors
           </div>
 
           <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
