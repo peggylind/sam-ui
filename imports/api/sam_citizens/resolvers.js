@@ -54,7 +54,7 @@ export default {
     return await SamCitizens.find(
          qdb,
          {limit:args.limit}
-       );//.fetch();
+       ).fetch();
     }
   },
 
