@@ -95,21 +95,22 @@ function list4plots (plots) {
   return makePlotColors(plotList) //which is a list of objects from toShow
 }
 
-const firstzoom = 11.3;
+const firstzoom = 10.3;
 const calcOpacity = (zoom) => { return 1 - (zoom/25)};
 const calcStrokeWidth = (zoom) =>
   (zoom *1.3) < 22 ? 23 - (zoom * 1.3) : 1;
-const calcRadiusScale = (zoom) =>
-  (zoom *13) < 210 ? 216 - (zoom * 13) : 6;
+// const calcRadiusScale = (zoom) =>
+//   (zoom *13) < 210 ? 216 - (zoom * 13) : 6;
 const calcOneOf = (zoom) =>
-  zoom > 12.7 ? 1 : zoom < 12 ? zoom > 11 ? 100 : 10 : 1000;
+  zoom > 12.8 ? 1 : zoom > 12 ? 10 : zoom > 11 ? 100 : 1000;
+  //zoom > 12.7 ? 1 : zoom < 11 ? 1000: zoom > 11 ? 100 : 10;
 
 
 const samprops = { //have all decided with same logic??
   //racial_entropy_index: '',
   explainIndex: 0,
   geojson_title: '',//'Super_Neighborhoods.geojson',// 'Harvey_Houston.geojson',
-  limit: 20000,
+  limit: 40000,
   one_of: calcOneOf(firstzoom),
   member: "",
   race: "",
@@ -123,10 +124,10 @@ const samprops = { //have all decided with same logic??
   latitude: 29.75,
   zoom: firstzoom,
   opacity: calcOpacity(firstzoom),
-  radiusMinPixels: 1.12,
-  radiusMaxPixels: 1000,
+  radiusMinPixels: 2.5,
+  radiusMaxPixels: 100,
   strokeWidth: calcStrokeWidth(firstzoom),
-  radiusScale: calcRadiusScale(firstzoom),
+  //radiusScale: calcRadiusScale(firstzoom), //letting it do automatic
   outline: false,
   pickable: true,
   dist: 170000,
@@ -200,9 +201,11 @@ export default class App extends React.PureComponent {
   }
   onFactortoShow = function(e){
     var samprops = {...this.state.samprops}
+    var newr = 0;
     samprops.toShow.forEach(function(row,r){
       if(samprops.categIndex == r){ //if "all" is the factorName = '', then all will be returned
-        samprops[samprops.toShow[r].category] = e.factorName;
+        samprops[samprops.toShow[r].category] = e.factorName; //this writes it out to the args in resolver.js
+        samprops.toShow[r].fnd = e.factorName;
       }
     })
     this.setState({samprops});
@@ -234,12 +237,9 @@ export default class App extends React.PureComponent {
     samprops.longitude = mapstuff.longitude;
     samprops.zoom = mapstuff.zoom;
     samprops.dist = dist;
-    //samprops.radiusMaxPixels = 1000;
     samprops.opacity = calcOpacity(mapstuff.zoom);
     samprops.strokeWidth = calcStrokeWidth(mapstuff.zoom);
-    samprops.radiusScale = calcRadiusScale(mapstuff.zoom);
-    samprops.one_of = mapstuff.zoom > 13 ? 1 : mapstuff.zoom < 12 ? mapstuff.zoom < 10 ? 1000: 10 : 100;
-    //samprops.one_of = calcOneOf(mapstuff.zoom);
+    samprops.one_of = calcOneOf(mapstuff.zoom);
     this.setState({samprops});
   };
 

@@ -137,7 +137,7 @@ class SamDataForm extends React.PureComponent {
           </div>
 
           <div>
-      {this.state.plotOpen && (
+      {!this.state.plotOpen && (
       <div style={plotButtonStyle}>
               <button onClick={() => this.setState({ plotOpen: true, plotHeight: '75%', plotWidth: '75%' })}>
                 Show Plots

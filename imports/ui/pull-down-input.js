@@ -42,8 +42,6 @@ export default class PullDown extends React.PureComponent {
   }
   onFactortoShow(e){
     this.props.onFactortoShow(e)
-    // console.log('this is:', this);
-    // console.log(e)
   }
   onCatChange(event) { //if you take value of index, it does the map function differently - very odd
     this.props.onCatChange(event);
@@ -87,6 +85,10 @@ export default class PullDown extends React.PureComponent {
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
       <div title="Categories for display with colors" style={{fontSize:"2em"}}>Categories</div>
+      {this.state.samprops.toShow.map((category,ind) =>
+        category.fnd &&
+          <div style={{fontSize:"1.2em", backgroundColor:"white"}} key={ind}>{category.category.substring(0,20)} : {category.fnd.substring(0,20)}</div>
+      )}
       <div style={{fontSize:"2em"}}>
         <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
             defaultValue={this.state.samprops.toShow[this.state.samprops.categIndex].category}>
@@ -100,14 +102,9 @@ export default class PullDown extends React.PureComponent {
       </div>
 
       <div style={{fontSize:"1em", overflow:"scroll"}}>
-        {this.state.samprops.toShow[this.state.samprops.categIndex].fnd &&
-          <div style={{backgroundColor: '#ffffff',
-            borderColor: '#ffffff',position:'relative',
-            borderWidth: "3px", borderStyle:"dashed", height:"2em"}}>
-            {this.state.samprops.toShow[this.state.samprops.categIndex].fnd.substring(0,20)}
-          <p>Create subselection; if .fnd, then have it selected and new 'show all' button</p></div>}
 
         {this.state.samprops.toShow[this.state.samprops.categIndex].factors.map((factor,ind) =>
+          this.state.samprops.toShow[this.state.samprops.categIndex].fnd != factor.factorName &&
           <div key={ind}
             onClick={(e) => this.onFactortoShow(factor)}
             style={{backgroundColor: this.state.samprops.allcolors[factor.factorColor].HEX,

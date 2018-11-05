@@ -45,10 +45,6 @@ export default {
           // and some mechanism for obj with $gte, etc.
           }
         }
-        console.log(SamCitizens.find(
-             qdb,
-             {limit:args.limit}
-           ).count())
       }
 
     return await SamCitizens.find(

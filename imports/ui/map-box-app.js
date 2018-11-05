@@ -185,7 +185,7 @@ const ScatterMap = new ScatterplotLayer({
     radiusMinPixels: this.props.samprops.radiusMinPixels,
     radiusMaxPixels: this.props.samprops.radiusMaxPixels,
     strokeWidth: this.props.samprops.strokeWidth,
-    radiusScale: this.props.samprops.radiusScale,
+    //radiusScale: this.props.samprops.radiusScale,
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
     onHover: ({object}) => this.setToolInfo(object),
