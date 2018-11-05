@@ -101,15 +101,15 @@ export default class PullDown extends React.PureComponent {
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
 
-      <div style={{fontSize:"1em", overflow:"scroll"}}>
+      <div style={{fontSize:"1em", overflow:"auto"}}>
 
         {this.state.samprops.toShow[this.state.samprops.categIndex].factors.map((factor,ind) =>
           this.state.samprops.toShow[this.state.samprops.categIndex].fnd != factor.factorName &&
-          <div key={ind}
+          <button key={ind}
             onClick={(e) => this.onFactortoShow(factor)}
             style={{backgroundColor: this.state.samprops.allcolors[factor.factorColor].HEX,
               borderColor: this.state.samprops.allcolors[factor.factorColor].HEX,
-              position:'relative',
+              position:'relative',width:'100%',
               borderWidth: "3px", borderStyle:"dashed", height:"2em"}}>
             {factor.factorName.substring(0,24)}
             {this.state.changeColors &&
@@ -119,15 +119,15 @@ export default class PullDown extends React.PureComponent {
 
               </div>
             }
-          </div>)}
+          </button>)}
 
-          <div key="100"
+          <button key="100"
             onClick={(e) => this.onFactortoShow('')}
-            style={{backgroundColor:'#ffffff',fontSize:"1em",
-              borderColor:'#ffffff',position:'relative',
+            style={{backgroundColor:'#ffffff',
+              borderColor:'#ffffff',position:'relative',width:'100%',
               borderWidth: "3px", borderStyle:"solid", height:"2em"}}>
               show all {this.state.samprops.toShow[this.state.samprops.categIndex].pretty_name} factors
-          </div>
+          </button>
 
           <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>

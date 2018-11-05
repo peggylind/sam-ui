@@ -94,6 +94,7 @@ export default class MapBox extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+      console.log('map-box updated')
       //console.log(JSON.stringify(this.props.samprops.catShow))
       if (this.props.geojsonsam != prevProps.geojsonsam){
         console.log(this.props.geojsonsam)
@@ -108,7 +109,7 @@ export default class MapBox extends Component {
         // }
       };
       if (this.props.data != prevState.samdata && prevState.waiting == 0){
-        //console.log('set samdata again '+(Date.now()))
+        console.log('set samdata new '+(Date.now()))
         this.setState({samdata: this.props.data});
         if (this.props.samprops.limit < 10001){ //instead of 40001
           this.handlePopulationChange(this.props.samprops.limit+7000)
