@@ -87,7 +87,7 @@ export default class PullDown extends React.PureComponent {
       <div title="Categories for display with colors" style={{fontSize:"2em"}}>Categories</div>
       {this.state.samprops.toShow.map((category,ind) =>
         category.fnd &&
-          <div style={{fontSize:"1.2em", backgroundColor:"white"}} key={ind}>{category.category.substring(0,20)} : {category.fnd.substring(0,20)}</div>
+          <div style={{fontSize:"1.1em", backgroundColor:"white"}} key={ind}>{category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20)}</div>
       )}
       <div style={{fontSize:"2em"}}>
         <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
