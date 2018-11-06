@@ -17,7 +17,7 @@ export default class D3Scatter extends React.PureComponent {
     // console.log('so b4 setState')
   //  this.setState({scatterdata: this.props.data, waiting: 0});
   }
-  componentDidUpdate(props, prevState) {
+  componentDidUpdate(props, prevState) { //get from map-box
     // console.log('didUpdate'+prevState.waiting)
    if (props.data != prevState.data){
       this.setState({scatterdata: props.data}); //, waiting: 0});

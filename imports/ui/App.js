@@ -150,10 +150,11 @@ export default class App extends React.PureComponent {
        this.setToolInfo = this.setToolInfo.bind(this);
        this.setClick = this.setClick.bind(this);
        this.setExplanation = this.setExplanation.bind(this);
-
+       this.setWaiting = this.setWaiting.bind(this);
        //bbox is NW,NE,SE,SW
        const bbox = [[-95.91,28.93],[-94.67,28.93],[-94.67,30.47],[-95.91,30.47]];
        this.state = {
+         waiting: 1,
          toolTipInfo : {text:'Hover over features or sam citizens for info.'},
          //explanation : model_explanations()[samprops.explainIndex],//{text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
          samprops : samprops,
@@ -175,6 +176,9 @@ export default class App extends React.PureComponent {
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
   //this lets you step up on data in scatter and mapbox; not just slider
+  setWaiting = function(wait){
+    this.setState({waiting:wait})
+  };
   handlePopulationChange = function(limit) {
     var samprops = {...this.state.samprops}
     samprops.limit = limit;
@@ -193,7 +197,7 @@ export default class App extends React.PureComponent {
         samprops.catShow = row.category; //only used in map-box right now
         samprops.forColors = assignColors(samprops.toShow[r]);
       }
-    })
+    });
     this.setState({samprops});
   }
   onFactortoShow = function(e){
@@ -205,6 +209,7 @@ export default class App extends React.PureComponent {
         samprops.toShow[r].fnd = e.factorName;
       }
     })
+    this.setWaiting(1);
     this.setState({samprops});
   }
 
@@ -237,6 +242,7 @@ export default class App extends React.PureComponent {
     samprops.opacity = calcOpacity(mapstuff.zoom);
     samprops.strokeWidth = calcStrokeWidth(mapstuff.zoom);
     samprops.one_of = calcOneOf(mapstuff.zoom);
+    if(this.state.samprops.one_of != samprops.one_of){this.setWaiting(1)}
     this.setState({samprops});
   };
 
@@ -286,9 +292,18 @@ export default class App extends React.PureComponent {
   // }
 
   render(){
+    let patience = <div></div>
+    if (this.state.waiting){ patience =
+        <div style={{position:"absolute",zIndex:'10',width:"100%",height:"100%",backgroundColor:"#7f7f7f33"}}>
+        <div style={{marginTop:"30%", marginLeft:"30%", color:"green", fontSize:"2em"}}>
+        Loading Data ... thank you for your patience</div></div>
+      }
+
+
       //if (loading) return null;
       return (
           <div>
+          {patience}
               <div style={{position:"absolute",width:"100%",fontSize:"4em",textAlign:"center", zIndex:"3"}}>
                 <span title="Houston on a first name basis" style={{backgroundColor:"#7f7f7f33",borderRadius:"25px"}}>Sam City</span>
               </div>
@@ -377,6 +392,7 @@ export default class App extends React.PureComponent {
               onMapChange={this.onMapChange}
               setToolInfo={this.setToolInfo}
               setClick={this.setClick}
+              setWaiting={this.setWaiting}
               handlePopulationChange={this.handlePopulationChange}
               />
           </div>

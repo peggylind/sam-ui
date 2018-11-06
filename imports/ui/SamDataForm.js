@@ -75,7 +75,7 @@ class SamDataForm extends React.PureComponent {
          containerwidth: '8',
          containerheight: '4',
          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
-       }
+       };
    }
    async componentDidMount() {
      const retrn = await fetch('/json/'+this.props.samprops.geojson_title)
@@ -87,7 +87,8 @@ class SamDataForm extends React.PureComponent {
      // const jsonsam = await res.json()
      //this.setState({jsonsam})
    }
-   componentDidUpdate(prevProps, prevState) {
+   componentDidUpdate(newProps, prevState) {
+     console.log('samdataform did update')
      if(prevState.plotOpen && !prevState.plotOpen2){ //trying to get window to open first - might be able to keep it from reloading
        this.setState({plotOpen2:true})
      };
@@ -128,6 +129,7 @@ class SamDataForm extends React.PureComponent {
             setToolInfo={this.props.setToolInfo}
             handlePopulationChange={this.props.handlePopulationChange}
             setClick={this.props.setClick}
+            setWaiting={this.props.setWaiting}
             data={this.props.samcity}
             //data={this.props.samprops.zoom <10 ? this.state.jsonsam : this.props.samcity}
             geojsonsam={this.state.geojsonsam}
@@ -135,7 +137,6 @@ class SamDataForm extends React.PureComponent {
             samprops={this.props.samprops}
             />
           </div>
-
           <div>
       {!this.state.plotOpen && (
       <div style={plotButtonStyle}>
@@ -157,6 +158,7 @@ class SamDataForm extends React.PureComponent {
               setToolInfo={this.props.setToolInfo}
               handlePopulationChange={this.props.handlePopulationChange}
               setClick={this.props.setClick}
+              setWaiting={this.props.setWaiting}
               data={this.props.samcity}
               plotFactorColors={this.props.samprops.plotFactorColors}
               containerwidth={1200}

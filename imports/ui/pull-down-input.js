@@ -51,6 +51,7 @@ export default class PullDown extends React.PureComponent {
      this.props.onChangetoShow(showObj);
   };
   componentDidUpdate(prevProps, prevState) {
+    console.log('didUpdate in pull-down - set waiting here, and have it change interaction with everything')
     var samprops = {...this.state.samprops}
     if (this.props.samprops != prevProps.samprops){
       samprops.categIndex = this.props.samprops.categIndex;

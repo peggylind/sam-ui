@@ -38,6 +38,7 @@ export default class MapBox extends Component {
       this.SamControls = new SamMapControls();
       this.setToolInfo = this.props.setToolInfo;
       this.setClick = this.props.setClick;
+      this.setWaiting = this.props.setWaiting;
       this.handlePopulationChange = this.props.handlePopulationChange;
       this.state = {
             mapboxApiAccessToken: 'pk.eyJ1IjoibWRjaW90dGkiLCJhIjoiY2l1cWdyamw5MDAxcTJ2bGFmdzJxdGFyNyJ9.2b6aTKZNlT1_DEJiJ9l3hw',
@@ -89,14 +90,14 @@ export default class MapBox extends Component {
         }
       }
     componentDidMount(){
-
+      //console.log('componentDidMount')
       //this.setState({geojsonsam:this.props.geojsonsam})
-    }
+    };
 
-    componentDidUpdate(prevProps, prevState) {
-      console.log('map-box updated')
+    componentDidUpdate(newProps, prevState) {
+      console.log('map-box updated'+JSON.stringify(newProps.samprops.waiting)+JSON.stringify(prevState.waiting))
       //console.log(JSON.stringify(this.props.samprops.catShow))
-      if (this.props.geojsonsam != prevProps.geojsonsam){
+      if (this.props.geojsonsam != newProps.geojsonsam){
         console.log(this.props.geojsonsam)
          this.setState({geojsonsam:this.props.geojsonsam})
        };
@@ -104,6 +105,7 @@ export default class MapBox extends Component {
       //  this.setState({geojsonsam:this.props.geojsonsam})
         console.log('set samdata '+(Date.now()))
         this.setState({samdata: this.props.data, waiting: 0});
+        this.setWaiting(0);
         // if (this.props.samprops.limit < 10001){
         //   this.handlePopulationChange(this.props.samprops.limit+500)
         // }
@@ -111,9 +113,10 @@ export default class MapBox extends Component {
       if (this.props.data != prevState.samdata && prevState.waiting == 0){
         console.log('set samdata new '+(Date.now()))
         this.setState({samdata: this.props.data});
-        if (this.props.samprops.limit < 10001){ //instead of 40001
-          this.handlePopulationChange(this.props.samprops.limit+7000)
-        }
+        this.setWaiting(0);
+        // if (this.props.samprops.limit < 10001){ //instead of 40001
+        //   this.handlePopulationChange(this.props.samprops.limit+7000)
+        // }
       };
       if (this.state.viewport != prevState.viewport){
         var scale = getDistanceScales(this.state.viewport).metersPerPixel[0];
@@ -212,7 +215,7 @@ const ScatterMap = new ScatterplotLayer({
         mapControls={this.SamControls}
         onViewportChange={(viewport) => this.setState({viewport})}
       >
-      {patience}
+      
         <DeckGL
           {...this.state.viewport}
           initialViewState={this.state.viewport}
