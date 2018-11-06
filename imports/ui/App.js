@@ -107,7 +107,7 @@ const samprops = { //have all decided with same logic??
   //racial_entropy_index: '',
   explainIndex: 0,
   geojson_title: 'Super_Neighborhoods.geojson',// 'Harvey_Houston.geojson',
-  limit: 40000,
+  limit: 4000,
   one_of: calcOneOf(firstzoom),
   member: "",
   race: "",

@@ -49,7 +49,7 @@ export default class D3Scatter extends React.PureComponent {
 						marginTop={40}
 						x={d => parseInt(d['age'])}//isNaN(parseInt(d['age'])) ? 0 : parseInt(d['age']) }
 						y={d => parseInt(d['household_income'])} //isNaN(parseInt(d['household_income'])) ? 0 : parseInt(d['household_income']) }
-						r={d => 3}
+						r={d => 2}
 						fill={d => plotClass.factorcolors[d[plotClass.category]]}
             stroke={d=>"none"}
 						xDomain={[1, 100]}
