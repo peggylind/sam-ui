@@ -3,8 +3,7 @@ library(rjson)
 
 
 #mongod open on my local, but connect as needed
-#sam <- readRDS("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData/complete_sample_set2018-09-22.RDS")
-sam <- readRDS("/Users/dprice3/Downloads/OneDrive - University Of Houston/Social Network Hypergraphs/NewSAMData/sam_inserted_10_17.RDS")
+sam <- readRDS("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData/complete_sample_set2018-09-22.RDS")
 library(dplyr)
 
 test_sam <- sample_n(sam,100000)
@@ -55,11 +54,6 @@ for (row in 1:nrow(sam2insert)){
   SamCity$insert(rjson::toJSON(sam2insert[row,]))
 }
 Sys.time()
-
-SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1}')
-SamCity$index(add = '{"coords" : "2dsphere", "race" : 1}')
-Sys.time()
-
 #OR
 library(doParallel)
 no_cores <- detectCores()
@@ -67,11 +61,14 @@ cl <- makeCluster(no_cores-2)
 registerDoParallel(cl)
 Sys.time()
 foreach(row=1:nrow(sam2insert) %dopar%
-          SamCity$insert(rjson::toJSON(sam2insert[row,]))
+    SamCity$insert(rjson::toJSON(sam2insert[row,]))
 )
 Sys.time()
 stopCluster(cl)
 
+
+SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1}')
+Sys.time()
 
 #these don't work from mongolite, but do from mongo command line?
 SamCity$stats()
