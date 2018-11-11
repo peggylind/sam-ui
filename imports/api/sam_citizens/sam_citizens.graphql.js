@@ -1,6 +1,6 @@
 export default `\
 type SamCitizen {
-  _id: String!
+  _id: ID!
   individual_id: Int
   age: Int
   bracket_age: String

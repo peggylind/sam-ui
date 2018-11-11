@@ -4,61 +4,67 @@ import { graphql } from "react-apollo";
 import MapBox from "./map-box-app";
 import D3Scatter from "./d3-scatter";
 //import asyncComponent from "./asyncComponent";
-//import Sam20k from '../api/sam_citizens/sam_20k';
+
+//adding $age to query makes it fail with unexpected EOF??????
 
 const samQuery = gql`
   query SamCitizens(
-    $limit: Int,
-    $one_of: Int,
-    $member: String,
+    $_id: ID,
+    $age: Int,
+    $asthma: String,
+    $citizenship: String,
+    $coords: [Float],
+    $disability: String,
+    $dist: Float,
     $educational_attainment: String,
     $employment: String,
     $household_income: Int,
     $household_type: String,
+    $limit: Int,
+    $member: String,
+    $one_of: Int,
     $quality_description: String,
-    $asthma: String,
-    $disability: String,
-    $citizenship: String,
     $race: String,
-    $veteran_status: String,
-    $dist: Float,
     $racial_entropy_index: Float,
-    $coords: [Float]
+    $veteran_status: String
   ) {
     samcity(
-      limit: $limit,
-      one_of: $one_of,
-      member: $member,
-      educational_attainment: $educational_attainment,
-      employment: $employment,
-      disability: $disability,
-      household_income: $household_income,
-      household_type: $household_type,
-      quality_description: $quality_description,
+      _id: $_id,
+      age: $age,
       asthma: $asthma,
       citizenship: $citizenship,
-      race: $race,
-      age: $age,
-      veteran_status: $veteran_status,
-      racial_entropy_index: $racial_entropy_index,
+      coords: $coords,
+      disability: $disability,
       dist: $dist,
-      coords: $coords
+      educational_attainment: $educational_attainment,
+      employment: $employment,
+      household_income: $household_income,
+      household_type: $household_type,
+      limit: $limit,
+      member: $member,
+      one_of: $one_of,
+      quality_description: $quality_description,
+      race: $race,
+      racial_entropy_index: $racial_entropy_index,
+      veteran_status: $veteran_status
     ) {
       _id
-      member
-      race
       age
+      asthma
       citizenship
+      coords
+      disability
+      educational_attainment
       employment
       household_income
       household_type
-      quality_description
+      limit
+      member
       one_of
-      educational_attainment
+      quality_description
+      race
+      racial_entropy_index
       veteran_status
-      disability
-      asthma
-      coords
     }
   }
 `;
@@ -68,7 +74,7 @@ class SamDataForm extends React.PureComponent {
        super(props);
        this.plotcontain = React.createRef();
        this.state = {
-         plotOpen : false,  //plot stuff is just turned off at the button with a !
+         plotOpen : false,  //plot stuff is just turned off at the button with a ! inline
          plotOpen2 : false,
          plotWidth: '8%',
          plotHeight: '4%',
@@ -77,6 +83,7 @@ class SamDataForm extends React.PureComponent {
          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
        };
    }
+
    async componentDidMount() {
      const retrn = await fetch('/json/'+this.props.samprops.geojson_title)
      const geojsonsam = await retrn.json()
@@ -105,6 +112,7 @@ class SamDataForm extends React.PureComponent {
    //data={this.props.samprops.zoom <14 ? this.state.jsonsam : this.props.samcity}
    //how can we get them both as part of the same data stream, and not reloading when you do search on new data characteristics?
     render(){
+
       const plotStyle = {
         position: 'absolute',
         left: '20%',
@@ -131,6 +139,7 @@ class SamDataForm extends React.PureComponent {
             setClick={this.props.setClick}
             setWaiting={this.props.setWaiting}
             data={this.props.samcity}
+            returnColors = {this.returnColors}
             //data={this.props.samprops.zoom <10 ? this.state.jsonsam : this.props.samcity}
             geojsonsam={this.state.geojsonsam}
             mapprops={this.props.mapprops}
@@ -138,7 +147,7 @@ class SamDataForm extends React.PureComponent {
             />
           </div>
           <div>
-      {!this.state.plotOpen && (
+      {this.state.plotOpen && (
       <div style={plotButtonStyle}>
               <button onClick={() => this.setState({ plotOpen: true, plotHeight: '75%', plotWidth: '75%' })}>
                 Show Plots

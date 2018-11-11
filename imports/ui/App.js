@@ -10,6 +10,7 @@ import SamDataForm from './SamDataForm'; //change to just samdatamap??
 import Slide from './slider-input';
 import LegendBox from './legend-box';
 import {model_explanations} from "./model_explanations";
+import {categories} from "./categories"
 // var DASHlogo = require('/public/images/DASHlogo.png');
 // var UHLogo = require('/public/images/honors-the-honors-college-tertiary2.png');
 
@@ -35,31 +36,7 @@ const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color
 //tofind should be what would be inserted in the pipe - with limit always given?
 //tofind is used in SamDataForm to filter
 //rest is sent as part of gql to resolver and made into a request
-const toShow = [{category: 'race', pretty_name: 'race', type: 'factor', factors: [{factorName:'white',factorColor:3},{factorName:'asian',factorColor:2},
-    {factorName:'black',factorColor:1},{factorName:'hispanic',factorColor:5},{factorName:'other.race',factorColor:4},
-    {factorName:'multiracial',factorColor:0}],fnd:''},
-  {category: 'educational_attainment', pretty_name: 'education', type: 'factor', factors: [{factorName:'High School Graduate',factorColor:3},{factorName:'Graduate or Professional Degree',factorColor:2},
-    {factorName:"Bachelor's Degree",factorColor:1},{factorName:"Associate's degree",factorColor:5},{factorName:"Some College, no degree",factorColor:5},
-    {factorName:"Less than 9th grade",factorColor:1},{factorName:"9th to 12th grade, no diploma",factorColor:5}],fnd:''},
-
-  {category: 'racial_entropy_index', pretty_name: 'racial entropy', type: 'range', low: -.01, high:-.13, factors:
-    [{factorName:'low',factorColor:3},{factorName:'high',factorColor:6}],fnd:'',fnd_top_num:1000000,fnd_bottom_num:0},
-  // {category: 'member', type: 'factor', factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2},
-  //   {factorName:'Householder',factorColor:1},{factorName:'Wife',factorColor:6}],fnd:''},
-  {category: 'household_income', pretty_name: 'income', type: 'range', low: 30000, high:70000, factors:
-    [{factorName:'low',factorColor:5},{factorName:'high',factorColor:1}],fnd:'',fnd_top_num:1000000,fnd_bottom_num:0},
-  // {category: 'sex', type: 'factor', factors: [{factorName:'Male',factorColor:5},{factorName:'Female',factorColor:1}],fnd:''},
-  {category: 'age', pretty_name: 'age', type: 'range', low: 0, high:120, factors:
-    [{factorName:'low',factorColor:11},{factorName:'high',factorColor:10}],fnd:'',fnd_top_num:100,fnd_bottom_num:0},
-  {category: 'employment', pretty_name: 'employment', type: 'factor', factors: [{factorName:'Not in labor force',factorColor:3},{factorName:'Employed',factorColor:2},
-    {factorName:'Unemployed',factorColor:1},{factorName:'In Armed Forces',factorColor:6}],fnd:''},
-  // {category: 'stresslevelincome', type: 'factor', factors: [{factorName:'yes',factorColor:5},{factorName:'no',factorColor:1}],fnd:''},
-  // {category: 'quality_description', type: 'factor', factors: [{factorName:'Average',factorColor:3},{factorName:'Good',factorColor:2},
-  //   {factorName:'Excellent',factorColor:1},{factorName:'Poor',factorColor:6},{factorName:"Superior",factorColor:1},{factorName:"Low",factorColor:5}],fnd:''},
-  {category: 'disability', pretty_name: 'disability', type: 'factor', factors: [{factorName:'No Disabilities',factorColor:3},{factorName:'With One Type of Disability',factorColor:2},
-    {factorName:'With Two or More Types of Disabilities',factorColor:1}],fnd:''},
-  {category: 'veteran_status', pretty_name: 'veteran', type: 'factor', factors: [{factorName:'Nonveteran',factorColor:1},{factorName:'Veteran',factorColor:11}],fnd:''}
-];
+const toShow = categories([0,4,1,5]); //can order as pleased
 
 function assignColors (newColors) {
     let forColors = {};
@@ -107,7 +84,7 @@ const samprops = { //have all decided with same logic??
   //racial_entropy_index: '',
   explainIndex: 0,
   geojson_title: 'Super_Neighborhoods.geojson',// 'Harvey_Houston.geojson',
-  limit: 4000,
+  limit: 14000,
   one_of: calcOneOf(firstzoom),
   member: "",
   race: "",
@@ -232,7 +209,7 @@ export default class App extends React.PureComponent {
      this.setState({samprops});
   };
 
-  onMapChange = function(mapstuff,dist){
+  onMapChange = function(mapstuff,dist,height){ //height is used for normalizing for plot -- and can be used to make height of legendbox, too
     console.log("mapstuff"+JSON.stringify(mapstuff.zoom))
     var samprops = {...this.state.samprops}
     samprops.latitude = mapstuff.latitude;
@@ -267,7 +244,7 @@ export default class App extends React.PureComponent {
     toolTipInfo.info = info
     toolTipInfo.text = ''
     console.log(toolTipInfo)
-    console.log(toolTipInfo.account)
+    console.log(toolTipInfo.coords)
     this.setState({toolTipInfo})
   };
   setClick = function(info){
@@ -295,8 +272,8 @@ export default class App extends React.PureComponent {
     let patience = <div></div>
     if (this.state.waiting){ patience =
         <div style={{position:"absolute",zIndex:'10',width:"100%",height:"100%",backgroundColor:"#7f7f7f33"}}>
-        <div style={{marginTop:"30%", marginLeft:"30%", color:"green", fontSize:"2em"}}>
-        Loading Data ... thank you for your patience</div></div>
+        <div style={{marginTop:"30%", marginLeft:"3%", color:"green", fontSize:"2em",textAlign:"center"}}>
+        <div>Loading Data ... </div><div>thank you for your patience</div></div></div>
       }
 
 

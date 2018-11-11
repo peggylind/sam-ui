@@ -55,11 +55,12 @@ export default class MapBox extends Component {
   //      this.emitChangeDebounced = debounce(this.emitChange, 250);
       }
 
+
       returnColors (factor) {
         //do color array here for ranges - also in scatterdata
         //if "factor" is a string, then ...; else {
           //or have things saved on app.js that let us know how to do the interpolation?
-        // console.log('in ' +'this.props.samprops.forColors[factor]'+factor)
+        //console.log('in ' +'this.props.samprops.forColors[factor]'+typeof factor)
         if(this.props.samprops.toShow[this.props.samprops.categIndex].type == 'factor'){
           return this.props.samprops.forColors[factor]
         }else{
@@ -129,7 +130,7 @@ export default class MapBox extends Component {
         }else{
           var dist4search = worldWidth
         };
-        this.props.onMapChange(this.state.viewport,dist4search*1.8);
+        this.props.onMapChange(this.state.viewport,dist4search,worldHeight);
       };
     };
 
@@ -153,11 +154,11 @@ const GeoMap = new GeoJsonLayer({
   getRadius: 100,
   getLineWidth: 100,
   getElevation: 30,
-  onHover: ({object}) => this.setToolInfo(object),
-
+  //onHover: ({object}) => this.setToolInfo(object),
+  //autoHighlight: true,
   //getElevation: f => Math.sqrt(f.properties.valuePerSqm) * 10,
-  getFillColor: [255, 255, 255, 50],
-  getLineColor: [0, 0, 0]
+  getFillColor: [255, 255, 255, 255],
+  getLineColor: [255, 0, 0, 255]
   //lightSettings: LIGHT_SETTINGS,
 
 })
@@ -192,11 +193,12 @@ const ScatterMap = new ScatterplotLayer({
     //radiusScale: this.props.samprops.radiusScale,
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
-    //onHover: ({object}) => this.setToolInfo(object),
+    autoHighlight: true,
+    onHover: ({object}) => this.setToolInfo(object),
     onClick: ({object}) => this.setToolInfo(object) //,this.setClick(object)
   });
   const main_layers = [
-     GeoMap,
+     //GeoMap,
      ScatterMap
     //PointCloudMap
   ];
@@ -215,7 +217,7 @@ const ScatterMap = new ScatterplotLayer({
         mapControls={this.SamControls}
         onViewportChange={(viewport) => this.setState({viewport})}
       >
-      
+
         <DeckGL
           {...this.state.viewport}
           initialViewState={this.state.viewport}
