@@ -9,8 +9,6 @@ import D3Scatter from "./d3-scatter";
 
 const samQuery = gql`
   query SamCitizens(
-    $_id: ID,
-    $age: Int,
     $asthma: String,
     $citizenship: String,
     $coords: [Float],
@@ -29,7 +27,6 @@ const samQuery = gql`
     $veteran_status: String
   ) {
     samcity(
-      _id: $_id,
       age: $age,
       asthma: $asthma,
       citizenship: $citizenship,
@@ -48,7 +45,6 @@ const samQuery = gql`
       racial_entropy_index: $racial_entropy_index,
       veteran_status: $veteran_status
     ) {
-      _id
       age
       asthma
       citizenship

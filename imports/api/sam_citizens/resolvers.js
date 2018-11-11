@@ -1,5 +1,5 @@
 //import Description from "../descriptions/descriptions";
-import {DataLoader} from 'dataloader';
+//import {DataLoader} from 'dataloader';
 import SamCitizens from "./sam_citizens";
 //import Sam20k from "./sam_20k";
 
@@ -15,6 +15,10 @@ export default {
     //  //return await SamCitizens.rawCollection().aggregate(pipeline, options).fetch();
 
     async samcity(obj, args, { _id }){
+      console.log('args: '+args)
+      // console.log('parent: '+parent)
+      // console.log('context: '+context)
+      // console.log('info: '+info)
       var qdb = {
         coords: {
           $near: {
@@ -46,6 +50,8 @@ export default {
           }
         }
       }
+      // console.log('reafdasfsdfas: '+SamCitizens.find(
+      //      qdb).count())
 
     return await SamCitizens.find(
          qdb,
