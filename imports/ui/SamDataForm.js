@@ -80,18 +80,24 @@ const GetHousehold = ({ household_id }) => (
     notifyOnNetworkStatusChange
   >
   {({ loading, error, data, refetch, networkStatus }) => {
+      let house_header = <span></span>
       let house = <span></span>
       if (loading){house = <span>Loading</span>};
       if(data.samcity){
-        house = data.samcity.map((citizen, ind) => ( //should be able to get income, etc. off of ind == 0
-          <div key={ind+`citizen.age`}>{citizen.member} age: {citizen.age} employment: {citizen.employment}</div>
+        if(data.samcity.length>0){
+          house_header = <div>Household Income: ${data.samcity[0].household_income} and household_id:{data.samcity[0].household_id}</div>
+          house = data.samcity.map((citizen, ind) => ( //should be able to get income, etc. off of ind == 0
+            <div key={ind+`citizen.age`}>{citizen.member} age: {citizen.age} employment: {citizen.employment}</div>
         ))
-      console.log('honestly'+JSON.stringify(data.samcity[0]))}
+      console.log('honestly'+JSON.stringify(data.samcity[0]))}}
       //if (error) return `Error!: ${error}`;
 
       return (
         <div>
-          <div style={{position:"absolute",zIndex:"5",top:"5%",left:"10%",width:"90%",fontSize:"2em",backgroundColor:"#f8f8ff",}}>{house}</div>
+          <div style={{position:"absolute",zIndex:"5",top:"5%",left:"10%",width:"90%",fontSize:"2em",backgroundColor:"#f8f8ff",}}>
+          <div>{house_header}</div>
+          {house}
+          </div>
         </div>
       );
     }}
