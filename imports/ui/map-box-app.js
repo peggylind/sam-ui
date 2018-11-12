@@ -194,20 +194,15 @@ const ScatterMap = new ScatterplotLayer({
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
     autoHighlight: true,
-    onHover: ({object}) => this.setToolInfo(object),
-    onClick: ({object}) => this.setToolInfo(object) //,this.setClick(object)
+    //onHover: ({object}) => this.setToolInfo(object),
+    onClick: ({object}) => this.setClick(object)
   });
   const main_layers = [
      //GeoMap,
      ScatterMap
     //PointCloudMap
   ];
-    let patience = <div></div>
-    if (this.state.waiting){ patience =
-        <div style={{position:"absolute",
-        marginTop:"30%", marginLeft:"30%", color:"green", fontSize:"2em"}}>
-        Loading Data ... thank you for your patience</div>
-      }
+
 
     return (
       <ReactMapGL
@@ -217,7 +212,6 @@ const ScatterMap = new ScatterplotLayer({
         mapControls={this.SamControls}
         onViewportChange={(viewport) => this.setState({viewport})}
       >
-
         <DeckGL
           {...this.state.viewport}
           initialViewState={this.state.viewport}
@@ -225,7 +219,6 @@ const ScatterMap = new ScatterplotLayer({
           layers={main_layers}
           >
           </DeckGL>
-
       </ReactMapGL>
     );
   }

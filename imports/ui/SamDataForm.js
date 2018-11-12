@@ -18,6 +18,7 @@ const samQuery = gql`
     $dist: Float,
     $educational_attainment: String,
     $employment: String,
+    $household_id: ID,
     $household_income: Int,
     $household_type: String,
     $limit: Int,
@@ -39,6 +40,7 @@ const samQuery = gql`
       dist: $dist,
       educational_attainment: $educational_attainment,
       employment: $employment,
+      household_id: $household_id,
       household_income: $household_income,
       household_type: $household_type,
       limit: $limit,
@@ -57,6 +59,7 @@ const samQuery = gql`
       disability
       educational_attainment
       employment
+      household_id
       household_income
       household_type
       limit
@@ -69,27 +72,52 @@ const samQuery = gql`
     }
   }
 `;
-const ShowingSomeErrors = () => (
-  <Query query={samQuery} errorPolicy="all">
-    {({ error, data, loading }) => {
-      if (loading) return <span>loading...</span>
+
+const GetHousehold = ({ household_id }) => (
+  <Query
+    query={samQuery}
+    variables={{ household_id }}
+    notifyOnNetworkStatusChange
+  >
+  {({ loading, error, data, refetch, networkStatus }) => {
+      // if (networkStatus === 4) return "Loading!";
+      // if (loading) return null;
+      console.log('honestly'+JSON.stringify(data))
+      //if (error) return `Error!: ${error}`;
+
       return (
         <div>
-          <pre>Bad: {error.graphQLErrors.map(({ message }, i) => (
-            <span key={i}>{message}</span>
-          ))}
-          </pre>
+          <div style={{position:"absolute",zIndex:"5",top:"5%",left:"10%",width:"90%",fontSize:"2em",backgroundColor:"#f8f8ff",}}>{household_id}</div>
         </div>
-      )
+      );
     }}
   </Query>
-);
+)
+
+//for later, in debugging
+// const ShowingSomeErrors = () => (
+//   <Query query={samQuery} errorPolicy="all">
+//     {({ error, data, loading }) => {
+//       if (loading) return <span>loading...</span>
+//       return (
+//         <div>
+//           <pre>Bad: {error.graphQLErrors.map(({ message }, i) => (
+//             <span key={i}>{message}</span>
+//           ))}
+//           </pre>
+//         </div>
+//       )
+//     }}
+//   </Query>
+// );
 
 class SamDataForm extends React.PureComponent {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
        super(props);
-       this.plotcontain = React.createRef();
+       //this.plotcontain = React.createRef();
+       console.log('insamdata: '+this.props.samprops.household_id)
        this.state = {
+         household_id: this.props.samprops.household_id,
          plotOpen : false,  //plot stuff is just turned off at the button with a ! inline
          plotOpen2 : false,
          plotWidth: '8%',
@@ -111,7 +139,8 @@ class SamDataForm extends React.PureComponent {
      //this.setState({jsonsam})
    }
    componentDidUpdate(newProps, prevState) {
-     console.log('samdataform did update')
+     // console.log('prevState.household_id: '+prevState.household_id)
+     // console.log(newProps.samprops.household_id)
      if(prevState.plotOpen && !prevState.plotOpen2){ //trying to get window to open first - might be able to keep it from reloading
        this.setState({plotOpen2:true})
      };
@@ -119,11 +148,20 @@ class SamDataForm extends React.PureComponent {
        this.setState({plotOpen2:false})
      };
      //this was not setting in time for the plot
-     if (prevState.containerwidth != this.plotcontain.current.offsetWidth ||
-         prevState.containerheight != this.plotcontain.current.offsetHeight ){
-             this.setState({containerwidth:this.plotcontain.current.offsetWidth,
-             containerheight:this.plotcontain.current.offsetHeight});
-     };
+     // if (prevState.containerwidth != this.plotcontain.current.offsetWidth ||
+     //     prevState.containerheight != this.plotcontain.current.offsetHeight ){
+     //         this.setState({containerwidth:this.plotcontain.current.offsetWidth,
+     //         containerheight:this.plotcontain.current.offsetHeight});
+     // };
+   }
+   static getDerivedStateFromProps(props, state) {
+     if(props.samprops.household_id != state.household_id){
+       return{
+         household_id:props.samprops.household_id
+       }
+     }else{
+       return null
+     }
    }
    //data={this.props.samprops.zoom <14 ? this.state.jsonsam : this.props.samcity}
    //how can we get them both as part of the same data stream, and not reloading when you do search on new data characteristics?
@@ -147,6 +185,9 @@ class SamDataForm extends React.PureComponent {
 
     return (
       <div>
+      {this.state.household_id && (
+          <GetHousehold household_id={this.state.household_id} />
+        )}
         <div>
           <MapBox
             onMapChange={this.props.onMapChange}
@@ -162,39 +203,43 @@ class SamDataForm extends React.PureComponent {
             samprops={this.props.samprops}
             />
           </div>
-          <ShowingSomeErrors style={{position:"absolute",zIndex:"20",textAlign:"center"}}/>
-          <div>
 
-      {this.state.plotOpen && (
-      <div style={plotButtonStyle}>
-              <button onClick={() => this.setState({ plotOpen: true, plotHeight: '75%', plotWidth: '75%' })}>
-                Show Plots
-              </button>
-      </div>)}
-      {this.state.plotOpen && (
-        <div style={plotButtonStyle}>
-                <button onClick={() => this.setState({ plotOpen: false, plotHeight: '4%', plotWidth: '8%' })}>
-                  Hide Plots
-                </button>
+
         </div>
-      )}
-      <div style={plotStyle} ref={this.plotcontain}>
-      {this.state.plotOpen && (
-          <div id="plotcontainer">
-          <D3Scatter
-              setToolInfo={this.props.setToolInfo}
-              handlePopulationChange={this.props.handlePopulationChange}
-              setClick={this.props.setClick}
-              setWaiting={this.props.setWaiting}
-              data={this.props.samcity}
-              plotFactorColors={this.props.samprops.plotFactorColors}
-              containerwidth={1200}
-              containerheight={600}
-          /></div>
-        )}
-        </div>
-        </div>
-    </div>
+
+      //  <div>
+
+
+      // {this.state.plotOpen && (
+      // <div style={plotButtonStyle}>
+      //         <button onClick={() => this.setState({ plotOpen: true, plotHeight: '75%', plotWidth: '75%' })}>
+      //           Show Plots
+      //         </button>
+      // </div>)}
+      // {this.state.plotOpen && (
+      //   <div style={plotButtonStyle}>
+      //           <button onClick={() => this.setState({ plotOpen: false, plotHeight: '4%', plotWidth: '8%' })}>
+      //             Hide Plots
+      //           </button>
+      //   </div>
+      // )}
+      // <div style={plotStyle} ref={this.plotcontain}>
+      // {this.state.plotOpen && (
+      //     <div id="plotcontainer">
+      //     <D3Scatter
+      //         setToolInfo={this.props.setToolInfo}
+      //         handlePopulationChange={this.props.handlePopulationChange}
+      //         setClick={this.props.setClick}
+      //         setWaiting={this.props.setWaiting}
+      //         data={this.props.samcity}
+      //         plotFactorColors={this.props.samprops.plotFactorColors}
+      //         containerwidth={1200}
+      //         containerheight={600}
+      //     /></div>
+      //   )}
+      //  </div>
+    //  </div>
+    //</div>
   )
 };
 };
@@ -204,18 +249,18 @@ export default graphql(samQuery,
   {
     options: props => ({
       variables: {
-        member: props.samprops.member,
-        race: props.samprops.race,
         age: props.samprops.age,
+        bottom_range: props.samprops.bottom_range,
+        coords: [props.samprops.longitude,props.samprops.latitude] || [-95.35,29.75],
+        dist: props.samprops.dist,
         educational_attainment: props.samprops.educational_attainment,
         employment: props.samprops.employment,
-        stresslevelincome: props.samprops.stresslevelincome,
-        dist: props.samprops.dist,
         limit:  props.samprops.limit,
-        bottom_range: props.samprops.bottom_range,
-        top_range: props.samprops.top_range,
+        member: props.samprops.member,
         one_of: props.samprops.one_of,
-        coords: [props.samprops.longitude,props.samprops.latitude] || [-95.35,29.75]
+        race: props.samprops.race,
+        stresslevelincome: props.samprops.stresslevelincome,
+        top_range: props.samprops.top_range
       }
     }),
     props: ({ data }) => ({ ...data })

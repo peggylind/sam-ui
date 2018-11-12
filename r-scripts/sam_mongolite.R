@@ -68,6 +68,7 @@ stopCluster(cl)
 
 
 SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1}')
+SamCity$index(add = '{"coords" : "2dsphere", "household_id" : -1}')
 Sys.time()
 
 #these don't work from mongolite, but do from mongo command line?

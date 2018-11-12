@@ -28,13 +28,20 @@ import App from "../../ui/App";
 //   }));
 //   return forward(operation);
 // });
-
+const cache = new InMemoryCache({
+  cacheRedirects: {
+    Query: {
+      samcity: (_, args, { getCacheKey }) =>
+        getCacheKey({ __typename: 'SamCitizen', id: args.household_id }) //or should I make a SamHouse type??? https://www.apollographql.com/docs/react/advanced/caching.html#cacheRedirect
+    },
+  },
+});
 
 const client = new ApolloClient({
 //  uri: '/graphql',
 //  link: from([authLink, httpLink]),
   link: new DDPLink(),
-  cache: new InMemoryCache()
+  cache
 });
 // const client = new ApolloClient({
 //   uri: '/graphql',

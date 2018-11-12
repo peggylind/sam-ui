@@ -1,6 +1,4 @@
 import React, {Component} from "react";
-// import gql from "graphql-tag";
-// import { graphql } from "react-apollo";
 import RegisterForm from "./RegisterForm";
 import LoginForm from "./LoginForm";
 //import SidePane from "./side-pane"; //would liftup twice for components under SidePane
@@ -86,11 +84,12 @@ const samprops = { //have all decided with same logic??
   geojson_title: 'Super_Neighborhoods.geojson',// 'Harvey_Houston.geojson',
   limit: 14000,
   one_of: calcOneOf(firstzoom),
-  member: "",
-  race: "",
+  // member: "",
+  // race: "",
   age: 55,
   bottom_range: 0,
   top_range: 100,
+  dist: 170000,
   educational_attainment: '',
   stresslevelincome: '',
   employment: '',
@@ -104,7 +103,7 @@ const samprops = { //have all decided with same logic??
   //radiusScale: calcRadiusScale(firstzoom), //letting it do automatic
   outline: false,
   pickable: true,
-  dist: 170000,
+
   allcolors: allcolors,
   toShow: toShow,
   forColors: assignColors(toShow[0]),
@@ -244,16 +243,16 @@ export default class App extends React.PureComponent {
     toolTipInfo.info = info
     toolTipInfo.text = ''
     console.log(toolTipInfo)
-    console.log(toolTipInfo.coords)
     this.setState({toolTipInfo})
   };
   setClick = function(info){
     var toolTipInfo = {...this.state.toolTipInfo}
     toolTipInfo.info = info
     toolTipInfo.text = ''
-    console.log(toolTipInfo)
-    console.log('toolTipInfo.account')
-    this.setState({toolTipInfo})
+    var samprops = {...this.state.samprops}
+    console.log('in App'+info.household_id)
+    samprops.household_id = info.household_id
+    this.setState({toolTipInfo,samprops})
   };
   formatDollars = function(number){
     if (number!=undefined){
@@ -299,7 +298,6 @@ export default class App extends React.PureComponent {
                             overflow: "scroll",backgroundColor:"#f8f8ff",zIndex:"3"}}>
 
                 <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"4",borderRadius:"25px"}}>
-
                 {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/></div>}
                   <h2 style={{textAlign:"center"}}>{model_explanations(this.state.samprops.explainIndex).h2_title}</h2>
                   <div style={{textAlign:"center",fontWeight: "bold"}}>{model_explanations(this.state.samprops.explainIndex).author}</div>
@@ -331,6 +329,8 @@ export default class App extends React.PureComponent {
                     <div style={{position:"relative"}}>
                       {this.state.toolTipInfo.info.age != "NA" & this.state.toolTipInfo.info.age != ""   &&
                         <div> Age -  {this.state.toolTipInfo.info.age} </div>}
+                      {this.state.toolTipInfo.info.household_id != "NA" & this.state.toolTipInfo.info.household_id != ""   &&
+                        <div> household_id -  {this.state.toolTipInfo.info.household_id} </div>}
                       {this.state.toolTipInfo.info.citizenship != "NA" & this.state.toolTipInfo.info.citizenship != "" &&
                         <div> Citizen -  {this.state.toolTipInfo.info.citizenship} </div>}
                       {this.state.toolTipInfo.info.educational_attainment != "NA" & this.state.toolTipInfo.info.educational_attainment != "" &&

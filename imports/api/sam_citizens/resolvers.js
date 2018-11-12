@@ -26,17 +26,21 @@ export default {
               type: "Point" ,
               coordinates: args.coords
             },
-            $maxDistance: args.dist, //in meters
-            $minDistance: 10
+            $maxDistance: args.dist//, //in meters
+            //$minDistance: 10
           }
         },
         one_of:{$gte : args.one_of},
       };
-      const factor_vars = ['race','member','citizenship',
+      const factor_vars = ['household_id', //id isn't really a factor, but process same way
+        'race','member','citizenship',
         'employment','quality_description','educational_attainment',
         'veteran_status','disability','asthma'];
       const range_vars = ['household_income','age']; //finish later
       for (var arg in args){
+        // if(arg=='household_id'){
+        //   qdb[arg]
+        // }
         if(factor_vars.indexOf(arg) >=0){
           if(args[arg]){
             console.log(args[arg])
@@ -51,8 +55,8 @@ export default {
           }
         }
       }
-      // console.log('reafdasfsdfas: '+SamCitizens.find(
-      //      qdb).count())
+      console.log('reafdasfsdfas: '+SamCitizens.find(
+           qdb).count())
 
     return await SamCitizens.find(
          qdb,
