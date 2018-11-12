@@ -15,10 +15,14 @@ const typeDefs = [UsersSchema, samSchemas];
 
 const resolvers = merge(UsersResolvers, samResolvers);
 
+const logger = { log: e => console.log(e) }
 
 const schema = makeExecutableSchema({
   typeDefs,
-  resolvers
+  resolvers,
+  logger,
+  allowUndefinedInResolve:true, //should throw more errors for debugging
+  allowResolversNotInSchema:false //turn off later; default is false - with true it shows too many errors to process; everything is undefined in the resolve...
 });
 
 setup({

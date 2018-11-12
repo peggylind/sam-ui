@@ -3,6 +3,7 @@ type SamCitizen {
   _id: ID!
   individual_id: Int
   age: Int
+  bottom_range: Int
   bracket_age: String
   asthma: String
   citizenship: String
@@ -24,6 +25,7 @@ type SamCitizen {
   race: String
   sex: String
   size: Int
+  top_range: Int
   veteran_status: String
 }
 

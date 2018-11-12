@@ -12,6 +12,9 @@ import { DDPLink } from 'meteor/swydo:ddp-apollo';
 
 import App from "../../ui/App";
 
+//to consider: there's ways of putting context into the client:
+//https://www.apollographql.com/docs/react/api/react-apollo.html
+
 // const httpLink = new HttpLink({
 //   uri: Meteor.absoluteUrl("graphql")
 // });

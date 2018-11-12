@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import gql from "graphql-tag";
-import { graphql } from "react-apollo";
+import { graphql, Query } from "react-apollo";
 import MapBox from "./map-box-app";
 import D3Scatter from "./d3-scatter";
 //import asyncComponent from "./asyncComponent";
@@ -9,7 +9,9 @@ import D3Scatter from "./d3-scatter";
 
 const samQuery = gql`
   query SamCitizens(
+    $age: Int,
     $asthma: String,
+    $bottom_range: Int,
     $citizenship: String,
     $coords: [Float],
     $disability: String,
@@ -24,11 +26,13 @@ const samQuery = gql`
     $quality_description: String,
     $race: String,
     $racial_entropy_index: Float,
+    $top_range: Int,
     $veteran_status: String
   ) {
     samcity(
       age: $age,
       asthma: $asthma,
+      bottom_range: $bottom_range
       citizenship: $citizenship,
       coords: $coords,
       disability: $disability,
@@ -43,6 +47,7 @@ const samQuery = gql`
       quality_description: $quality_description,
       race: $race,
       racial_entropy_index: $racial_entropy_index,
+      top_range: $top_range,
       veteran_status: $veteran_status
     ) {
       age
@@ -64,6 +69,21 @@ const samQuery = gql`
     }
   }
 `;
+const ShowingSomeErrors = () => (
+  <Query query={samQuery} errorPolicy="all">
+    {({ error, data, loading }) => {
+      if (loading) return <span>loading...</span>
+      return (
+        <div>
+          <pre>Bad: {error.graphQLErrors.map(({ message }, i) => (
+            <span key={i}>{message}</span>
+          ))}
+          </pre>
+        </div>
+      )
+    }}
+  </Query>
+);
 
 class SamDataForm extends React.PureComponent {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
@@ -142,7 +162,9 @@ class SamDataForm extends React.PureComponent {
             samprops={this.props.samprops}
             />
           </div>
+          <ShowingSomeErrors style={{position:"absolute",zIndex:"20",textAlign:"center"}}/>
           <div>
+
       {this.state.plotOpen && (
       <div style={plotButtonStyle}>
               <button onClick={() => this.setState({ plotOpen: true, plotHeight: '75%', plotWidth: '75%' })}>

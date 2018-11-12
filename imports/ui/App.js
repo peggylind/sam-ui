@@ -76,7 +76,7 @@ const calcStrokeWidth = (zoom) =>
 // const calcRadiusScale = (zoom) =>
 //   (zoom *13) < 210 ? 216 - (zoom * 13) : 6;
 const calcOneOf = (zoom) =>
-  zoom > 12.8 ? 1 : zoom > 12 ? 10 : zoom > 11 ? 100 : 1000;
+  zoom > 13.3 ? 1 : zoom > 12.2 ? 10 : zoom > 11 ? 100 : 1000;
   //zoom > 12.7 ? 1 : zoom < 11 ? 1000: zoom > 11 ? 100 : 10;
 
 

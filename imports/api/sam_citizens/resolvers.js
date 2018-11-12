@@ -15,7 +15,7 @@ export default {
     //  //return await SamCitizens.rawCollection().aggregate(pipeline, options).fetch();
 
     async samcity(obj, args, { _id }){
-      console.log('args: '+args)
+      console.log('args: '+JSON.stringify(args))
       // console.log('parent: '+parent)
       // console.log('context: '+context)
       // console.log('info: '+info)
@@ -45,7 +45,8 @@ export default {
         }
         if(range_vars.indexOf(arg) >=0){
           if(args[arg]){
-            qdb[arg] = {$gte : args['bottom_range'],$lte : args['top_range']};
+            console.log(args['bottom_range'])
+            //qdb[arg] = {$gte : args['bottom_range'],$lte : args['top_range']};
           // and some mechanism for obj with $gte, etc.
           }
         }
