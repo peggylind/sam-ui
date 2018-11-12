@@ -32,28 +32,28 @@ export default {
         },
         one_of:{$gte : args.one_of},
       };
-      const factor_vars = ['household_id', //id isn't really a factor, but process same way
+      const factor_vars = [//'household_id', //id isn't really a factor, but process same way
         'race','member','citizenship',
         'employment','quality_description','educational_attainment',
         'veteran_status','disability','asthma'];
       const range_vars = ['household_income','age']; //finish later
       for (var arg in args){
-        // if(arg=='household_id'){
-        //   qdb[arg]
-        // }
+        if(arg=='household_id'){
+          qdb = {}
+          qdb[arg] = parseInt(args[arg])
+        };
         if(factor_vars.indexOf(arg) >=0){
           if(args[arg]){
-            console.log(args[arg])
             qdb[arg] = args[arg];
           }
-        }
+        };
         if(range_vars.indexOf(arg) >=0){
           if(args[arg]){
             console.log(args['bottom_range'])
             //qdb[arg] = {$gte : args['bottom_range'],$lte : args['top_range']};
           // and some mechanism for obj with $gte, etc.
           }
-        }
+        };
       }
       console.log('reafdasfsdfas: '+SamCitizens.find(
            qdb).count())
