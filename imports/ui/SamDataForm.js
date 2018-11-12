@@ -85,7 +85,7 @@ const GetHousehold = ({ household_id }) => (
       if (loading){house = <span>Loading</span>};
       if(data.samcity){
         if(data.samcity.length>0){
-          house_header = <div>Household Income: ${data.samcity[0].household_income} and household_id:{data.samcity[0].household_id}</div>
+          house_header = <div><div style={{fontSize:"2em",textAlign:"center"}}>Household Characteristics</div><div>Household Income: ${data.samcity[0].household_income} and household_id:{data.samcity[0].household_id}</div><hr></hr></div>
           house = data.samcity.map((citizen, ind) => ( //should be able to get income, etc. off of ind == 0
             <div key={ind+`citizen.age`}>{citizen.member} age: {citizen.age} employment: {citizen.employment}</div>
         ))
@@ -94,8 +94,8 @@ const GetHousehold = ({ household_id }) => (
 
       return (
         <div>
-          <div style={{position:"absolute",zIndex:"5",top:"5%",left:"10%",width:"90%",fontSize:"2em",backgroundColor:"#f8f8ff",}}>
-          <div>{house_header}</div>
+          <div style={{position:"absolute",zIndex:"5",top:"15%",left:"20%",width:"50%",fontSize:"1.2em",backgroundColor:"#f8f8ff",}}>
+          {house_header}
           {house}
           </div>
         </div>
