@@ -65,6 +65,15 @@ export default {
     }
   },
 
+  FloatwNA : {
+    __parseLiteral(ast) {
+        if (ast.kind === Kind.FLOAT) {
+          return parseFloat(ast.value); // ast value is always in string format
+        }
+        return null;
+      }
+  },
+
   SamCitizen: {
   },
 

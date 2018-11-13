@@ -21,6 +21,13 @@ const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
   logger,
+  formatError: error => {
+    console.log(error);
+    return new Error('Internal server error');
+    // Or, you can delete the exception information
+    // delete error.extensions.exception;
+    // return error;
+  },
   allowUndefinedInResolve:true, //should throw more errors for debugging
   allowResolversNotInSchema:false //turn off later; default is false - with true it shows too many errors to process; everything is undefined in the resolve...
 });

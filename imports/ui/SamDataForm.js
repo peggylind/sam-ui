@@ -6,11 +6,13 @@ import D3Scatter from "./d3-scatter";
 //import asyncComponent from "./asyncComponent";
 
 //adding $age to query makes it fail with unexpected EOF??????
-
+//if thesee don't match type coming from mongo, it just dies without an error!
 const samQuery = gql`
   query SamCitizens(
     $age: Int,
     $asthma: String,
+    $autism_by_CRH: String,
+    $autism_by_maternal_age: String,
     $bottom_range: Int,
     $citizenship: String,
     $coords: [Float],
@@ -22,17 +24,30 @@ const samQuery = gql`
     $household_income: Int,
     $household_type: String,
     $limit: Int,
+    $loc_num: String,
+    $loc_name: String,
+    $lowbirthweightbyrace: String,
     $member: String,
+    $nativity: String,
     $one_of: Int,
+    $pregnant: String,
+    $prenatal_first_tri: String,
     $quality_description: String,
     $race: String,
     $racial_entropy_index: Float,
+    $stresslevelincome: FloatwNA,
+    $stresslevelrace: FloatwNA,
     $top_range: Int,
-    $veteran_status: String
+    $veteran_status: String,
+    $zip: String,
+    $zip_education_entropy_index: Float,
+    $zip_racial_entropy_index: Float
   ) {
     samcity(
       age: $age,
       asthma: $asthma,
+      autism_by_CRH: $autism_by_CRH,
+      autism_by_maternal_age: $autism_by_maternal_age,
       bottom_range: $bottom_range
       citizenship: $citizenship,
       coords: $coords,
@@ -44,16 +59,29 @@ const samQuery = gql`
       household_income: $household_income,
       household_type: $household_type,
       limit: $limit,
+      loc_num: $loc_num,
+      loc_name: $loc_name,
+      lowbirthweightbyrace: $lowbirthweightbyrace,
       member: $member,
+      nativity: $nativity,
       one_of: $one_of,
+      pregnant: $pregnant,
+      prenatal_first_tri: $prenatal_first_tri,
       quality_description: $quality_description,
       race: $race,
       racial_entropy_index: $racial_entropy_index,
+      stresslevelincome: $stresslevelincome,
+      stresslevelrace: $stresslevelrace,
       top_range: $top_range,
       veteran_status: $veteran_status
+      zip: $zip
+      zip_education_entropy_index: $zip_education_entropy_index
+      zip_racial_entropy_index: $zip_racial_entropy_index
     ) {
       age
       asthma
+      autism_by_CRH
+      autism_by_maternal_age
       citizenship
       coords
       disability
@@ -63,16 +91,28 @@ const samQuery = gql`
       household_income
       household_type
       limit
+      loc_num
+      loc_name
+      lowbirthweightbyrace
       member
+      nativity
       one_of
+      pregnant
+      prenatal_first_tri
       quality_description
       race
       racial_entropy_index
+      stresslevelincome
+      stresslevelrace
       veteran_status
+      zip
+      zip_education_entropy_index
+      zip_racial_entropy_index
     }
   }
 `;
 
+//https://www.howtographql.com/ --lots more to use with new graphql 2.1 features.
 const GetHousehold = ({ household_id }) => (
   <Query
     query={samQuery}
@@ -81,22 +121,46 @@ const GetHousehold = ({ household_id }) => (
   >
   {({ loading, error, data, refetch, networkStatus }) => {
       let house_header = <span></span>
+      let house_header2 = <span></span>
+      let house_title = <span></span>
       let house = <span></span>
-      if (loading){house = <span>Loading</span>};
+      let hr = <span></span>
+      let ldg = <span></span>  //copying patience from App.js
+      if (loading){
+        ldg =
+              <div style={{position:"absolute",zIndex:'10',width:"100%",height:"100%",backgroundColor:"#7f7f7f33"}}>
+              <div style={{marginTop:"30%", marginLeft:"3%", color:"green", fontSize:"2em",textAlign:"center"}}>
+              <div>Loading Data ... </div><div>thank you for your patience</div></div></div>
+        //house = <span>Loading</span>
+      }else{
+        ldg = <span></span>
+        console.log('how to call setWaiting???')};
       if(data.samcity){
         if(data.samcity.length>0){
-          house_header = <div><div style={{fontSize:"2em",textAlign:"center"}}>Household Characteristics</div><div>Household Income: ${data.samcity[0].household_income} and household_id:{data.samcity[0].household_id}</div><hr></hr></div>
-          house = data.samcity.map((citizen, ind) => ( //should be able to get income, etc. off of ind == 0
-            <div key={ind+`citizen.age`}>{citizen.member} age: {citizen.age} employment: {citizen.employment}</div>
+          let loc_name = data.samcity[0].loc_name.charAt(0).toUpperCase() + data.samcity[0].loc_name.slice(1).toLowerCase()
+          hr = <hr></hr>
+          house_header = <div style={{fontSize:"1.8em",textAlign:"center"}}>Household Characteristics</div>
+          house_header2 = <div>Household Income: ${data.samcity[0].household_income}, HCAD quality of housing: {data.samcity[0].quality_description}, and household_id:{data.samcity[0].household_id}</div>
+          house_title = <div>This is not real data, but represents a plausible household for {data.samcity[0].loc_num} {loc_name}, TX {data.samcity[0].zip} based on census data.</div>
+          house = data.samcity.map((citizen, ind) => (
+            <div key={ind+"cit"}><div>{citizen.member} age: {citizen.age} employment: {citizen.employment} nativity: {citizen.nativity}</div>
+            <div>need second .map with categories that are searchable in PullDown</div></div>
         ))
-      console.log('honestly'+JSON.stringify(data.samcity[0]))}}
+      }}
       //if (error) return `Error!: ${error}`;
 
       return (
         <div>
-          <div style={{position:"absolute",zIndex:"5",top:"15%",left:"20%",width:"50%",fontSize:"1.2em",backgroundColor:"#f8f8ff",}}>
+        {ldg}
+          <div style={{position:"absolute",zIndex:"5",top:"15%",left:"20%",width:"50%",fontSize:"1.2em",backgroundColor:"#f8f8ff"}}>
           {house_header}
+          {hr}
+          {house_title}
+          {hr}
+          {house_header2}
+          {hr}
           {house}
+          {hr}
           </div>
         </div>
       );
@@ -125,9 +189,10 @@ class SamDataForm extends React.PureComponent {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
        super(props);
        //this.plotcontain = React.createRef();
-       console.log('insamdata: '+this.props.samprops.household_id)
+       this.setWaiting = this.props.setWaiting;
        this.state = {
          household_id: this.props.samprops.household_id,
+         setWaiting: this.props.setWaiting,
          plotOpen : false,  //plot stuff is just turned off at the button with a ! inline
          plotOpen2 : false,
          plotWidth: '8%',
@@ -149,6 +214,8 @@ class SamDataForm extends React.PureComponent {
      //this.setState({jsonsam})
    }
    componentDidUpdate(newProps, prevState) {
+     // if(newProps.samcity){
+     // console.log('component did update in SamDataForm'+JSON.stringify(newProps.samcity.length))}
      // console.log('prevState.household_id: '+prevState.household_id)
      // console.log(newProps.samprops.household_id)
      if(prevState.plotOpen && !prevState.plotOpen2){ //trying to get window to open first - might be able to keep it from reloading
@@ -165,7 +232,10 @@ class SamDataForm extends React.PureComponent {
      // };
    }
    static getDerivedStateFromProps(props, state) {
+     // if(props.samcity){
+     // console.log('inside getDerivedStateFromProps in SamDataForm'+props.samcity.length)}
      if(props.samprops.household_id != state.household_id){
+       //props.setWaiting(1)
        return{
          household_id:props.samprops.household_id
        }

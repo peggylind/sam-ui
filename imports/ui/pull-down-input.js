@@ -63,8 +63,8 @@ export default class PullDown extends React.PureComponent {
     //this.model_explanations = model_explanations
     return (
       <div style={{backgroundColor:"#7f7f7f33"}}>
-      <div title="Health Models and Interventions" style={{fontSize:"2em"}}>Models</div>
-      <div style={{fontSize:"2em"}}>
+      <div title="Health Models and Interventions" style={{fontSize:"1.5em"}}>Models</div>
+      <div style={{fontSize:"1.5em"}}>
       <select onChange={this.setExplanation} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
           defaultValue={this.props.samprops.explainIndex}>
           {model_explanations('names').map((cat,k) => <option
@@ -75,8 +75,8 @@ export default class PullDown extends React.PureComponent {
       </select>
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
-      <div title="Select Boundaries to Show" style={{fontSize:"2em"}}>Geography</div>
-      <div style={{fontSize:"2em"}}>
+      <div title="Select Boundaries to Show" style={{fontSize:"1.5em"}}>Geography</div>
+      <div style={{fontSize:"1.5em"}}>
         <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
             defaultValue={"Background Map"}>
             <option>
@@ -85,12 +85,12 @@ export default class PullDown extends React.PureComponent {
         </select>
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
-      <div title="Categories for display with colors" style={{fontSize:"2em"}}>Categories</div>
+      <div title="Categories for display with colors" style={{fontSize:"1.5em"}}>Categories</div>
       {this.state.samprops.toShow.map((category,ind) =>
         category.fnd &&
           <div style={{fontSize:"1.1em", backgroundColor:"white"}} key={ind}>{category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20)}</div>
       )}
-      <div style={{fontSize:"2em"}}>
+      <div style={{fontSize:"1.5em"}}>
         <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
             defaultValue={this.state.samprops.toShow[this.state.samprops.categIndex].category}>
             {this.state.samprops.toShow.map((cat,k) => <option
