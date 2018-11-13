@@ -18,8 +18,11 @@ const samQuery = gql`
     $coords: [Float],
     $disability: String,
     $dist: Float,
+    $education_entropy_index: Float,
     $educational_attainment: String,
     $employment: String,
+    $english_speaking_skills: String,
+    $health_insurance: String,
     $household_id: ID,
     $household_income: Int,
     $household_type: String,
@@ -27,6 +30,8 @@ const samQuery = gql`
     $loc_num: String,
     $loc_name: String,
     $lowbirthweightbyrace: String,
+    $maternal_CRH: FloatwNA,
+    $means_of_transportation_to_work: String,
     $member: String,
     $nativity: String,
     $one_of: Int,
@@ -37,6 +42,7 @@ const samQuery = gql`
     $racial_entropy_index: Float,
     $stresslevelincome: FloatwNA,
     $stresslevelrace: FloatwNA,
+    $travel_time_to_work: FloatwNA,
     $top_range: Int,
     $veteran_status: String,
     $zip: String,
@@ -53,8 +59,11 @@ const samQuery = gql`
       coords: $coords,
       disability: $disability,
       dist: $dist,
+      education_entropy_index: $education_entropy_index,
       educational_attainment: $educational_attainment,
       employment: $employment,
+      english_speaking_skills: $english_speaking_skills,
+      health_insurance: $health_insurance,
       household_id: $household_id,
       household_income: $household_income,
       household_type: $household_type,
@@ -62,6 +71,8 @@ const samQuery = gql`
       loc_num: $loc_num,
       loc_name: $loc_name,
       lowbirthweightbyrace: $lowbirthweightbyrace,
+      maternal_CRH: $maternal_CRH,
+      means_of_transportation_to_work: $means_of_transportation_to_work,
       member: $member,
       nativity: $nativity,
       one_of: $one_of,
@@ -73,9 +84,10 @@ const samQuery = gql`
       stresslevelincome: $stresslevelincome,
       stresslevelrace: $stresslevelrace,
       top_range: $top_range,
-      veteran_status: $veteran_status
-      zip: $zip
-      zip_education_entropy_index: $zip_education_entropy_index
+      travel_time_to_work: $travel_time_to_work,
+      veteran_status: $veteran_status,
+      zip: $zip,
+      zip_education_entropy_index: $zip_education_entropy_index,
       zip_racial_entropy_index: $zip_racial_entropy_index
     ) {
       age
@@ -85,8 +97,11 @@ const samQuery = gql`
       citizenship
       coords
       disability
+      education_entropy_index
       educational_attainment
       employment
+      english_speaking_skills
+      health_insurance
       household_id
       household_income
       household_type
@@ -94,6 +109,8 @@ const samQuery = gql`
       loc_num
       loc_name
       lowbirthweightbyrace
+      maternal_CRH
+      means_of_transportation_to_work
       member
       nativity
       one_of
@@ -104,6 +121,7 @@ const samQuery = gql`
       racial_entropy_index
       stresslevelincome
       stresslevelrace
+      travel_time_to_work
       veteran_status
       zip
       zip_education_entropy_index
@@ -141,10 +159,10 @@ const GetHousehold = ({ household_id }) => (
           hr = <hr></hr>
           house_header = <div style={{fontSize:"1.8em",textAlign:"center"}}>Household Characteristics</div>
           house_header2 = <div>Household Income: ${data.samcity[0].household_income}, HCAD quality of housing: {data.samcity[0].quality_description}, and household_id:{data.samcity[0].household_id}</div>
-          house_title = <div>This is not real data, but represents a plausible household for {data.samcity[0].loc_num} {loc_name}, TX {data.samcity[0].zip} based on census data.</div>
+          house_title = <div>This is not real data, but represents a plausible household for: <br></br> {data.samcity[0].loc_num} {loc_name}, TX {data.samcity[0].zip} based on census data.</div>
           house = data.samcity.map((citizen, ind) => (
-            <div key={ind+"cit"}><div>{citizen.member} age: {citizen.age} employment: {citizen.employment} nativity: {citizen.nativity}</div>
-            <div>need second .map with categories that are searchable in PullDown</div></div>
+            <div key={ind+"cit"}><div>{citizen.member} is {citizen.age} years old, {citizen.employment} a {citizen.citizenship} a {citizen.nativity} of U.S., who speaks {citizen.language_at_home} at home, and takes {citizen.$means_of_transportation_to_work} for {citizen.travel_time_to_work} minutes/day</div>
+            <div>need second .map with categories that are searchable in PullDown per model, and to deal with NA, etc. above</div></div>
         ))
       }}
       //if (error) return `Error!: ${error}`;

@@ -13,6 +13,7 @@ type SamCitizen {
   coords: [Float]
   date_erected: String
   disability: String
+  education_entropy_index: Float
   educational_attainment: String
   employment: String
   english_speaking_skills: String
@@ -21,21 +22,25 @@ type SamCitizen {
   household_income: Int
   household_type: String
   individual_id: Int
-  quality_description: String
-  racial_entropy_index: Float
+  language_at_home: String
   limit: Int
   loc_num: String
   loc_name: String
   lowbirthweightbyrace: String
+  maternal_CRH: FloatwNA
+  means_of_transportation_to_work: String
   member: String
   nativity: String
   one_of: Int
   pregnant: String
   prenatal_first_tri: String
+  quality_description: String
   race: String
+  racial_entropy_index: Float
   sex: String
   stresslevelincome: FloatwNA
   stresslevelrace: FloatwNA
+  travel_time_to_work: FloatwNA
   veteran_status: String
   zip: String
   zip_education_entropy_index: Float
@@ -67,6 +72,7 @@ type Query {
       coords:[Float],
       disability: String,
       dist:Float,
+      education_entropy_index:Float,
       educational_attainment:String,
       employment: String,
       english_speaking_skills: String,
@@ -79,6 +85,8 @@ type Query {
       loc_num:String,
       loc_name:String,
       lowbirthweightbyrace:String,
+      maternal_CRH:FloatwNA,
+      means_of_transportation_to_work:String,
       member:String,
       nativity: String,
       one_of:Int,
@@ -90,6 +98,7 @@ type Query {
       sex: String,
       stresslevelincome: FloatwNA,
       stresslevelrace: FloatwNA,
+      travel_time_to_work: FloatwNA,
       top_range: Int,
       veteran_status: String,
       zip: String,
