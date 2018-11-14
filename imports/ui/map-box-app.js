@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import DeckGL, { GeoJsonLayer, ScatterplotLayer, ArcLayer, LineLayer, PointCloudLayer, MapController, Controller } from 'deck.gl';
+import DeckGL, { GeoJsonLayer, ScatterplotLayer, ArcLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, ContourLayer, MapController, Controller } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import WebMercatorViewport, {getDistanceScales} from 'viewport-mercator-project';
 //import debounce from 'lodash.debounce';
@@ -201,11 +201,58 @@ const ScatterMap = new ScatterplotLayer({
     //onHover: ({object}) => this.setToolInfo(object),
     onClick: ({object}) => this.setClick(object)
   });
-  const main_layers = [
-     //GeoMap,
-    ScatterMap
-    //PointCloudMap
+  const HexMap = new HexagonLayer({
+    id: 'hex-layer',
+    data: [...this.state.samdata],
+    pickable: true,
+    extruded: true,
+    radius: 1000,
+    elevationScale: 4,
+    getPosition: d => [d.coords[0], d.coords[1]],
+    onHover: ({object}) => this.setToolInfo(`${object.position.join(', ')}\nCount: ${object.count}`)
+  });
+  const GridMap = new GridLayer({
+    id: 'grid-layer',
+    data: [...this.state.samdata],
+    pickable: true,
+    extruded: true,
+    cellSize: 1000,
+    elevationScale: 4,
+    getPosition: d => [d.coords[0], d.coords[1]],
+    onHover: ({object}) => this.setToolInfo(`${object.position.join(', ')}\nCount: ${object.count}`)
+  });
+  const GridCellMap = new GridCellLayer({
+    id: 'grid-cell-layer',
+    data: [...this.state.samdata],
+    pickable: true,
+    extruded: true,
+    cellSize: 1000,
+    elevationScale: 4,
+    getPosition: d => [d.coords[0], d.coords[1]],
+    onHover: ({object}) => this.setToolInfo(`${object.position.join(', ')}\nCount: ${object.count}`)
+  });
+  // const ContourMap = new ContourLayer({ //not working
+  //   id: 'contourLayer',
+  //   data: [...this.state.samdata],
+  //   // Three contours are rendered.
+  //   contours: [
+  //     {threshold: 1, color: [255, 0, 0], strokeWidth: 1},
+  //     {threshold: 5, color: [0, 255, 0], strokeWidth: 2},
+  //     {threshold: 10, color: [0, 0, 255], strokeWidth: 5}
+  //   ],
+  //   cellSize: 200,
+  //   getPosition: d => [d.coords[0], d.coords[1]]
+  // });
+  const main_layers_list = [
+     GeoMap,
+     ScatterMap,
+     HexMap,
+     PointCloudMap,
+     GridMap,
+     GridCellMap//,
+  //   ContourMap
   ];
+  const main_layers = main_layers_list[this.props.mapprops.mode]
 
 
     return (

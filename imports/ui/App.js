@@ -103,15 +103,13 @@ const samprops = { //have all decided with same logic??
   //radiusScale: calcRadiusScale(firstzoom), //letting it do automatic
   outline: false,
   pickable: true,
-
   allcolors: allcolors,
   toShow: toShow,
   forColors: assignColors(toShow[0]),
   changeColors: false, //let's you turn off select for colors on factors - if we can change that with an input, perhaps forces reload??
   categIndex: 0,
   catShow: 'race', //faster color in map-box-app - if can also read opacity off of toShow[categIndex], then have per color control.
-  cloudOrPlot: 'Plot', //scatterplot or cloud on map
-  plotFactorColors: list4plots(['race','educational_attainment','employment'])
+  openHousehold: 1
   //this logic will apply to everything we want to show - component should feed whole object here
 };
 
@@ -136,6 +134,7 @@ export default class App extends React.PureComponent {
          samprops : samprops,
          mapprops : {
               bbox: bbox, //may use later for searches - now based on geonear in circle
+              mode: 1, //[GeoMap,ScatterMap,HexMap,PointCloudMap,GridMap,GridCellMap,ContourMap]
               viewport: {
                 width: window.innerWidth,
                 height: window.innerHeight,
@@ -252,6 +251,7 @@ export default class App extends React.PureComponent {
     var samprops = {...this.state.samprops}
     console.log('in App'+info.household_id)
     samprops.household_id = info.household_id
+    samprops.openHousehold = 1
     this.setState({toolTipInfo,samprops})
   };
   formatDollars = function(number){

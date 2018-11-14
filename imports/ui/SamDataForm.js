@@ -152,7 +152,8 @@ const GetHousehold = ({ household_id }) => (
         //house = <span>Loading</span>
       }else{
         ldg = <span></span>
-        console.log('how to call setWaiting???')};
+        console.log('how to call setWaiting???')
+      };
       if(data.samcity){
         if(data.samcity.length>0){
           let loc_name = data.samcity[0].loc_name.charAt(0).toUpperCase() + data.samcity[0].loc_name.slice(1).toLowerCase()
@@ -171,14 +172,15 @@ const GetHousehold = ({ household_id }) => (
         <div>
         {ldg}
           <div style={{position:"absolute",zIndex:"5",top:"15%",left:"20%",width:"50%",fontSize:"1.2em",backgroundColor:"#f8f8ff"}}>
-          {house_header}
-          {hr}
-          {house_title}
-          {hr}
-          {house_header2}
-          {hr}
-          {house}
-          {hr}
+          //  <span style={{zIndex:"6",left:"98%",fontSize:"1.8em"}} onClick=(this.setState({openHousehold:0}))>X</span>
+            {house_header}
+            {hr}
+            {house_title}
+            {hr}
+            {house_header2}
+            {hr}
+            {house}
+            {hr}
           </div>
         </div>
       );
@@ -210,6 +212,7 @@ class SamDataForm extends React.PureComponent {
        this.setWaiting = this.props.setWaiting;
        this.state = {
          household_id: this.props.samprops.household_id,
+         openHousehold: 1, //this.props.samprops.openHousehold,
          setWaiting: this.props.setWaiting,
          plotOpen : false,  //plot stuff is just turned off at the button with a ! inline
          plotOpen2 : false,
@@ -224,7 +227,7 @@ class SamDataForm extends React.PureComponent {
    async componentDidMount() {
      const retrn = await fetch('/json/'+this.props.samprops.geojson_title)
      const geojsonsam = await retrn.json()
-     console.log(geojsonsam)
+     //console.log(geojsonsam)
 
      this.setState({geojsonsam})
      // const res = await fetch('/json/sam_of_100.json') //only if loading json for faster process
