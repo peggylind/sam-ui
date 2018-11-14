@@ -205,10 +205,12 @@ const GetHousehold = ({ household_id }) => (
 //   </Query>
 // );
 
+
 class SamDataForm extends React.PureComponent {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
        super(props);
        //this.plotcontain = React.createRef();
+       this.onXClick = this.onXClick.bind(this);
        this.setWaiting = this.props.setWaiting;
        this.state = {
          household_id: this.props.samprops.household_id,
@@ -222,6 +224,12 @@ class SamDataForm extends React.PureComponent {
          containerheight: '4',
          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
        };
+   }
+   onXClick = () => {
+     console.log('onXClick')
+        this.setState({
+          openHousehold: 0
+        });
    }
 
    async componentDidMount() {
@@ -286,9 +294,10 @@ class SamDataForm extends React.PureComponent {
 
     return (
       <div>
-      {this.state.household_id && (
+      {this.state.household_id & this.state.openHousehold && (
           <GetHousehold household_id={this.state.household_id} />
         )}
+        <span style={{position:"absolute",zIndex:"6",left:"98%",fontSize:"1.1em"}} onClick={this.onXClick}>X</span>
         <div>
           <MapBox
             onMapChange={this.props.onMapChange}
