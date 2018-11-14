@@ -152,12 +152,12 @@ const GetHousehold = ({ household_id }) => (
         //house = <span>Loading</span>
       }else{
         ldg = <span></span>
-        console.log('how to call setWaiting???')
       };
       if(data.samcity){
         if(data.samcity.length>0){
           let loc_name = data.samcity[0].loc_name.charAt(0).toUpperCase() + data.samcity[0].loc_name.slice(1).toLowerCase()
           hr = <hr></hr>
+          clicker = <span style={{position:"absolute",zIndex:"6",left:"98%",top:"2%",fontSize:"1.1em"}} onClick={this.onXClick}>X</span>
           house_header = <div style={{fontSize:"1.8em",textAlign:"center"}}>Household Characteristics</div>
           house_header2 = <div>Household Income: ${data.samcity[0].household_income}, HCAD quality of housing: {data.samcity[0].quality_description}</div>
           house_title = <div>This is not real data, but represents a plausible household for: <br></br> {data.samcity[0].loc_num} {loc_name}, TX {data.samcity[0].zip} based on census data.</div>
@@ -172,7 +172,7 @@ const GetHousehold = ({ household_id }) => (
       return (
         <div>
         {ldg}
-          <div style={{position:"absolute",zIndex:"5",top:"15%",left:"20%",width:"50%",fontSize:"1.2em",backgroundColor:"#f8f8ff"}}>
+          <div>
             {house_header}
             {hr}
             {house_title}
@@ -214,7 +214,7 @@ class SamDataForm extends React.PureComponent {
        this.setWaiting = this.props.setWaiting;
        this.state = {
          household_id: this.props.samprops.household_id,
-         openHousehold: 1, //this.props.samprops.openHousehold,
+         openHousehold: 0, //this.props.samprops.openHousehold,
          setWaiting: this.props.setWaiting,
          plotOpen : false,  //plot stuff is just turned off at the button with a ! inline
          plotOpen2 : false,
@@ -266,6 +266,7 @@ class SamDataForm extends React.PureComponent {
      if(props.samprops.household_id != state.household_id){
        //props.setWaiting(1)
        return{
+         openHousehold:1,
          household_id:props.samprops.household_id
        }
      }else{
@@ -294,10 +295,14 @@ class SamDataForm extends React.PureComponent {
 
     return (
       <div>
-      {this.state.household_id & this.state.openHousehold && (
-          <GetHousehold household_id={this.state.household_id} />
-        )}
-        <span style={{position:"absolute",zIndex:"6",left:"98%",fontSize:"1.1em"}} onClick={this.onXClick}>X</span>
+        <div style={{position:"absolute",width:"100%",height:"100%"}}>
+          {this.state.openHousehold && (
+            <div style={{position:"absolute",zIndex:"5",top:"15%",left:"20%",width:"50%",fontSize:"1.2em",backgroundColor:"#f8f8ff"}}>
+            <span style={{position:"absolute",zIndex:"6",left:"95%",top:"6%",fontSize:"1.1em",backgroundColor:"#ffffff"}} onClick={this.onXClick}>X</span>
+              <GetHousehold household_id={this.state.household_id}/></div>
+            )}
+        </div>
+
         <div>
           <MapBox
             onMapChange={this.props.onMapChange}
@@ -313,7 +318,6 @@ class SamDataForm extends React.PureComponent {
             samprops={this.props.samprops}
             />
           </div>
-
 
         </div>
 
