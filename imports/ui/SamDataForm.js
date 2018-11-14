@@ -168,11 +168,11 @@ const GetHousehold = ({ household_id }) => (
       }}
       //if (error) return `Error!: ${error}`;
 
+      //  <span style={{zIndex:"6",left:"98%",fontSize:"1.8em"}} onClick=(this.setState({openHousehold:0}))>X</span>
       return (
         <div>
         {ldg}
           <div style={{position:"absolute",zIndex:"5",top:"15%",left:"20%",width:"50%",fontSize:"1.2em",backgroundColor:"#f8f8ff"}}>
-          //  <span style={{zIndex:"6",left:"98%",fontSize:"1.8em"}} onClick=(this.setState({openHousehold:0}))>X</span>
             {house_header}
             {hr}
             {house_title}
