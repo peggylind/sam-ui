@@ -34,7 +34,7 @@ const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color
 //tofind should be what would be inserted in the pipe - with limit always given?
 //tofind is used in SamDataForm to filter
 //rest is sent as part of gql to resolver and made into a request
-const toShow = categories([0,4,1,5]); //can order as pleased
+const toShow = categories([0,4,1,2,5,6]); //can order as pleased
 
 function assignColors (newColors) {
     let forColors = {};
