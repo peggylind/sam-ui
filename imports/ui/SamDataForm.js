@@ -158,11 +158,11 @@ const GetHousehold = ({ household_id }) => (
           let loc_name = data.samcity[0].loc_name.charAt(0).toUpperCase() + data.samcity[0].loc_name.slice(1).toLowerCase()
           hr = <hr></hr>
           house_header = <div style={{fontSize:"1.8em",textAlign:"center"}}>Household Characteristics</div>
-          house_header2 = <div>Household Income: ${data.samcity[0].household_income}, HCAD quality of housing: {data.samcity[0].quality_description}, and household_id:{data.samcity[0].household_id}</div>
+          house_header2 = <div>Household Income: ${data.samcity[0].household_income}, HCAD quality of housing: {data.samcity[0].quality_description}</div>
           house_title = <div>This is not real data, but represents a plausible household for: <br></br> {data.samcity[0].loc_num} {loc_name}, TX {data.samcity[0].zip} based on census data.</div>
           house = data.samcity.map((citizen, ind) => (
-            <div key={ind+"cit"}><div>{citizen.member} is {citizen.age} years old, {citizen.employment} a {citizen.citizenship} a {citizen.nativity} of U.S., who speaks {citizen.language_at_home} at home, and takes {citizen.$means_of_transportation_to_work} for {citizen.travel_time_to_work} minutes/day</div>
-            <div>need second .map with categories that are searchable in PullDown per model, and to deal with NA, etc. above</div></div>
+            <div key={ind+"cit"}><div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
+            <div></div></div>//need second .map with categories that are searchable in PullDown per model, and to deal with NA, etc. above
         ))
       }}
       //if (error) return `Error!: ${error}`;

@@ -142,7 +142,7 @@ export default class App extends React.PureComponent {
                 longitude: samprops.longitude, //-95.315,
                 latitude: samprops.latitude, //29.75,
                 zoom: samprops.zoom,//16.051394480575627, //which is zoom for 1 meter for testing
-                pitch: 20,
+                pitch: 10,
                 bearing: 0
               }
             }

@@ -55,6 +55,10 @@ export default class MapBox extends Component {
   //      this.emitChangeDebounced = debounce(this.emitChange, 250);
       }
 
+      returnheight (factor) {
+        //console.log(factor)
+        return factor.household_income/10
+      }
 
       returnColors (factor) {
         //do color array here for ranges - also in scatterdata
@@ -163,23 +167,23 @@ const GeoMap = new GeoJsonLayer({
 
 })
 
-// const PointCloudMap = new PointCloudLayer({
-//   id: 'point-cloud-layer',
-//   data: [...this.state.samdata],
-//   getPosition: d => [d.coords[0], d.coords[1], 1000],
-//   getColor: d => this.props.samprops.forColors[d.race],
-//   opacity: 0.85,
-//   radiusMinPixels: 1.12,
-//   radiusMaxPixels: 100,
-//   strokeWidth: 2,
-//   radiusScale: 10,
-//   outline: false,
-//   pickable: true,
-//   onHover: ({object}) => this.setToolInfo(object?`${object.race}\n${object.total_income}`:null)
-//   //panEnd: info => console.log('panend:', info),
-//   // onHover: info => console.log('Hovered:', info),
-//   // onClick: info => console.log('Clicked:', info)
-// });
+const PointCloudMap = new PointCloudLayer({
+  id: 'point-cloud-layer',
+  data: [...this.state.samdata],
+  getPosition: d => [d.coords[0], d.coords[1], this.returnheight(d)],
+  getColor: d => this.props.samprops.forColors[d.race],
+  getColor: d => this.returnColors(d[this.props.samprops.catShow]),
+  opacity: this.props.samprops.opacity,
+  radiusMinPixels: this.props.samprops.radiusMinPixels,
+  radiusMaxPixels: this.props.samprops.radiusMaxPixels,
+  strokeWidth: this.props.samprops.strokeWidth,
+  //radiusScale: this.props.samprops.radiusScale,
+  outline: this.props.samprops.outline,
+  pickable: this.props.samprops.pickable,
+  autoHighlight: true,
+  //onHover: ({object}) => this.setToolInfo(object),
+  onClick: ({object}) => this.setClick(object)
+});
 //const showCat = 'race'
 const ScatterMap = new ScatterplotLayer({
     id: 'scatterplot-layer',
@@ -199,7 +203,7 @@ const ScatterMap = new ScatterplotLayer({
   });
   const main_layers = [
      //GeoMap,
-     ScatterMap
+    ScatterMap
     //PointCloudMap
   ];
 
