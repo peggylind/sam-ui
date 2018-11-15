@@ -34,8 +34,8 @@ const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color
 //tofind should be what would be inserted in the pipe - with limit always given?
 //tofind is used in SamDataForm to filter
 //rest is sent as part of gql to resolver and made into a request
-const toShow = categories([0,1,2,4,7]); //can order as pleased
-const toShowScale = categories([0,5,6,3]);
+const toShow = categories([11,2,3,5,7,8,9,10,13,16]); //can order as pleased
+const toShowScale = categories([0,6,1,4,12,14,15]);
 
 function assignColors (newColors) {
     let forColors = {};
@@ -110,7 +110,7 @@ const samprops = { //have all decided with same logic??
   toShowScale: toShowScale,
   forColors: assignColors(toShow[1]),
   changeColors: false, //let's you turn off select for colors on factors - if we can change that with an input, perhaps forces reload??
-  categIndex: 1,
+  categIndex: 3,
   scaleIndex: 0,
   catShow: 'race', //faster color in map-box-app - if can also read opacity off of toShow[categIndex], then have per color control.
   scaleShow: 'none', //'income',

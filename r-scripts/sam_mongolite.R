@@ -45,7 +45,7 @@ sam <- as.data.frame(sam)
 SamCity <- mongo("samcity", url = "mongodb://localhost/SamCity");
 #remove first!!
 SamCity$drop()
-SamCity$find(limit = 20)
+SamCity$find(limit = 2)
 #mongolite throws  Error: No method asJSON S3 class: sfg , so tried an extra toJSON
 sam2insert <- sam
 

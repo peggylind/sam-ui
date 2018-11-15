@@ -52,6 +52,7 @@ export default class MapBox extends Component {
       }
 
       returnheight (factor) {
+        //should do some as log!!!
         let min = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].low
         let max = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].high
         //function(val, max, min) { return (val - min) / (max - min); }
