@@ -34,7 +34,8 @@ const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color
 //tofind should be what would be inserted in the pipe - with limit always given?
 //tofind is used in SamDataForm to filter
 //rest is sent as part of gql to resolver and made into a request
-const toShow = categories([0,4,1,2,5,6]); //can order as pleased
+const toShow = categories([0,1,2,4,7]); //can order as pleased
+const toShowScale = categories([0,5]); //,6,3]);
 
 function assignColors (newColors) {
     let forColors = {};
@@ -105,10 +106,13 @@ const samprops = { //have all decided with same logic??
   pickable: true,
   allcolors: allcolors,
   toShow: toShow,
-  forColors: assignColors(toShow[0]),
+  toShowScale: toShowScale,
+  forColors: assignColors(toShow[1]),
   changeColors: false, //let's you turn off select for colors on factors - if we can change that with an input, perhaps forces reload??
-  categIndex: 0,
+  categIndex: 1,
+  scaleIndex: 0,
   catShow: 'race', //faster color in map-box-app - if can also read opacity off of toShow[categIndex], then have per color control.
+  scaleShow: 'none', //'income',
   openHousehold: 1
   //this logic will apply to everything we want to show - component should feed whole object here
 };
@@ -118,6 +122,7 @@ export default class App extends React.PureComponent {
        super(props);
        this.handlePopulationChange = this.handlePopulationChange.bind(this);
        this.onCatChange = this.onCatChange.bind(this);
+       this.onScaleChange = this.onScaleChange.bind(this);
        this.onFactortoShow = this.onFactortoShow.bind(this);
        this.onChangetoShow = this.onChangetoShow.bind(this);
        this.onMapChange = this.onMapChange.bind(this);
@@ -164,6 +169,19 @@ export default class App extends React.PureComponent {
     samprops.geojson_title = geojson_title;
     this.setState({samprops});
   };
+  onScaleChange = function(event){
+    var samprops = {...this.state.samprops}
+    var mapprops = {...this.state.mapprops}
+    samprops.toShowScale.forEach(function(row,r){
+      if(row.category == event.target.value){
+        samprops.scaleIndex = r;
+        samprops.scaleShow = row.category; //only used in map-box right now --fix this and catShow!!
+        if(r==0){mapprops.mode=1}else{mapprops.mode=3}; //other scale possibilities later
+        //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
+      }
+    });
+    this.setState({samprops,mapprops});
+  }
   onCatChange = function(event){
     var samprops = {...this.state.samprops}
     samprops.toShow.forEach(function(row,r){
@@ -189,16 +207,17 @@ export default class App extends React.PureComponent {
   }
 
   onChangetoShow = function(showObj){
-    console.log(showObj)
      var samprops = {...this.state.samprops}
      samprops.toShow.forEach(function (catRow, i){
        if (catRow.category==showObj.catName){
+         console.log(catRow.category+' tochange to categIndex '+i)
          catRow.factors.forEach(function (factorRow, j){
            if (factorRow.factorName == showObj.factorName){
              factorRow.factorColor = showObj.factorColor;
              samprops.toShow[i].factors[j] = factorRow;
              samprops.allcolors = samprops.allcolors;
              samprops.forColors = assignColors(samprops.toShow[i]); //may be able to make this smoother
+             samprops.categIndex = i;
              samprops.catShow = samprops.toShow[i].category; //only used in map-box right now
            };
          });
@@ -208,7 +227,7 @@ export default class App extends React.PureComponent {
   };
 
   onMapChange = function(mapstuff,dist,height){ //height is used for normalizing for plot -- and can be used to make height of legendbox, too
-    console.log("mapstuff"+JSON.stringify(mapstuff.zoom))
+    console.log("mapstuff dist "+dist+"  "+height)
     var samprops = {...this.state.samprops}
     samprops.latitude = mapstuff.latitude;
     samprops.longitude = mapstuff.longitude;
@@ -356,6 +375,7 @@ export default class App extends React.PureComponent {
               samprops={this.state.samprops}
               onPopChange={this.handlePopulationChange}
               onCatChange={this.onCatChange}
+              onScaleChange={this.onScaleChange}
               onFactortoShow={this.onFactortoShow}
               onChangetoShow={this.onChangetoShow}
               onMapChange={this.onMapChange}

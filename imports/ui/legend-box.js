@@ -57,6 +57,7 @@ export default class LegendBox extends React.PureComponent {
               <PullDown
                 onChangetoShow={this.props.onChangetoShow}
                 onCatChange={this.props.onCatChange}
+                onScaleChange={this.props.onScaleChange}
                 onFactortoShow={this.props.onFactortoShow}
                 setExplanation={this.props.setExplanation}
                 samprops={this.props.samprops}

@@ -45,63 +45,56 @@ export default class MapBox extends Component {
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
             time: 0,
             samdata: this.props.samdata || [],
-          //  geojsonsam: [firstgeojson],
             waiting: 1,
-            //toShow: this.props.samprops.toShow[0],
             toTest: {white:[230,159,0],black:[213,94,0]},
             forColors: this.props.samprops.forColors //maybe have in toShow - have to draw the flow again
         };
-  //      this.handleEvent = this.handleEvent.bind(this);
-  //      this.emitChangeDebounced = debounce(this.emitChange, 250);
       }
 
       returnheight (factor) {
         //console.log(factor)
-        return factor.household_income/10
+        return factor.household_income/20
       }
 
       returnColors (factor) {
-        //do color array here for ranges - also in scatterdata
-        //if "factor" is a string, then ...; else {
-          //or have things saved on app.js that let us know how to do the interpolation?
-        //console.log('in ' +'this.props.samprops.forColors[factor]'+typeof factor)
-        if(this.props.samprops.toShow[this.props.samprops.categIndex].type == 'factor'){
+        //if(this.props.samprops.toShow[this.props.samprops.categIndex].type == 'factor'){
           return this.props.samprops.forColors[factor]
-        }else{
-          var low = this.props.samprops.toShow[this.props.samprops.categIndex].low;
-          var high = this.props.samprops.toShow[this.props.samprops.categIndex].high;
-          var lowrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[0].factorColor].RGB
-          var highrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[1].factorColor].RGB
-          let RGB = lowrgb;
-          if(factor>1){
-            let half = (high+low)/2;
-            if (factor>half){RGB=highrgb};
-          }else{
-            console.log(factor)
-            if(factor <= -0.45){RGB=highrgb};
-          }
-          // var r = lowrgb[0]+(Math.abs(highrgb[0]-lowrgb[0])/high)*factor;
-          // if (r>255){r=255}
-          // if (r<0){r=0}
-          // //var g = lowrgb[1]+(Math.abs(highrgb[1]-lowrgb[1])/high)*factor;
-          // var g = ((lowrgb[1]+255)/high)*factor;
-          // if (g>255){g=255}
-          // if (g<0){g=0}
-          // var b = lowrgb[2]+(Math.abs(highrgb[2]-lowrgb[2])/high)*factor;
-          // if (b>255){b=255}
-          // if (b<0){b=0}
-          // var RGB = [Math.round(r),Math.round(g),Math.round(b)];
-          return RGB
-        }
+        //}
+        // else{
+        //   var low = this.props.samprops.toShow[this.props.samprops.categIndex].low;
+        //   var high = this.props.samprops.toShow[this.props.samprops.categIndex].high;
+        //   var lowrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[0].factorColor].RGB
+        //   var highrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[1].factorColor].RGB
+        //   let RGB = lowrgb;
+        //   if(factor>1){
+        //     let half = (high+low)/2;
+        //     if (factor>half){RGB=highrgb};
+        //   }else{
+        //     console.log(factor)
+        //     if(factor <= -0.45){RGB=highrgb};
+        //   }
+        //   // var r = lowrgb[0]+(Math.abs(highrgb[0]-lowrgb[0])/high)*factor;
+        //   // if (r>255){r=255}
+        //   // if (r<0){r=0}
+        //   // //var g = lowrgb[1]+(Math.abs(highrgb[1]-lowrgb[1])/high)*factor;
+        //   // var g = ((lowrgb[1]+255)/high)*factor;
+        //   // if (g>255){g=255}
+        //   // if (g<0){g=0}
+        //   // var b = lowrgb[2]+(Math.abs(highrgb[2]-lowrgb[2])/high)*factor;
+        //   // if (b>255){b=255}
+        //   // if (b<0){b=0}
+        //   // var RGB = [Math.round(r),Math.round(g),Math.round(b)];
+        //   return RGB
+        // }
       }
     componentDidMount(){
-      //console.log('componentDidMount')
+      console.log('componentDidMount in mapbox '+this.props.samprops.catShow)
       //this.setState({geojsonsam:this.props.geojsonsam})
     };
 
     componentDidUpdate(newProps, prevState) {
       //console.log('map-box updated'+JSON.stringify(newProps.samprops.waiting)+JSON.stringify(prevState.waiting))
-      //console.log(JSON.stringify(this.props.samprops.catShow))
+      console.log('map-box updated'+JSON.stringify(this.props.samprops.catShow))
       if (this.props.geojsonsam != newProps.geojsonsam){
         console.log(this.props.geojsonsam)
          this.setState({geojsonsam:this.props.geojsonsam})
@@ -171,7 +164,6 @@ const PointCloudMap = new PointCloudLayer({
   id: 'point-cloud-layer',
   data: [...this.state.samdata],
   getPosition: d => [d.coords[0], d.coords[1], this.returnheight(d)],
-  getColor: d => this.props.samprops.forColors[d.race],
   getColor: d => this.returnColors(d[this.props.samprops.catShow]),
   opacity: this.props.samprops.opacity,
   radiusMinPixels: this.props.samprops.radiusMinPixels,

@@ -27,6 +27,7 @@ export default class PullDown extends React.PureComponent {
     super(props);
     this.setExplanation = this.props.setExplanation.bind(this);
     this.onFactortoShow = this.onFactortoShow.bind(this);
+    this.onScaleChange = this.onScaleChange.bind(this);
     this.onCatChange = this.onCatChange.bind(this);
     this.onChangetoShow = this.onChangetoShow.bind(this);
     this.state = {
@@ -35,13 +36,13 @@ export default class PullDown extends React.PureComponent {
     }
   };
   setExplanation(e){
-    //console.log(i)
-    console.log('wtf'+e.target.value)
-    console.log('wtfreaa')
     this.props.setExplanation(e) //not sure this does anything!!!! bind seems to work by itself, but haven't fully tested
   }
   onFactortoShow(e){
     this.props.onFactortoShow(e)
+  }
+  onScaleChange(event) { //if you take value of index, it does the map function differently - very odd
+    this.props.onScaleChange(event);
   }
   onCatChange(event) { //if you take value of index, it does the map function differently - very odd
     this.props.onCatChange(event);
@@ -132,6 +133,19 @@ export default class PullDown extends React.PureComponent {
           </button>
 
           <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
+      </div>
+      <div title="Categories for display with scale" style={{fontSize:"1.5em"}}>Scales</div>
+
+      <div style={{fontSize:"1.5em"}}>
+        <select onChange={this.onScaleChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
+            defaultValue={this.state.samprops.toShowScale[this.state.samprops.scaleIndex].category}>
+            {this.state.samprops.toShowScale.map((cat,k) => <option
+              key={cat+k+'scale'} value={this.state.samprops.toShowScale[k].category}>
+              {this.state.samprops.toShowScale[k].pretty_name.substring(0,15)}
+              </option>)
+            }
+        </select>
+        <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
   </div>
     )

@@ -1,5 +1,7 @@
 export function categories(list) {
   const cat_list = [
+    {category: 'none', pretty_name: 'none', type: 'non', low: 0, high:0, factors:
+      [{factorName:'none',factorColor:5}],fnd:''},
     {category: 'race', pretty_name: 'race', html_title: 'Self-reported race for census', type: 'factor',
       factors: [{factorName:'white',factorColor:3},{factorName:'asian',factorColor:2},
         {factorName:'black',factorColor:1},{factorName:'hispanic',factorColor:5},{factorName:'other.race',factorColor:4},
