@@ -52,40 +52,16 @@ export default class MapBox extends Component {
       }
 
       returnheight (factor) {
-        //console.log(factor)
-        return factor.household_income/20
+        let min = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].low
+        let max = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].high
+        //function(val, max, min) { return (val - min) / (max - min); }
+        return ((factor[this.props.samprops.scaleShow]-min) / (max - min)) * (this.props.samprops.height/2)
       }
 
       returnColors (factor) {
         //if(this.props.samprops.toShow[this.props.samprops.categIndex].type == 'factor'){
           return this.props.samprops.forColors[factor]
         //}
-        // else{
-        //   var low = this.props.samprops.toShow[this.props.samprops.categIndex].low;
-        //   var high = this.props.samprops.toShow[this.props.samprops.categIndex].high;
-        //   var lowrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[0].factorColor].RGB
-        //   var highrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[1].factorColor].RGB
-        //   let RGB = lowrgb;
-        //   if(factor>1){
-        //     let half = (high+low)/2;
-        //     if (factor>half){RGB=highrgb};
-        //   }else{
-        //     console.log(factor)
-        //     if(factor <= -0.45){RGB=highrgb};
-        //   }
-        //   // var r = lowrgb[0]+(Math.abs(highrgb[0]-lowrgb[0])/high)*factor;
-        //   // if (r>255){r=255}
-        //   // if (r<0){r=0}
-        //   // //var g = lowrgb[1]+(Math.abs(highrgb[1]-lowrgb[1])/high)*factor;
-        //   // var g = ((lowrgb[1]+255)/high)*factor;
-        //   // if (g>255){g=255}
-        //   // if (g<0){g=0}
-        //   // var b = lowrgb[2]+(Math.abs(highrgb[2]-lowrgb[2])/high)*factor;
-        //   // if (b>255){b=255}
-        //   // if (b<0){b=0}
-        //   // var RGB = [Math.round(r),Math.round(g),Math.round(b)];
-        //   return RGB
-        // }
       }
     componentDidMount(){
       console.log('componentDidMount in mapbox '+this.props.samprops.catShow)

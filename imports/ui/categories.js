@@ -16,7 +16,7 @@ export function categories(list) {
       html_title: 'Which person in family - householder is the person leading family and adult is an additional adult in the household', type: 'factor',
       factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2},
         {factorName:'Householder',factorColor:1},{factorName:'Wife',factorColor:6}],fnd:''},
-    {category: 'household_income', pretty_name: 'income', type: 'range', low: 30000, high:70000, factors:
+    {category: 'household_income', pretty_name: 'income', type: 'range', low: 0, high:700000, factors:
       [{factorName:'low',factorColor:5},{factorName:'high',factorColor:1}],fnd:'',fnd_top_num:1000000,fnd_bottom_num:0},
     // {category: 'sex', type: 'factor', factors: [{factorName:'Male',factorColor:5},{factorName:'Female',factorColor:1}],fnd:''},
     {category: 'age', pretty_name: 'age', type: 'range', low: 0, high:120, factors:

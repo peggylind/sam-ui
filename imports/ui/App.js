@@ -35,7 +35,7 @@ const allcolors = [color0,color1,color2,color3,color4,color5,color6,color7,color
 //tofind is used in SamDataForm to filter
 //rest is sent as part of gql to resolver and made into a request
 const toShow = categories([0,1,2,4,7]); //can order as pleased
-const toShowScale = categories([0,5]); //,6,3]);
+const toShowScale = categories([0,5,6,3]);
 
 function assignColors (newColors) {
     let forColors = {};
@@ -91,6 +91,7 @@ const samprops = { //have all decided with same logic??
   bottom_range: 0,
   top_range: 100,
   dist: 170000,
+  height: 40000,
   educational_attainment: '',
   stresslevelincome: '',
   employment: '',
@@ -233,6 +234,7 @@ export default class App extends React.PureComponent {
     samprops.longitude = mapstuff.longitude;
     samprops.zoom = mapstuff.zoom;
     samprops.dist = dist;
+    samprops.height = height;
     samprops.opacity = calcOpacity(mapstuff.zoom);
     samprops.strokeWidth = calcStrokeWidth(mapstuff.zoom);
     samprops.one_of = calcOneOf(mapstuff.zoom);
