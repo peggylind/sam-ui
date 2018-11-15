@@ -108,9 +108,9 @@ const samprops = { //have all decided with same logic??
   allcolors: allcolors,
   toShow: toShow,
   toShowScale: toShowScale,
-  forColors: assignColors(toShow[1]),
+  forColors: assignColors(toShow[0]),
   changeColors: false, //let's you turn off select for colors on factors - if we can change that with an input, perhaps forces reload??
-  categIndex: 3,
+  categIndex: 0,
   scaleIndex: 0,
   catShow: 'race', //faster color in map-box-app - if can also read opacity off of toShow[categIndex], then have per color control.
   scaleShow: 'none', //'income',

@@ -35,6 +35,7 @@ const firstgeojson = {
 export default class MapBox extends Component {
   constructor(props) {
       super(props);
+      console.log('setting state in mapbox')
       this.SamControls = new SamMapControls();
       this.setToolInfo = this.props.setToolInfo;
       this.setClick = this.props.setClick;
@@ -65,7 +66,8 @@ export default class MapBox extends Component {
         //}
       }
     componentDidMount(){
-      console.log('componentDidMount in mapbox '+this.props.samprops.catShow)
+      // console.log('componentDidMount in mapbox '+this.props.samprops.catShow)
+      // if (this.props.data){console.log('data')}
       //this.setState({geojsonsam:this.props.geojsonsam})
     };
 

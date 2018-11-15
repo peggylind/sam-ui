@@ -97,7 +97,7 @@ export default class PullDown extends React.PureComponent {
             defaultValue={this.state.samprops.toShow[this.state.samprops.categIndex].category}>
             {this.state.samprops.toShow.map((cat,k) => <option
               key={cat+k} value={this.state.samprops.toShow[k].category}>
-              {this.state.samprops.toShow[k].pretty_name.substring(0,15)}
+              {this.state.samprops.toShow[k].pretty_name}
               </option>)
             }
         </select>
