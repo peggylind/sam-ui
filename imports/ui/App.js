@@ -173,14 +173,22 @@ export default class App extends React.PureComponent {
   onScaleChange = function(event){
     var samprops = {...this.state.samprops}
     var mapprops = {...this.state.mapprops}
+    if(event==''){
+      if (mapprops.mode>0 && mapprops.mode<5){
+        mapprops.mode+=1
+        }else{
+        mapprops.mode=1
+      }
+    }else{
     samprops.toShowScale.forEach(function(row,r){
       if(row.category == event.target.value){
         samprops.scaleIndex = r;
         samprops.scaleShow = row.category; //only used in map-box right now --fix this and catShow!!
         if(r==0){mapprops.mode=1}else{mapprops.mode=3}; //other scale possibilities later
         //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
-      }
-    });
+      }})
+    };
+
     this.setState({samprops,mapprops});
   }
   onCatChange = function(event){

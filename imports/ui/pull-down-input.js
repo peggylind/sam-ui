@@ -134,7 +134,8 @@ export default class PullDown extends React.PureComponent {
 
           <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
-      <div title="Categories for display with scale" style={{fontSize:"1.5em"}}>Scales</div>
+      <div title="Categories for display with scale" onClick={(e) => this.onScaleChange('')}
+          style={{fontSize:"1.5em"}}>Scales</div>
 
       <div style={{fontSize:"1.5em"}}>
         <select onChange={this.onScaleChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
@@ -147,6 +148,13 @@ export default class PullDown extends React.PureComponent {
         </select>
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
+      <button key="102"
+        onClick={(e) => this.onScaleChange('')}
+        style={{backgroundColor:'#ffffff',
+          borderColor:'#ffffff',position:'relative',width:'100%',
+          borderWidth: "3px", borderStyle:"solid", height:"2em"}}>
+          change scale view
+      </button>
   </div>
     )
   }
