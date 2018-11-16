@@ -1,5 +1,5 @@
 //import Description from "../descriptions/descriptions";
-import {DataLoader} from 'dataloader';
+//import {DataLoader} from 'dataloader';
 import SamCitizens from "./sam_citizens";
 //import Sam20k from "./sam_20k";
 
@@ -15,6 +15,10 @@ export default {
     //  //return await SamCitizens.rawCollection().aggregate(pipeline, options).fetch();
 
     async samcity(obj, args, { _id }){
+      console.log('args: '+JSON.stringify(args))
+      // console.log('parent: '+parent)
+      // console.log('context: '+context)
+      // console.log('info: '+info)
       var qdb = {
         coords: {
           $near: {
@@ -22,37 +26,52 @@ export default {
               type: "Point" ,
               coordinates: args.coords
             },
-            $maxDistance: args.dist, //in meters
-            $minDistance: 10
+            $maxDistance: args.dist//, //in meters
+            //$minDistance: 10
           }
         },
         one_of:{$gte : args.one_of},
       };
-      const factor_vars = ['race','member','citizenship',
+      const factor_vars = [//'household_id', //id isn't really a factor, but process same way
+        'race','member','citizenship',
         'employment','quality_description','educational_attainment',
         'veteran_status','disability','asthma'];
       const range_vars = ['household_income','age']; //finish later
       for (var arg in args){
+        if(arg=='household_id'){
+          qdb = {}
+          qdb[arg] = parseInt(args[arg])
+        };
         if(factor_vars.indexOf(arg) >=0){
           if(args[arg]){
-            console.log(args[arg])
             qdb[arg] = args[arg];
           }
-        }
+        };
         if(range_vars.indexOf(arg) >=0){
           if(args[arg]){
-          //  qdb[arg] = args[arg];
+            console.log(args['bottom_range'])
+            //qdb[arg] = {$gte : args['bottom_range'],$lte : args['top_range']};
           // and some mechanism for obj with $gte, etc.
           }
-        }
-        //console.log(qdb)
+        };
       }
+      console.log('reafdasfsdfas: '+SamCitizens.find(
+           qdb).count())
 
     return await SamCitizens.find(
          qdb,
          {limit:args.limit}
-       );//.fetch();
+       ).fetch();
     }
+  },
+
+  FloatwNA : {
+    __parseLiteral(ast) {
+        if (ast.kind === Kind.FLOAT) {
+          return parseFloat(ast.value); // ast value is always in string format
+        }
+        return null;
+      }
   },
 
   SamCitizen: {

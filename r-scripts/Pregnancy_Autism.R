@@ -2,33 +2,53 @@
 #summer, 2018
 
 #add to exp_sam
-#test on 
-exp_sam <- readRDS("exp_sam_1.RDS")
-exp_sam_test <- sample_n(exp_sam,5000,replace = TRUE)
+#since did it after, just creating smaller number of columns and adding it by individual_id, later.
+test_sam <- sam[1:50000,]
+new_sam <- sam %>% select(individual_id,race,age,sex) %>% filter(sex=='Female') 
+sam_merge <- merge(sam,sam_preg_autism,by = "individual_id",all=TRUE)
 
-
-#rewrite for mutate
-exp_sam_preg_autism <- test_sam %>% 
+#rewrite for mutate 
+sam_preg_autism <- new_sam %>% 
   mutate(
     pregnant = case_when(
-      age >=15 & age <= 17 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.024, 0.976)),
-      age >=18 & age <= 19 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.055, 0.945)),
-      age >=20 & age <= 29 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.059, 0.941)),
-      age >=30 & age <= 44 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.0382, 0.9618)),
-      age >=45 & age <= 64 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.029, 0.971)),
-      age < 15 | age > 64 ~ 'no'
+      age >=15 & age <= 17 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.036, 0.964)),
+      age >=18 & age <= 19 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.106, 0.894)),
+      age >=20 & age <= 24 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.154, 0.846)),
+      age >=25 & age <= 29 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.169, 0.831)),
+      age >=30 & age <= 34 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.138, 0.862)),
+      age >=35 & age <= 39 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.077, 0.923)),
+      age >=40 & age <= 44 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.019, 0.981)),
+      age >=45 & age <= 51 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.001, 0.999)),
+      age < 15 | age > 51 ~ 'no'
   ),
     prenatal_first_tri = case_when(
-      pregnant == "yes" & age >=15 & age <= 17 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.016, 0.984)),
-      pregnant == "yes" & age >=18 & age <= 19 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.041, 0.959)),
-      pregnant == "yes" & age >=20 & age <= 29 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.479, 0.521)),
-      pregnant == "yes" & age >=30 & age <= 44 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.433, 0.567)),
-      pregnant == "yes" & age >=45 & age <= 64 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.031, 0.969)),
-      age < 15 | age > 64 ~ 'no'
+      pregnant == "yes" & age >=15 & age <= 19 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.543, 0.467)),
+      pregnant == "yes" & age >=20 & age <= 24 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.632, 0.368)),
+      pregnant == "yes" & age >=25 & age <= 29 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.739, 0.261)),
+      pregnant == "yes" & age >=30 & age <= 40 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.792, 0.208)),
+      pregnant == "yes" & age >=41 & age <= 51 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.763, 0.237))
+    ),
+    autism_by_maternal_age = case_when(
+      pregnant == "yes" & age >=15 & age <= 19 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.054, 0.946)),
+      pregnant == "yes" & age >=20 & age <= 24 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.19, 0.810)),
+      pregnant == "yes" & age >=25 & age <= 29 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.293, 0.707)),
+      pregnant == "yes" & age >=30 & age <= 34 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.292, 0.708)),
+      pregnant == "yes" & age >=35 & age <= 44 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.148, 0.852)),
+      pregnant == "yes" & age >=45 & age <= 54 ~ sample(c("yes", "no"), size = 1, replace = TRUE, prob = c(0.024, 0.976))
+    ),
+    maternal_CRH = case_when(
+      prenatal_first_tri == "yes" & race == 'asian' ~ rnorm(1, mean = 4.5, sd = .25),
+      prenatal_first_tri == "yes" & race == 'other.race' ~ rnorm(1, mean = 3.85, sd = .25),
+      prenatal_first_tri == "yes" & race == 'multiracial' ~ rnorm(1, mean = 5.3, sd = .25),
+      prenatal_first_tri == "yes" & race == 'black' ~ rnorm(1, mean = 3.85, sd = .25),
+      prenatal_first_tri == "yes" & race == 'hispanic' ~ rnorm(1, mean = 3.95, sd = .25),
+      prenatal_first_tri == "yes" & race == 'white' ~ rnorm(1, mean = 4.33, sd = .25)
+    ),
+    autism_by_CRH = case_when(
+      maternal_CRH > 5.29 ~ 'yes'
     )
-    
   )
-  #mutate(pregnant = ifelse(age > 14 & age < 18, sample(c("yes", "no"), size = 100000, replace = TRUE, prob = c(0.024, 0.976)),"no"))
+sam_merge <- merge(sam,sam_preg_autism,by = "individual_id",all=TRUE)
 
 
 Pregnancy Rates

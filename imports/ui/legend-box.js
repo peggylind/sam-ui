@@ -3,17 +3,22 @@ import Slide from './slider-input';
 import PullDown from './pull-down-input';
 //might just do my own pane...
 
-export default class LegendBox extends Component {
+export default class LegendBox extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
             isBoxOpen: true,
         };
-
+        this.handleClick = this.handleClick.bind(this);
     };
 
     componentDidMount() {
     };
+    handleClick() {
+      this.setState(state => ({
+        isBoxOpen: !state.isBoxOpen
+      }));
+    }
 
 //index for toShow category could be here - and then it could do a number of types.
 //slider works reasonably well, but need to debug
@@ -26,51 +31,45 @@ export default class LegendBox extends Component {
 
     render() {
       const boxStyle = {
-        marginTop: '12%',
+        top: '2%',
         position: 'absolute',
         zindex: '3',
         width: '25%',
         height: '80%',
+        borderRadius:'25px',
         backgroundColor: 'white',
         overflow: 'scroll'
       }
       const boxButtonStyle = {
         position: 'relative',
-        zIndex: '1',
-        width: '100%'
+        left: '2%',
+        top: '2%',
+        zIndex: '3',
+        width: '10%'
       };
         return (
 
           <div style={boxStyle}>
-          {!this.state.isBoxOpen &&
-          <div style={boxButtonStyle}>
-                  <button onClick={() => this.setState({ isBoxOpen: true })}>
-                    Show Legend
-                  </button>
-          </div>
-          }
-          {this.state.isBoxOpen &&
-            <div>
-            <div style={boxButtonStyle}>
-                    <button onClick={() => this.setState({ isBoxOpen: false })}>
-                      Hide
-                    </button>
-            </div>
 
+          {this.state.isBoxOpen &&
             <div style={{position:'absolute',marginLeft:'15%',zIndex:'3',width:'50%'}}>
 
               <PullDown
                 onChangetoShow={this.props.onChangetoShow}
                 onCatChange={this.props.onCatChange}
+                onScaleChange={this.props.onScaleChange}
                 onFactortoShow={this.props.onFactortoShow}
+                setExplanation={this.props.setExplanation}
                 samprops={this.props.samprops}
               ></PullDown>
-              <hr/>
 
-              <h1>put GeoJSON selector here</h1>
-            </div>
             </div>
           }
+          <span style={boxButtonStyle}>
+                  <button title="Toggle Selectors" onClick={this.handleClick}>
+                    {this.state.isBoxOpen ? '<' : '>'}
+                  </button>
+          </span>
 
           </div>
 )}};

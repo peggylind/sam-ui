@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import DeckGL, { GeoJsonLayer, ScatterplotLayer, ArcLayer, LineLayer, PointCloudLayer, MapController, Controller } from 'deck.gl';
+import DeckGL, { GeoJsonLayer, ScatterplotLayer, ArcLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, ContourLayer, MapController, Controller } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import WebMercatorViewport, {getDistanceScales} from 'viewport-mercator-project';
 //import debounce from 'lodash.debounce';
@@ -35,57 +35,46 @@ const firstgeojson = {
 export default class MapBox extends Component {
   constructor(props) {
       super(props);
+      console.log('setting state in mapbox')
       this.SamControls = new SamMapControls();
       this.setToolInfo = this.props.setToolInfo;
       this.setClick = this.props.setClick;
+      this.setWaiting = this.props.setWaiting;
       this.handlePopulationChange = this.props.handlePopulationChange;
       this.state = {
             mapboxApiAccessToken: 'pk.eyJ1IjoibWRjaW90dGkiLCJhIjoiY2l1cWdyamw5MDAxcTJ2bGFmdzJxdGFyNyJ9.2b6aTKZNlT1_DEJiJ9l3hw',
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
             time: 0,
             samdata: this.props.samdata || [],
-          //  geojsonsam: [firstgeojson],
             waiting: 1,
-            //toShow: this.props.samprops.toShow[0],
             toTest: {white:[230,159,0],black:[213,94,0]},
             forColors: this.props.samprops.forColors //maybe have in toShow - have to draw the flow again
         };
-  //      this.handleEvent = this.handleEvent.bind(this);
-  //      this.emitChangeDebounced = debounce(this.emitChange, 250);
+      }
+
+      returnheight (factor) {
+        //should do some as log!!!
+        let min = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].low
+        let max = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].high
+        //function(val, max, min) { return (val - min) / (max - min); }
+        return ((factor[this.props.samprops.scaleShow]-min) / (max - min)) * (this.props.samprops.height/2)
       }
 
       returnColors (factor) {
-        //do color array here for ranges - also in scatterdata
-        //if "factor" is a string, then ...; else {
-          //or have things saved on app.js that let us know how to do the interpolation?
-        //console.log('in ' +'this.props.samprops.forColors[factor]')
-        if(this.props.samprops.toShow[this.props.samprops.categIndex].type == 'factor'){
+        //if(this.props.samprops.toShow[this.props.samprops.categIndex].type == 'factor'){
           return this.props.samprops.forColors[factor]
-        }else{
-          var low = this.props.samprops.toShow[this.props.samprops.categIndex].low;
-          var high = this.props.samprops.toShow[this.props.samprops.categIndex].high;
-          var lowrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[0].factorColor].RGB
-          var highrgb = this.props.samprops.allcolors[this.props.samprops.toShow[this.props.samprops.categIndex].factors[1].factorColor].RGB
-          var r = lowrgb[0]+(Math.abs(highrgb[0]-lowrgb[0])/high)*factor;
-          if (r>255){r=255}
-          if (r<0){r=0}
-          //var g = lowrgb[1]+(Math.abs(highrgb[1]-lowrgb[1])/high)*factor;
-          var g = ((lowrgb[1]+255)/high)*factor;
-          if (g>255){g=255}
-          if (g<0){g=0}
-          var b = lowrgb[2]+(Math.abs(highrgb[2]-lowrgb[2])/high)*factor;
-          if (b>255){b=255}
-          if (b<0){b=0}
-          var RGB = [Math.round(r),Math.round(g),Math.round(b)];
-          return RGB
-        }
+        //}
       }
     componentDidMount(){
+      // console.log('componentDidMount in mapbox '+this.props.samprops.catShow)
+      // if (this.props.data){console.log('data')}
       //this.setState({geojsonsam:this.props.geojsonsam})
-    }
+    };
 
-    componentDidUpdate(prevProps, prevState) {
-      if (this.props.geojsonsam != prevProps.geojsonsam){
+    componentDidUpdate(newProps, prevState) {
+      //console.log('map-box updated'+JSON.stringify(newProps.samprops.waiting)+JSON.stringify(prevState.waiting))
+      console.log('map-box updated'+JSON.stringify(this.props.samprops.catShow))
+      if (this.props.geojsonsam != newProps.geojsonsam){
         console.log(this.props.geojsonsam)
          this.setState({geojsonsam:this.props.geojsonsam})
        };
@@ -93,16 +82,18 @@ export default class MapBox extends Component {
       //  this.setState({geojsonsam:this.props.geojsonsam})
         console.log('set samdata '+(Date.now()))
         this.setState({samdata: this.props.data, waiting: 0});
+        this.setWaiting(0);
         // if (this.props.samprops.limit < 10001){
         //   this.handlePopulationChange(this.props.samprops.limit+500)
         // }
       };
       if (this.props.data != prevState.samdata && prevState.waiting == 0){
-        //console.log('set samdata again '+(Date.now()))
+        console.log('set samdata new '+(Date.now()))
         this.setState({samdata: this.props.data});
-        if (this.props.samprops.limit < 10001){ //instead of 40001
-          this.handlePopulationChange(this.props.samprops.limit+7000)
-        }
+        this.setWaiting(0);
+        // if (this.props.samprops.limit < 10001){ //instead of 40001
+        //   this.handlePopulationChange(this.props.samprops.limit+7000)
+        // }
       };
       if (this.state.viewport != prevState.viewport){
         var scale = getDistanceScales(this.state.viewport).metersPerPixel[0];
@@ -115,7 +106,7 @@ export default class MapBox extends Component {
         }else{
           var dist4search = worldWidth
         };
-        this.props.onMapChange(this.state.viewport,dist4search*1.8);
+        this.props.onMapChange(this.state.viewport,dist4search,worldHeight);
       };
     };
 
@@ -129,42 +120,41 @@ const GeoMap = new GeoJsonLayer({
   id: 'geojson-layer',
   data: this.state.geojsonsam,
   pickable: true,
-    stroked: false,
-    filled: true,
-    extruded: true,
-    lineWidthScale: 20,
-    lineWidthMinPixels: 2,
-    getFillColor: [160, 160, 180, 200],
+  stroked: false,
+  filled: true,
+  extruded: false,
+  lineWidthScale: 20,
+  lineWidthMinPixels: 2,
+//    getFillColor: [160, 160, 180, 200],
 //    getLineColor: d => colorToRGBArray(d.properties.color),
-    getRadius: 100,
-    getLineWidth: 10,
-    getElevation: 30,
-//    onHover: ({object}) => setTooltip(object.properties.name || object.properties.station),
-
+  getRadius: 100,
+  getLineWidth: 100,
+  getElevation: 30,
+  //onHover: ({object}) => this.setToolInfo(object),
+  //autoHighlight: true,
   //getElevation: f => Math.sqrt(f.properties.valuePerSqm) * 10,
-  //getFillColor: f => COLOR_SCALE(f.properties.growth),
-  getLineColor: [255, 255, 255],
+  getFillColor: [255, 255, 255, 255],
+  getLineColor: [255, 0, 0, 255]
   //lightSettings: LIGHT_SETTINGS,
 
 })
 
-// const PointCloudMap = new PointCloudLayer({
-//   id: 'point-cloud-layer',
-//   data: [...this.state.samdata],
-//   getPosition: d => [d.coords[0], d.coords[1], 1000],
-//   getColor: d => this.props.samprops.forColors[d.race],
-//   opacity: 0.85,
-//   radiusMinPixels: 1.12,
-//   radiusMaxPixels: 100,
-//   strokeWidth: 2,
-//   radiusScale: 10,
-//   outline: false,
-//   pickable: true,
-//   onHover: ({object}) => this.setToolInfo(object?`${object.race}\n${object.total_income}`:null)
-//   //panEnd: info => console.log('panend:', info),
-//   // onHover: info => console.log('Hovered:', info),
-//   // onClick: info => console.log('Clicked:', info)
-// });
+const PointCloudMap = new PointCloudLayer({
+  id: 'point-cloud-layer',
+  data: [...this.state.samdata],
+  getPosition: d => [d.coords[0], d.coords[1], this.returnheight(d)],
+  getColor: d => this.returnColors(d[this.props.samprops.catShow]),
+  opacity: this.props.samprops.opacity,
+  radiusMinPixels: this.props.samprops.radiusMinPixels,
+  radiusMaxPixels: this.props.samprops.radiusMaxPixels,
+  strokeWidth: this.props.samprops.strokeWidth,
+  //radiusScale: this.props.samprops.radiusScale,
+  outline: this.props.samprops.outline,
+  pickable: this.props.samprops.pickable,
+  autoHighlight: true,
+  //onHover: ({object}) => this.setToolInfo(object),
+  onClick: ({object}) => this.setClick(object)
+});
 //const showCat = 'race'
 const ScatterMap = new ScatterplotLayer({
     id: 'scatterplot-layer',
@@ -175,23 +165,66 @@ const ScatterMap = new ScatterplotLayer({
     radiusMinPixels: this.props.samprops.radiusMinPixels,
     radiusMaxPixels: this.props.samprops.radiusMaxPixels,
     strokeWidth: this.props.samprops.strokeWidth,
-    radiusScale: this.props.samprops.radiusScale,
+    //radiusScale: this.props.samprops.radiusScale,
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
-    onHover: ({object}) => this.setToolInfo(object),
+    autoHighlight: true,
+    //onHover: ({object}) => this.setToolInfo(object),
     onClick: ({object}) => this.setClick(object)
   });
-  const main_layers = [
+  const HexMap = new HexagonLayer({
+    id: 'hex-layer',
+    data: [...this.state.samdata],
+    pickable: true,
+    extruded: true,
+    radius: 1000,
+    elevationScale: 4,
+    getPosition: d => [d.coords[0], d.coords[1]],
+    onHover: ({object}) => this.setToolInfo(`${object.position.join(', ')}\nCount: ${object.count}`)
+  });
+  const GridMap = new GridLayer({
+    id: 'grid-layer',
+    data: [...this.state.samdata],
+    pickable: true,
+    extruded: true,
+    cellSize: 1000,
+    elevationScale: 4,
+    getPosition: d => [d.coords[0], d.coords[1]],
+    onHover: ({object}) => this.setToolInfo(`${object.position.join(', ')}\nCount: ${object.count}`)
+  });
+  const GridCellMap = new GridCellLayer({
+    id: 'grid-cell-layer',
+    data: [...this.state.samdata],
+    pickable: true,
+    extruded: true,
+    cellSize: 1000,
+    elevationScale: 4,
+    getPosition: d => [d.coords[0], d.coords[1]],
+    onHover: ({object}) => this.setToolInfo(`${object.position.join(', ')}\nCount: ${object.count}`)
+  });
+  // const ContourMap = new ContourLayer({ //not working
+  //   id: 'contourLayer',
+  //   data: [...this.state.samdata],
+  //   // Three contours are rendered.
+  //   contours: [
+  //     {threshold: 1, color: [255, 0, 0], strokeWidth: 1},
+  //     {threshold: 5, color: [0, 255, 0], strokeWidth: 2},
+  //     {threshold: 10, color: [0, 0, 255], strokeWidth: 5}
+  //   ],
+  //   cellSize: 200,
+  //   getPosition: d => [d.coords[0], d.coords[1]]
+  // });
+  const main_layers_list = [
      GeoMap,
-     ScatterMap
-    //PointCloudMap
+     ScatterMap,
+     HexMap,
+     PointCloudMap,
+     GridMap,
+     GridCellMap//,
+  //   ContourMap
   ];
-    let patience = <div></div>
-    if (this.state.waiting){ patience =
-        <div style={{position:"absolute",
-        marginTop:"30%", marginLeft:"30%", color:"green", fontSize:"2em"}}>
-        Loading Data ... thank you for your patience</div>
-      }
+  const main_layers = main_layers_list[this.props.mapprops.mode]
+
 
     return (
       <ReactMapGL
@@ -201,7 +234,6 @@ const ScatterMap = new ScatterplotLayer({
         mapControls={this.SamControls}
         onViewportChange={(viewport) => this.setState({viewport})}
       >
-      {patience}
         <DeckGL
           {...this.state.viewport}
           initialViewState={this.state.viewport}
@@ -209,7 +241,6 @@ const ScatterMap = new ScatterplotLayer({
           layers={main_layers}
           >
           </DeckGL>
-
       </ReactMapGL>
     );
   }

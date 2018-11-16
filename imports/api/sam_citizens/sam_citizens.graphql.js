@@ -1,29 +1,50 @@
-export default `\
+export default `
+
+scalar FloatwNA
+
 type SamCitizen {
-  _id: String!
-  individual_id: Int
+  _id: ID!
   age: Int
-  bracket_age: String
   asthma: String
+  autism_by_CRH: String
+  autism_by_maternal_age: String
+  bracket_age: String
   citizenship: String
   coords: [Float]
   date_erected: String
   disability: String
+  education_entropy_index: Float
   educational_attainment: String
   employment: String
   english_speaking_skills: String
   health_insurance: String
+  household_id: ID!
   household_income: Int
   household_type: String
-  quality_description: String
+  individual_id: Int
+  language_at_home: String
   limit: Int
+  loc_num: String
+  loc_name: String
+  lowbirthweightbyrace: String
+  maternal_CRH: FloatwNA
+  means_of_transportation_to_work: String
   member: String
   nativity: String
   one_of: Int
+  pregnant: String
+  prenatal_first_tri: String
+  quality_description: String
   race: String
+  racial_entropy_index: Float
   sex: String
-  size: Int
+  stresslevelincome: FloatwNA
+  stresslevelrace: FloatwNA
+  travel_time_to_work: FloatwNA
   veteran_status: String
+  zip: String
+  zip_education_entropy_index: Float
+  zip_racial_entropy_index: Float
 }
 
 type Factor {
@@ -41,29 +62,48 @@ type FindFactors {
 
 type Query {
   samcity(
-      limit:Int,
-      one_of:Int,
-      individual_id: Int,
+      _id: ID
       age: Int,
+      asthma:String,
+      autism_by_maternal_age: String,
+      bottom_range: Int,
       bracket_age: String,
       citizenship: String,
-      member:String,
-      race:String,
+      coords:[Float],
       disability: String,
+      dist:Float,
+      education_entropy_index:Float,
       educational_attainment:String,
       employment: String,
       english_speaking_skills: String,
-      nativity: String,
-      quality_description: String,
       health_insurance: String,
+      household_id: ID,
       household_income: Int,
       household_type: String,
-      asthma:String,
-      dist:Float,
+      individual_id: Int,
+      limit:Int,
+      loc_num:String,
+      loc_name:String,
+      lowbirthweightbyrace:String,
+      maternal_CRH:FloatwNA,
+      means_of_transportation_to_work:String,
+      member:String,
+      nativity: String,
+      one_of:Int,
+      pregnant:String,
+      prenatal_first_tri:String,
+      quality_description: String,
+      race:String,
+      racial_entropy_index: Float,
       sex: String,
-      size: Int,
+      stresslevelincome: FloatwNA,
+      stresslevelrace: FloatwNA,
+      travel_time_to_work: FloatwNA,
+      top_range: Int,
       veteran_status: String,
-      coords:[Float]
+      zip: String,
+      zip_education_entropy_index: Float,
+      zip_racial_entropy_index: Float
     ):[SamCitizen],
   factorlist(category:String):[Factor]
 }

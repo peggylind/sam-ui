@@ -17,7 +17,7 @@ export default class D3Scatter extends React.PureComponent {
     // console.log('so b4 setState')
   //  this.setState({scatterdata: this.props.data, waiting: 0});
   }
-  componentDidUpdate(props, prevState) {
+  componentDidUpdate(props, prevState) { //get from map-box
     // console.log('didUpdate'+prevState.waiting)
    if (props.data != prevState.data){
       this.setState({scatterdata: props.data}); //, waiting: 0});
@@ -49,7 +49,7 @@ export default class D3Scatter extends React.PureComponent {
 						marginTop={40}
 						x={d => parseInt(d['age'])}//isNaN(parseInt(d['age'])) ? 0 : parseInt(d['age']) }
 						y={d => parseInt(d['household_income'])} //isNaN(parseInt(d['household_income'])) ? 0 : parseInt(d['household_income']) }
-						r={d => 3}
+						r={d => 2}
 						fill={d => plotClass.factorcolors[d[plotClass.category]]}
             stroke={d=>"none"}
 						xDomain={[1, 100]}
@@ -89,7 +89,7 @@ function getAnnotations(plotClass) {
 			<span
 				key="0"
 				className="chart-title"
-				style={{position: "absolute", left: 5, top: 10, width: 200}}>
+				style={{position: "absolute", left: 25, top: -20, width: 200}}>
 				"{plotClass.category}"
 			</span>
 		),
@@ -97,7 +97,7 @@ function getAnnotations(plotClass) {
 			<span
 				key="1"
 				className="axis-label"
-				style={{position: "absolute", left: 149, top: 182}}>
+				style={{position: "absolute", left: 149, top: 200}}>
 				"{plotClass.category}"
 			</span>
 		),
@@ -105,7 +105,7 @@ function getAnnotations(plotClass) {
 			<span
 				key="2"
 				className="axis-label"
-				style={{position: "absolute", left: 100, top: 134, width: 200,
+				style={{position: "absolute", left: 800, top: 134, width: 200,
 								MsTransform: "rotate(90deg)",
 								WebkitTransform: "rotate(90deg)",
 								transform: "rotate(90deg)"}}>
