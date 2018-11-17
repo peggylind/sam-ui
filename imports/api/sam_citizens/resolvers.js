@@ -8,11 +8,46 @@ import SamCitizens from "./sam_citizens";
 //https://github.com/APIs-guru/graphql-voyager
 //will do it only on full_sam, and with nested calls on one_of == 'tenthousands', 'thousands', etc.
 //the nested calls made from SamDataForm and combine with $limit
+const factor_vars = [//'household_id', //id isn't really a factor, but process same way
+  'race','member','citizenship',
+  'employment','quality_description','educational_attainment',
+  'veteran_status','disability','asthma'];
+const range_vars = ['household_income','age']; //finish later
 
 export default {
+
   Query: {
     //should be able to speed it up by creating an aggregate pipeline, but not sure what I'm doing wrong.
     //  //return await SamCitizens.rawCollection().aggregate(pipeline, options).fetch();
+    async samcitycount(args){
+      var qdb = {
+        coords: {
+        $near: {
+          $geometry: {
+            type: "Point" ,
+            coordinates: args.coords
+          },
+          $maxDistance: args.dist//, //in meters
+          //$minDistance: 10
+        }
+      },
+    };
+    for (var arg in args){
+      if(factor_vars.indexOf(arg) >=0){
+        if(args[arg]){
+          qdb[arg] = args[arg];
+        }
+      };
+    };
+
+    const rtn = await SamCitizens.find(
+         qdb
+       ).count();
+
+    return rtn
+  },
+
+
 
     async samcity(obj, args, { _id }){
       console.log('args: '+JSON.stringify(args))
@@ -32,11 +67,7 @@ export default {
         },
         one_of:{$gte : args.one_of},
       };
-      const factor_vars = [//'household_id', //id isn't really a factor, but process same way
-        'race','member','citizenship',
-        'employment','quality_description','educational_attainment',
-        'veteran_status','disability','asthma'];
-      const range_vars = ['household_income','age']; //finish later
+
       for (var arg in args){
         if(arg=='household_id'){
           qdb = {}
@@ -58,10 +89,12 @@ export default {
       console.log('reafdasfsdfas: '+SamCitizens.find(
            qdb).count())
 
-    return await SamCitizens.find(
+    const rtn = await SamCitizens.find(
          qdb,
          {limit:args.limit}
        ).fetch();
+
+    return rtn
     }
   },
 

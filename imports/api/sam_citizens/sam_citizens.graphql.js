@@ -60,7 +60,14 @@ type FindFactors {
   factor: Factor
 }
 
+type count {
+  fieldcount:Int
+}
+
 type Query {
+  samcitycount(
+    totalcount:Int
+  ),:[count],
   samcity(
       _id: ID
       age: Int,

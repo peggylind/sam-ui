@@ -73,7 +73,7 @@ export default class MapBox extends Component {
 
     componentDidUpdate(newProps, prevState) {
       //console.log('map-box updated'+JSON.stringify(newProps.samprops.waiting)+JSON.stringify(prevState.waiting))
-      console.log('map-box updated'+JSON.stringify(this.props.samprops.catShow))
+
       if (this.props.geojsonsam != newProps.geojsonsam){
         console.log(this.props.geojsonsam)
          this.setState({geojsonsam:this.props.geojsonsam})

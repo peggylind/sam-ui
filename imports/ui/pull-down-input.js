@@ -60,6 +60,9 @@ export default class PullDown extends React.PureComponent {
     };
   };
 
+  //could put an apolloquery here that return count and then have it for each below??
+  //test out the aggregation pipeling???
+
   render() {
     //this.model_explanations = model_explanations
     return (
