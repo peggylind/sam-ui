@@ -19,6 +19,8 @@ export default {
   Query: {
     //should be able to speed it up by creating an aggregate pipeline, but not sure what I'm doing wrong.
     //  //return await SamCitizens.rawCollection().aggregate(pipeline, options).fetch();
+//use toShow for potential fields/factors
+    //https://stackoverflow.com/questions/15259493/listing-counting-factors-of-unique-mongo-db-values-over-all-keys
     async samcitycount(args){
       var qdb = {
         coords: {
