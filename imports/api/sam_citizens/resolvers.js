@@ -20,6 +20,7 @@ export default {
     //should be able to speed it up by creating an aggregate pipeline, but not sure what I'm doing wrong.
     //  //return await SamCitizens.rawCollection().aggregate(pipeline, options).fetch();
 //use toShow for potential fields/factors
+//have to make sure they're only factors somehow
     //https://stackoverflow.com/questions/15259493/listing-counting-factors-of-unique-mongo-db-values-over-all-keys
     async samcitycount(args){
       var qdb = {
@@ -35,12 +36,38 @@ export default {
       },
     };
     for (var arg in args){
-      if(factor_vars.indexOf(arg) >=0){
+      //if(factor_vars.indexOf(arg) >=0){
         if(args[arg]){
           qdb[arg] = args[arg];
         }
-      };
+      //};
     };
+    //have to do a forEach for all the args?
+    //then use either distinct or toShow categories.js to populate??
+    //let cnt = SamCitizens.rawCollection().aggregate( [ { $collStats: { count: { } } } ] )
+    let cnt = SamCitizens.rawCollection().aggregate([
+    // { "$match": {
+    //     "price": { "$gte": 100, "$lte" 500 }
+    // }},
+    { "$group": {
+        "race": {
+            "$cond": [
+                { "race": "white" },
+                "white",
+                { "$cond": [
+                    { "race": "black" },
+                    "black",
+                    { "$cond": [
+                        { "hispanic": "hispanic" },
+                        "hispanic",
+                        "other_race"
+                    ]}
+                ]}
+            ]
+        },
+        "count": { "$sum": 1 }
+    }}
+])
 
     const rtn = await SamCitizens.find(
          qdb
@@ -50,7 +77,7 @@ export default {
   },
 
 
-
+//can we get args from new apollo client more flexibly??
     async samcity(obj, args, { _id }){
       console.log('args: '+JSON.stringify(args))
       // console.log('parent: '+parent)
@@ -88,8 +115,7 @@ export default {
           }
         };
       }
-      console.log('reafdasfsdfas: '+SamCitizens.find(
-           qdb).count())
+
 
     const rtn = await SamCitizens.find(
          qdb,

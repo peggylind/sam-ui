@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
 import {model_explanations} from "./model_explanations";
+import gql from "graphql-tag";
+import { graphql, Query } from "react-apollo";
+
+//if aggregation pipeline lets you get $sum on same output, then put here???
 
 const SelectText = ({allcolors, onChange, factor}) => {
   return (
