@@ -7,6 +7,7 @@ library(dplyr)
 library(sf)
 library(readr)
 library(forcats)
+library(tidyr)
 #sf_sam <- st_as_sf(sample_sam, crs=3674) don't do this time
 
 
@@ -66,7 +67,7 @@ zip_summed_sam_insurance <- exp_sam %>%
 write_rds(zip_summed_sam_insurance, "zip_summed_insurance.RDS") 
 
 #fix the NAs in citizenship
-sam_10_13_insertable$citizenship <- forecats::fct_explicit_na(sam_10_13_insertable$citizenship, "NotAnswered")
+sam_10_13_insertable$citizenship <- forcats::fct_explicit_na(sam_10_13_insertable$citizenship, "NotAnswered")
 zip_summed_sam_citizen <- sam_10_13_insertable %>%
   group_by_at(vars(zip,citizenship)) %>%
   summarize(zip_citizen_num = n()) %>%
