@@ -39,7 +39,7 @@ const GetHousehold = ({ household_id }) => (
         if(data.samcity.length>0){
           let loc_name = data.samcity[0].loc_name.charAt(0).toUpperCase() + data.samcity[0].loc_name.slice(1).toLowerCase()
           hr = <hr></hr>
-          clicker = <span style={{position:"absolute",zIndex:"6",left:"98%",top:"2%",fontSize:"1.1em"}} onClick={this.onXClick}>X</span>
+          clicker = <span style={{position:"absolute",borderStyle:"solid",borderRadius:"50px",borderColor:"black",zIndex:"6",left:"98%",top:"2%",fontSize:"1.1em"}} onClick={this.onXClick}>X</span>
           house_header = <div style={{fontSize:"1.8em",textAlign:"center"}}>Household Characteristics</div>
           house_header2 = <div>Household Income: ${data.samcity[0].household_income}, HCAD quality of housing: {data.samcity[0].quality_description}</div>
           house_title = <div>This is not real data, but represents a plausible household for: <br></br> {data.samcity[0].loc_num} {loc_name}, TX {data.samcity[0].zip} based on census data.</div>
@@ -117,8 +117,6 @@ class SamDataForm extends React.PureComponent {
    async componentDidMount() {
      const retrn = await fetch('/json/'+this.props.samprops.geojson_title)
      const geojsonsam = await retrn.json()
-     //console.log(geojsonsam)
-
      this.setState({geojsonsam})
      // const res = await fetch('/json/sam_of_100.json') //only if loading json for faster process
      // const jsonsam = await res.json()
@@ -159,21 +157,21 @@ class SamDataForm extends React.PureComponent {
    //how can we get them both as part of the same data stream, and not reloading when you do search on new data characteristics?
     render(){
 
-      const plotStyle = {
-        position: 'absolute',
-        left: '20%',
-        bottom: '0',
-        zindex: '3',
-        backgroundColor: 'white', //transparent
-        overflow: 'scroll'
-      };
-      const plotButtonStyle = {
-        position: 'absolute',
-        left: '50%',
-        zIndex: '10',
-        backgroundColor: 'white',
-        bottom: '0'
-      };
+      // const plotStyle = {
+      //   position: 'absolute',
+      //   left: '20%',
+      //   bottom: '0',
+      //   zindex: '3',
+      //   backgroundColor: 'white', //transparent
+      //   overflow: 'scroll'
+      // };
+      // const plotButtonStyle = {
+      //   position: 'absolute',
+      //   left: '50%',
+      //   zIndex: '10',
+      //   backgroundColor: 'white',
+      //   bottom: '0'
+      // };
 
     return (
       <div>
@@ -246,17 +244,47 @@ export default graphql(samQuery,
     options: props => ({
       variables: {
         age: props.samprops.age,
+        asthma: props.samprops.asthma,
+        autism_by_CRH: props.samprops.autism_by_CRH,
+        autism_by_maternal_age: props.samprops.autism_by_maternal_age,
         bottom_range: props.samprops.bottom_range,
+        bracket_age: props.samprops.bracket_age,
+        citizenship: props.samprops.citizenship,
         coords: [props.samprops.longitude,props.samprops.latitude] || [-95.35,29.75],
+        date_erected: props.samprops.date_erected,
+        disability: props.samprops.disability,
         dist: props.samprops.dist,
+        education_entropy_index: props.samprops.education_entropy_index,
         educational_attainment: props.samprops.educational_attainment,
         employment: props.samprops.employment,
+        english_speaking_skills: props.samprops.english_speaking_skills,
+        health_insurance: props.samprops.health_insurance,
+        household_id: props.samprops.household_id,
+        household_income: props.samprops.household_income,
+        household_type: props.samprops.household_type,
+        individual_id: props.samprops.individual_id,
+        language_at_home: props.samprops.language_at_home,
         limit:  props.samprops.limit,
+        lowbirthweightbyrace: props.samprops.lowbirthweightbyrace,
+        maternal_CRH: props.samprops.maternal_CRH,
+        means_of_transportation_to_work: props.samprops.means_of_transportation_to_work,
         member: props.samprops.member,
+        nativity: props.samprops.nativity,
         one_of: props.samprops.one_of,
+        pregnant: props.samprops.pregnant,
+        prenatal_first_tri: props.samprops.prenatal_first_tri,
+        quality_description: props.samprops.quality_description,
         race: props.samprops.race,
+        racial_entropy_index: props.samprops.racial_entropy_index,
+        sex: props.samprops.sex,
         stresslevelincome: props.samprops.stresslevelincome,
-        top_range: props.samprops.top_range
+        stresslevelrace: props.samprops.stresslevelrace,
+        top_range: props.samprops.top_range,
+        travel_time_to_work: props.samprops.travel_time_to_work,
+        veteran_status: props.samprops.veteran_status,
+        zip: props.samprops.zip,
+        zip_education_entropy_index: props.samprops.zip_education_entropy_index,
+        zip_racial_entropy_index: props.samprops.zip_racial_entropy_index
       }
     }),
     props: ({ data }) => ({ ...data })

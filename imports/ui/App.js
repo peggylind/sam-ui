@@ -87,15 +87,45 @@ const samprops = { //have all decided with same logic??
   limit: 14000,
   one_of: calcOneOf(firstzoom),
   // member: "",
-  // race: "",
   age: 55,
+  asthma: '',
+  autism_by_CRH: '',
+  autism_by_maternal_age: '',
   bottom_range: 0,
-  top_range: 100,
+  bracket_age: '',
+  citizenship: '',
+  date_erected: '',
+  disability: '',
   dist: firstdist,
-  height: 40000,
   educational_attainment: '',
-  stresslevelincome: '',
+  education_entropy_index: null,
   employment: '',
+  english_speaking_skills:'',
+  health_insurance: '',
+  household_type: '',
+  individual_id: '',
+  language_at_home: '',
+  lowbirthweightbyrace: '',
+  maternal_CRH: '',
+  means_of_transportation_to_work: '',
+  member: "",
+  nativity: '',
+  pregnant: '',
+  prenatal_first_tri: '',
+  quality_description: '',
+  race: "",
+  racial_entropy_index: null,
+  stresslevelincome: '',
+  stresslevelrace: '',
+  top_range: 100,
+  travel_time_to_work: '',
+  veteran_status: '',
+  zip: '',
+  zip_education_entropy_index: null,
+  zip_racial_entropy_index: null,
+  height: 40000,
+
+
   longitude: -95.315,
   latitude: 29.75,
   zoom: firstzoom,
@@ -269,7 +299,7 @@ export default class App extends React.PureComponent {
     var samprops = {...this.state.samprops}
     samprops.explainIndex = e.target.value;
     //explanation = expl
-    this.setState({samprops})
+    this.setState({samprops,exp_width: model_explanations(samprops.explainIndex).div_width})
     //could also set the toShow, etc. to go along with different models, if the pull-downs are too long
   };
   setText = function(txt,position){
@@ -336,12 +366,14 @@ export default class App extends React.PureComponent {
                 </span>
               </div>
               <div style={{position:"absolute",width:model_explanations(this.state.samprops.explainIndex).div_width,
-                            left:model_explanations(this.state.samprops.explainIndex).div_left,height:"100%",
+                            left:model_explanations(this.state.samprops.explainIndex).div_left,height:"95%",
                             overflow: "scroll",backgroundColor:"#f8f8ff",zIndex:"3"}}>
 
                 <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"4",borderRadius:"25px"}}>
                 {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/></div>}
                   <h2 style={{textAlign:"center"}}>{model_explanations(this.state.samprops.explainIndex).h2_title}</h2>
+                  {model_explanations(this.state.samprops.explainIndex).button}
+
                   <div style={{textAlign:"center",fontWeight: "bold"}}>{model_explanations(this.state.samprops.explainIndex).author}</div>
                   {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/><br/></div>}
                   <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).text}</div>
