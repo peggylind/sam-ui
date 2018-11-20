@@ -69,6 +69,7 @@ function list4plots (plots) {
 }
 
 const firstzoom = 10.3;
+const firstdist = 100000;
 const calcOpacity = (zoom) => { return 1 - (zoom/25)};
 const calcStrokeWidth = (zoom) =>
   (zoom *1.3) < 22 ? 23 - (zoom * 1.3) : 1;
@@ -90,7 +91,7 @@ const samprops = { //have all decided with same logic??
   age: 55,
   bottom_range: 0,
   top_range: 100,
-  dist: 170000,
+  dist: firstdist,
   height: 40000,
   educational_attainment: '',
   stresslevelincome: '',
@@ -98,6 +99,7 @@ const samprops = { //have all decided with same logic??
   longitude: -95.315,
   latitude: 29.75,
   zoom: firstzoom,
+  cellSize: firstdist/50,
   opacity: calcOpacity(firstzoom),
   radiusMinPixels: 2.5,
   radiusMaxPixels: 100,
@@ -114,7 +116,9 @@ const samprops = { //have all decided with same logic??
   scaleIndex: 0,
   catShow: 'race', //faster color in map-box-app - if can also read opacity off of toShow[categIndex], then have per color control.
   scaleShow: 'none', //'income',
-  openHousehold: 1
+  openHousehold: 1,
+  textname: '',
+  textposition: []
   //this logic will apply to everything we want to show - component should feed whole object here
 };
 
@@ -129,6 +133,7 @@ export default class App extends React.PureComponent {
        this.onMapChange = this.onMapChange.bind(this);
        this.setToolInfo = this.setToolInfo.bind(this);
        this.setClick = this.setClick.bind(this);
+       this.setText = this.setText.bind(this);
        this.setExplanation = this.setExplanation.bind(this);
        this.setWaiting = this.setWaiting.bind(this);
        //bbox is NW,NE,SE,SW
@@ -174,11 +179,12 @@ export default class App extends React.PureComponent {
     var samprops = {...this.state.samprops}
     var mapprops = {...this.state.mapprops}
     if(event==''){
-      if (mapprops.mode>0 && mapprops.mode<5){
-        mapprops.mode+=1
-        }else{
-        mapprops.mode=1
-      }
+      mapprops.mode = 4
+      // if (mapprops.mode>0 && mapprops.mode<5){
+      //   mapprops.mode+=1
+      //   }else{
+      //   mapprops.mode=1
+      // }
     }else{
     samprops.toShowScale.forEach(function(row,r){
       if(row.category == event.target.value){
@@ -242,6 +248,7 @@ export default class App extends React.PureComponent {
     samprops.longitude = mapstuff.longitude;
     samprops.zoom = mapstuff.zoom;
     samprops.dist = dist;
+    samprops.cellSize = dist/50;
     samprops.height = height;
     samprops.opacity = calcOpacity(mapstuff.zoom);
     samprops.strokeWidth = calcStrokeWidth(mapstuff.zoom);
@@ -265,12 +272,18 @@ export default class App extends React.PureComponent {
     this.setState({samprops})
     //could also set the toShow, etc. to go along with different models, if the pull-downs are too long
   };
+  setText = function(txt,position){
+    var samprops = {...this.state.samprops}
+    samprops.textname = txt;
+    samprops.textposition = position;
+    this.setState({samprops})
+  }
 //this is the tooltip
   setToolInfo = function(info){
     var toolTipInfo = {...this.state.toolTipInfo}
     toolTipInfo.info = info
     toolTipInfo.text = ''
-    console.log(toolTipInfo)
+    console.log(info)
     this.setState({toolTipInfo})
   };
   setClick = function(info){
@@ -398,6 +411,7 @@ export default class App extends React.PureComponent {
               samprops={this.state.samprops}
               onMapChange={this.onMapChange}
               setToolInfo={this.setToolInfo}
+              setText={this.setText}
               setClick={this.setClick}
               setWaiting={this.setWaiting}
               handlePopulationChange={this.handlePopulationChange}

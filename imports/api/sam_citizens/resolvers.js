@@ -80,6 +80,7 @@ export default {
 //can we get args from new apollo client more flexibly??
     async samcity(obj, args, { _id }){
       console.log('args: '+JSON.stringify(args))
+      console.log('obj: '+JSON.stringify(obj))
       // console.log('parent: '+parent)
       // console.log('context: '+context)
       // console.log('info: '+info)

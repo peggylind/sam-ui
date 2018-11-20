@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import {model_explanations} from "./model_explanations";
-import gql from "graphql-tag";
-import { graphql, Query } from "react-apollo";
 
 //if aggregation pipeline lets you get $sum on same output, then put here???
 
@@ -56,7 +54,6 @@ export default class PullDown extends React.PureComponent {
      this.props.onChangetoShow(showObj);
   };
   componentDidUpdate(prevProps, prevState) {
-    console.log('didUpdate in pull-down - set waiting here, and have it change interaction with everything')
     var samprops = {...this.state.samprops}
     if (this.props.samprops != prevProps.samprops){
       samprops.categIndex = this.props.samprops.categIndex;
@@ -160,7 +157,7 @@ export default class PullDown extends React.PureComponent {
         style={{backgroundColor:'#ffffff',
           borderColor:'#ffffff',position:'relative',width:'100%',
           borderWidth: "3px", borderStyle:"solid", height:"2em"}}>
-          change scale view
+          grid population
       </button>
   </div>
     )

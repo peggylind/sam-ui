@@ -11,6 +11,8 @@ import samQuery from "./samquery.graphql.js";
 
 
 //https://www.howtographql.com/ --lots more to use with new graphql 2.1 features.
+//could have ldg shared between 2
+
 const GetHousehold = ({ household_id }) => (
   <Query
     query={samQuery}
@@ -182,13 +184,13 @@ class SamDataForm extends React.PureComponent {
               <GetHousehold household_id={this.state.household_id}/></div>
             )}
         </div>
-
         <div>
           <MapBox
             onMapChange={this.props.onMapChange}
             setToolInfo={this.props.setToolInfo}
             handlePopulationChange={this.props.handlePopulationChange}
             setClick={this.props.setClick}
+            setText={this.props.setText}
             setWaiting={this.props.setWaiting}
             data={this.props.samcity}
             returnColors = {this.returnColors}

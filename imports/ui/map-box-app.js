@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import DeckGL, { GeoJsonLayer, ScatterplotLayer, ArcLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, ContourLayer, MapController, Controller } from 'deck.gl';
+import DeckGL, { GeoJsonLayer, ScatterplotLayer, ArcLayer, TextLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, ContourLayer, MapController, Controller } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import WebMercatorViewport, {getDistanceScales} from 'viewport-mercator-project';
 //import debounce from 'lodash.debounce';
@@ -39,6 +39,7 @@ export default class MapBox extends Component {
       this.SamControls = new SamMapControls();
       this.setToolInfo = this.props.setToolInfo;
       this.setClick = this.props.setClick;
+      this.setText = this.props.setText;
       this.setWaiting = this.props.setWaiting;
       this.handlePopulationChange = this.props.handlePopulationChange;
       this.state = {
@@ -47,7 +48,8 @@ export default class MapBox extends Component {
             time: 0,
             samdata: this.props.samdata || [],
             waiting: 1,
-            toTest: {white:[230,159,0],black:[213,94,0]},
+            textdata: [{text:this.props.samprops.textname,coords:this.props.samprops.textposition}],
+            //toTest: {white:[230,159,0],black:[213,94,0]},
             forColors: this.props.samprops.forColors //maybe have in toShow - have to draw the flow again
         };
       }
@@ -65,6 +67,26 @@ export default class MapBox extends Component {
           return this.props.samprops.forColors[factor]
         //}
       }
+      returnText (txt) {
+        console.log('returnText '+txt)
+        return txt //toString(parseInt(txt)*parseInt(this.props.samprops.one_of))
+      }
+
+    static getDerivedStateFromProps(props, state) {
+      //console.log('hovercoords: '+state.textdata[0].coords + ' : '+ props.samprops.textposition)
+      if (state.textdata[0].coords != props.samprops.textposition){
+        //have to load in and do a push??
+        //console.log('prevState.textdata[0].text: '+state.textdata[0].text + ' : '+ props.samprops.textname)
+        return {
+          text: 'pop: '+props.samprops.textname*props.samprops.one_of,
+          textdata:
+          [{text:props.samprops.textname,
+            coords:props.samprops.textposition}]}
+      }else{
+        return null
+      }
+    }
+
     componentDidMount(){
       // console.log('componentDidMount in mapbox '+this.props.samprops.catShow)
       // if (this.props.data){console.log('data')}
@@ -78,6 +100,11 @@ export default class MapBox extends Component {
         console.log(this.props.geojsonsam)
          this.setState({geojsonsam:this.props.geojsonsam})
        };
+      // if (prevState.textdata[0].text != newProps.samprops.textname){
+      //   //have to load in and do a push??
+      //   console.log('prevState.textdata[0].text: '+prevState.textdata[0].text + ' : '+ newProps.samprops.textname)
+      //   this.setState({textdata: [{text:newProps.samprops.textname,coords:newProps.samprops.textposition}]});
+      // }
       if (this.props.data && prevState.waiting == 1){
       //  this.setState({geojsonsam:this.props.geojsonsam})
         console.log('set samdata '+(Date.now()))
@@ -177,20 +204,25 @@ const ScatterMap = new ScatterplotLayer({
     data: [...this.state.samdata],
     pickable: true,
     extruded: true,
-    radius: 1000,
-    elevationScale: 4,
+    autoHighlight: true,
+    radius: this.props.samprops.cellSize,
+    elevationScale: 1,
+    opacity: .1,
     getPosition: d => [d.coords[0], d.coords[1]],
-    onHover: ({object}) => this.setToolInfo(`${object.position.join(', ')}\nCount: ${object.count}`)
+    onClick: ({object}) => this.setText(object.index,object.centroid),
+    onHover: ({object}) => this.setText(object.index,object.centroid),
   });
   const GridMap = new GridLayer({
     id: 'grid-layer',
     data: [...this.state.samdata],
     pickable: true,
     extruded: true,
-    cellSize: 1000,
-    elevationScale: 4,
+    autoHighlight: true,
+    cellSize: this.props.samprops.cellSize,
+    elevationScale: .21, //4
     getPosition: d => [d.coords[0], d.coords[1]],
-    onHover: ({object}) => this.setToolInfo(`${object.position.join(', ')}\nCount: ${object.count}`)
+    onHover: ({object}) => this.setText(object.count,object.position),
+    onClick: ({object}) => this.setText(object.count,object.position)
   });
   const GridCellMap = new GridCellLayer({
     id: 'grid-cell-layer',
@@ -200,8 +232,22 @@ const ScatterMap = new ScatterplotLayer({
     cellSize: 1000,
     elevationScale: 4,
     getPosition: d => [d.coords[0], d.coords[1]],
-    onHover: ({object}) => this.setToolInfo(`${object.position.join(', ')}\nCount: ${object.count}`)
+    onHover: ({object}) => this.setToolInfo(object)
   });
+  const TextMap = new TextLayer({
+      id: 'text-layer',
+      data: [...this.state.textdata],
+      pickable: true,
+      getPosition: d => [d.coords[0], d.coords[1]],
+      getText: d => [d.text], //this.returnText([d.text]),
+      getSize: 22, //this.props.samprops.zoom*4,
+      getColor: [0,255,0,255],
+      getAngle: 0,
+      getPixelOffset: [0,-30],
+      getTextAnchor: 'middle',
+      getAlignmentBaseline: 'center'//,
+      //onHover: ({object}) => setTooltip(`${object.name}\n${object.address}`)
+  })
   // const ContourMap = new ContourLayer({ //not working
   //   id: 'contourLayer',
   //   data: [...this.state.samdata],
@@ -223,7 +269,7 @@ const ScatterMap = new ScatterplotLayer({
      GridCellMap//,
   //   ContourMap
   ];
-  const main_layers = main_layers_list[this.props.mapprops.mode]
+  const main_layers = [TextMap,main_layers_list[this.props.mapprops.mode]]
 
 
     return (
@@ -234,6 +280,11 @@ const ScatterMap = new ScatterplotLayer({
         mapControls={this.SamControls}
         onViewportChange={(viewport) => this.setState({viewport})}
       >
+
+      <div style={{position:"absolute",zIndex:"5",
+                  textAlign:"center",width:"100%",top:"15%"}}>
+      {this.state.text}
+      </div>
         <DeckGL
           {...this.state.viewport}
           initialViewState={this.state.viewport}
