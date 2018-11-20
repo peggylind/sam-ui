@@ -217,6 +217,7 @@ const ScatterMap = new ScatterplotLayer({
     data: [...this.state.samdata],
     pickable: true,
     extruded: true,
+    opacity: .1,
     autoHighlight: true,
     cellSize: this.props.samprops.cellSize,
     elevationScale: .21, //4
@@ -269,7 +270,8 @@ const ScatterMap = new ScatterplotLayer({
      GridCellMap//,
   //   ContourMap
   ];
-  const main_layers = [TextMap,main_layers_list[this.props.mapprops.mode]]
+  //const main_layers = [TextMap,main_layers_list[this.props.mapprops.mode]]
+  const main_layers = [main_layers_list[this.props.mapprops.mode]]
 
 
     return (
