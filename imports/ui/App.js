@@ -170,7 +170,7 @@ export default class App extends React.PureComponent {
        const bbox = [[-95.91,28.93],[-94.67,28.93],[-94.67,30.47],[-95.91,30.47]];
        this.state = {
          waiting: 1,
-         toolTipInfo : {text:'Hover over features or sam citizens for info.'},
+         toolTipInfo : {text:'Hover cursor for info.'},
          //explanation : model_explanations()[samprops.explainIndex],//{text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
          highlight_data : [],
          samprops : samprops,
@@ -308,7 +308,7 @@ export default class App extends React.PureComponent {
     console.log(object)
     this.setState({highlight_data:[object]})
   }
-  setText = function(txt,position){
+  setText = function(txt,position){ //not sure what's wrong with this - need to control deck.gl render!!!
     var samprops = {...this.state.samprops}
     samprops.textname = txt;
     samprops.textposition = position;
@@ -318,14 +318,14 @@ export default class App extends React.PureComponent {
   setToolInfo = function(info){
     var toolTipInfo = {...this.state.toolTipInfo}
     toolTipInfo.info = info
-    toolTipInfo.text = ''
+    //toolTipInfo.text = '' //should be set from
     //console.log(info)
     this.setState({toolTipInfo})
   };
   setClick = function(info){
     var toolTipInfo = {...this.state.toolTipInfo}
     toolTipInfo.info = info
-    toolTipInfo.text = ''
+    //toolTipInfo.text = ''
     var samprops = {...this.state.samprops}
     //console.log('in App'+info.household_id)
     samprops.household_id = info.household_id

@@ -42,6 +42,7 @@ export default class LegendBox extends React.PureComponent {
       }
       const boxButtonStyle = {
         position: 'relative',
+        cursor: 'pointer',
         left: '2%',
         top: '2%',
         zIndex: '3',

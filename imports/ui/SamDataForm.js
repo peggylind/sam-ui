@@ -14,7 +14,8 @@ import samQuery from "./samquery.graphql.js";
 //could have ldg shared between 2
 //there's a setting in the apollo to share the data
 
-
+//try optimistic UI, and a feed for the loading??
+//https://blog.apollographql.com/tutorial-graphql-mutations-optimistic-ui-and-store-updates-f7b6b66bf0e2
 const GetHousehold = ({ household_id }) => (
   <Query
     query={samQuery}
