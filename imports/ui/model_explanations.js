@@ -19,7 +19,7 @@ export function model_explanations(index) {
   notes: `Have to decide - could make text have subobjects with paragraphs, etc.
   should add a place for source code and explanation of sources.
   `,
-  //button: '<span onClick={window.alert('ugh')}>X</span>',
+  //button: <span onClick={window.alert("ugh")}>X</span>,
   tooltip_terms: {}
 },
 {

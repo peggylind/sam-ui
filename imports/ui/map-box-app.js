@@ -39,6 +39,7 @@ export default class MapBox extends Component {
       this.SamControls = new SamMapControls();
       this.setToolInfo = this.props.setToolInfo;
       this.setClick = this.props.setClick;
+      this.setHighlight = this.props.setHighlight;
       this.setText = this.props.setText;
       this.setWaiting = this.props.setWaiting;
       this.handlePopulationChange = this.props.handlePopulationChange;
@@ -48,6 +49,7 @@ export default class MapBox extends Component {
             time: 0,
             samdata: this.props.samdata || [],
             waiting: 1,
+            highlight_data: this.props.highlight_data || [],
             textdata: [{text:this.props.samprops.textname,coords:this.props.samprops.textposition}],
             //toTest: {white:[230,159,0],black:[213,94,0]},
             forColors: this.props.samprops.forColors //maybe have in toShow - have to draw the flow again
@@ -83,8 +85,12 @@ export default class MapBox extends Component {
           [{text:props.samprops.textname,
             coords:props.samprops.textposition}]}
       }else{
+        if(props.highlight_data != state.highlight_data){
+          console.log('in mapbox '+props.highlight_data)
+          return {highlight_data:props.highlight_data}
+        }else{
         return null
-      }
+      }}
     }
 
     componentDidMount(){
@@ -141,49 +147,50 @@ export default class MapBox extends Component {
 //https://github.com/uber-common/viewport-mercator-project/blob/master/docs/api-reference/web-mercator-utils.md
 
   render() {
+    //console.log('in mb render: '+this.state.highlight_data)
     //const data = this.state.geojsonsam;
     //this.props.geojsonsam
-const GeoMap = new GeoJsonLayer({
-  id: 'geojson-layer',
-  data: this.state.geojsonsam,
-  pickable: true,
-  stroked: false,
-  filled: true,
-  extruded: false,
-  lineWidthScale: 20,
-  lineWidthMinPixels: 2,
-//    getFillColor: [160, 160, 180, 200],
-//    getLineColor: d => colorToRGBArray(d.properties.color),
-  getRadius: 100,
-  getLineWidth: 100,
-  getElevation: 30,
-  //onHover: ({object}) => this.setToolInfo(object),
-  //autoHighlight: true,
-  //getElevation: f => Math.sqrt(f.properties.valuePerSqm) * 10,
-  getFillColor: [255, 255, 255, 255],
-  getLineColor: [255, 0, 0, 255]
-  //lightSettings: LIGHT_SETTINGS,
+  const GeoMap = new GeoJsonLayer({
+    id: 'geojson-layer',
+    data: this.state.geojsonsam,
+    pickable: true,
+    stroked: false,
+    filled: true,
+    extruded: false,
+    lineWidthScale: 20,
+    lineWidthMinPixels: 2,
+  //    getFillColor: [160, 160, 180, 200],
+  //    getLineColor: d => colorToRGBArray(d.properties.color),
+    getRadius: 100,
+    getLineWidth: 100,
+    getElevation: 30,
+    //onHover: ({object}) => this.setToolInfo(object),
+    //autoHighlight: true,
+    //getElevation: f => Math.sqrt(f.properties.valuePerSqm) * 10,
+    getFillColor: [255, 255, 255, 255],
+    getLineColor: [255, 0, 0, 255]
+    //lightSettings: LIGHT_SETTINGS,
 
-})
+  })
 
-const PointCloudMap = new PointCloudLayer({
-  id: 'point-cloud-layer',
-  data: [...this.state.samdata],
-  getPosition: d => [d.coords[0], d.coords[1], this.returnheight(d)],
-  getColor: d => this.returnColors(d[this.props.samprops.catShow]),
-  opacity: this.props.samprops.opacity,
-  radiusMinPixels: this.props.samprops.radiusMinPixels,
-  radiusMaxPixels: this.props.samprops.radiusMaxPixels,
-  strokeWidth: this.props.samprops.strokeWidth,
-  //radiusScale: this.props.samprops.radiusScale,
-  outline: this.props.samprops.outline,
-  pickable: this.props.samprops.pickable,
-  autoHighlight: true,
-  //onHover: ({object}) => this.setToolInfo(object),
-  onClick: ({object}) => this.setClick(object)
-});
+  const PointCloudMap = new PointCloudLayer({
+    id: 'point-cloud-layer',
+    data: [...this.state.samdata],
+    getPosition: d => [d.coords[0], d.coords[1], this.returnheight(d)],
+    getColor: d => this.returnColors(d[this.props.samprops.catShow]),
+    opacity: this.props.samprops.opacity,
+    radiusMinPixels: this.props.samprops.radiusMinPixels,
+    radiusMaxPixels: this.props.samprops.radiusMaxPixels,
+    strokeWidth: this.props.samprops.strokeWidth,
+    //radiusScale: this.props.samprops.radiusScale,
+    outline: this.props.samprops.outline,
+    pickable: this.props.samprops.pickable,
+    autoHighlight: true,
+    //onHover: ({object}) => this.setToolInfo(object),
+    onClick: ({object}) => this.setClick(object)
+  });
 //const showCat = 'race'
-const ScatterMap = new ScatterplotLayer({
+  const ScatterMap = new ScatterplotLayer({
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
 		getPosition: d => [d.coords[0], d.coords[1]],
@@ -193,6 +200,23 @@ const ScatterMap = new ScatterplotLayer({
     radiusMaxPixels: this.props.samprops.radiusMaxPixels,
     strokeWidth: this.props.samprops.strokeWidth,
     //radiusScale: this.props.samprops.radiusScale,
+    outline: this.props.samprops.outline,
+    pickable: this.props.samprops.pickable,
+    //autoHighlight: true,
+    onHover: ({object}) => this.setToolInfo(object),
+    //onHover: ({object}) => this.setHighlight(object),
+    onClick: ({object}) => this.setClick(object)
+  });
+  const HighlightMap = new ScatterplotLayer({
+    id: 'highlight-layer',
+    data: [...this.state.highlight_data],
+		getPosition: d => [d.coords[0], d.coords[1]],
+    getColor: [255,0,0,255],// d => this.returnColors(d[this.props.samprops.catShow]),
+    opacity: 1, //this.props.samprops.opacity,
+    radiusMinPixels: this.props.samprops.radiusMinPixels,
+    radiusMaxPixels: this.props.samprops.radiusMaxPixels,
+    strokeWidth: this.props.samprops.strokeWidth*200,
+    //radiusScale: 2000,
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
     autoHighlight: true,
@@ -236,18 +260,18 @@ const ScatterMap = new ScatterplotLayer({
     onHover: ({object}) => this.setToolInfo(object)
   });
   const TextMap = new TextLayer({
-      id: 'text-layer',
-      data: [...this.state.textdata],
-      pickable: true,
-      getPosition: d => [d.coords[0], d.coords[1]],
-      getText: d => [d.text], //this.returnText([d.text]),
-      getSize: 22, //this.props.samprops.zoom*4,
-      getColor: [0,255,0,255],
-      getAngle: 0,
-      getPixelOffset: [0,-30],
-      getTextAnchor: 'middle',
-      getAlignmentBaseline: 'center'//,
-      //onHover: ({object}) => setTooltip(`${object.name}\n${object.address}`)
+    id: 'text-layer',
+    data: [...this.state.textdata],
+    pickable: true,
+    getPosition: d => [d.coords[0], d.coords[1]],
+    getText: d => [d.text], //this.returnText([d.text]),
+    getSize: 22, //this.props.samprops.zoom*4,
+    getColor: [0,255,0,255],
+    getAngle: 0,
+    getPixelOffset: [0,-30],
+    getTextAnchor: 'middle',
+    getAlignmentBaseline: 'center'//,
+    //onHover: ({object}) => setTooltip(`${object.name}\n${object.address}`)
   })
   // const ContourMap = new ContourLayer({ //not working
   //   id: 'contourLayer',
@@ -271,7 +295,7 @@ const ScatterMap = new ScatterplotLayer({
   //   ContourMap
   ];
   //const main_layers = [TextMap,main_layers_list[this.props.mapprops.mode]]
-  const main_layers = [main_layers_list[this.props.mapprops.mode]]
+  const main_layers = [HighlightMap,TextMap,main_layers_list[this.props.mapprops.mode]]
 
 
     return (

@@ -12,6 +12,8 @@ import samQuery from "./samquery.graphql.js";
 
 //https://www.howtographql.com/ --lots more to use with new graphql 2.1 features.
 //could have ldg shared between 2
+//there's a setting in the apollo to share the data
+
 
 const GetHousehold = ({ household_id }) => (
   <Query
@@ -104,6 +106,7 @@ class SamDataForm extends React.PureComponent {
          plotHeight: '4%',
          containerwidth: '8',
          containerheight: '4',
+         //highlight_data: [],
          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
        };
    }
@@ -147,11 +150,15 @@ class SamDataForm extends React.PureComponent {
        //props.setWaiting(1)
        return{
          openHousehold:1,
-         household_id:props.samprops.household_id
+         household_id:props.samprops.household_id,
+         highlight_data:props.highlight_data //assuming we always want this one.
        }
      }else{
+       if(props.highlight_data != state.highlight_data){
+         return {highlight_data:props.highlight_data}
+       }else{
        return null
-     }
+     }}
    }
    //data={this.props.samprops.zoom <14 ? this.state.jsonsam : this.props.samcity}
    //how can we get them both as part of the same data stream, and not reloading when you do search on new data characteristics?
@@ -188,9 +195,11 @@ class SamDataForm extends React.PureComponent {
             setToolInfo={this.props.setToolInfo}
             handlePopulationChange={this.props.handlePopulationChange}
             setClick={this.props.setClick}
+            setHighlight={this.props.setHighlight}
             setText={this.props.setText}
             setWaiting={this.props.setWaiting}
             data={this.props.samcity}
+            highlight_data={this.props.highlight_data}
             returnColors = {this.returnColors}
             //data={this.props.samprops.zoom <10 ? this.state.jsonsam : this.props.samcity}
             geojsonsam={this.state.geojsonsam}

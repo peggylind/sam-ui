@@ -8,7 +8,8 @@ import SamDataForm from './SamDataForm'; //change to just samdatamap??
 import Slide from './slider-input';
 import LegendBox from './legend-box';
 import {model_explanations} from "./model_explanations";
-import {categories} from "./categories"
+import {categories} from "./categories";
+import ModelDivs from './model_div';
 // var DASHlogo = require('/public/images/DASHlogo.png');
 // var UHLogo = require('/public/images/honors-the-honors-college-tertiary2.png');
 
@@ -80,7 +81,7 @@ const calcOneOf = (zoom) =>
   //zoom > 12.7 ? 1 : zoom < 11 ? 1000: zoom > 11 ? 100 : 10;
 
 
-const samprops = { //have all decided with same logic??
+const samprops = { //have all decided with same logic?? //a bunch of stuff should be fixed if we go apollo 3.1 - for now need it in both for search!!
   //racial_entropy_index: '',
   explainIndex: 0,
   geojson_title: 'Super_Neighborhoods.geojson',// 'Harvey_Houston.geojson',
@@ -124,8 +125,6 @@ const samprops = { //have all decided with same logic??
   zip_education_entropy_index: null,
   zip_racial_entropy_index: null,
   height: 40000,
-
-
   longitude: -95.315,
   latitude: 29.75,
   zoom: firstzoom,
@@ -163,6 +162,7 @@ export default class App extends React.PureComponent {
        this.onMapChange = this.onMapChange.bind(this);
        this.setToolInfo = this.setToolInfo.bind(this);
        this.setClick = this.setClick.bind(this);
+       this.setHighlight = this.setHighlight.bind(this);
        this.setText = this.setText.bind(this);
        this.setExplanation = this.setExplanation.bind(this);
        this.setWaiting = this.setWaiting.bind(this);
@@ -172,6 +172,7 @@ export default class App extends React.PureComponent {
          waiting: 1,
          toolTipInfo : {text:'Hover over features or sam citizens for info.'},
          //explanation : model_explanations()[samprops.explainIndex],//{text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
+         highlight_data : [],
          samprops : samprops,
          mapprops : {
               bbox: bbox, //may use later for searches - now based on geonear in circle
@@ -191,10 +192,11 @@ export default class App extends React.PureComponent {
          this.setToolInfo = debounce(this.setToolInfo, 200);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
-  //this lets you step up on data in scatter and mapbox; not just slider
+  //if update to Apollo 3, won't need
   setWaiting = function(wait){
     this.setState({waiting:wait})
   };
+  //use generally for slider in HOC
   handlePopulationChange = function(limit) {
     var samprops = {...this.state.samprops}
     samprops.limit = limit;
@@ -216,12 +218,12 @@ export default class App extends React.PureComponent {
       //   mapprops.mode=1
       // }
     }else{
-    samprops.toShowScale.forEach(function(row,r){
-      if(row.category == event.target.value){
-        samprops.scaleIndex = r;
-        samprops.scaleShow = row.category; //only used in map-box right now --fix this and catShow!!
-        if(r==0){mapprops.mode=1}else{mapprops.mode=3}; //other scale possibilities later
-        //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
+      samprops.toShowScale.forEach(function(row,r){
+        if(row.category == event.target.value){
+          samprops.scaleIndex = r;
+          samprops.scaleShow = row.category; //only used in map-box right now --fix this and catShow!!
+          if(r==0){mapprops.mode=1}else{mapprops.mode=3}; //other scale possibilities later
+          //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
       }})
     };
 
@@ -286,7 +288,7 @@ export default class App extends React.PureComponent {
     if(this.state.samprops.one_of != samprops.one_of){this.setWaiting(1)}
     this.setState({samprops});
   };
-
+//not using onSamDataChange??
   onSamDataChange = function(datactrls){
     var samprops = {...this.state.samprops}
     samprops.toShow = datactrls.toShow;
@@ -302,6 +304,10 @@ export default class App extends React.PureComponent {
     this.setState({samprops,exp_width: model_explanations(samprops.explainIndex).div_width})
     //could also set the toShow, etc. to go along with different models, if the pull-downs are too long
   };
+  setHighlight = function(object){
+    console.log(object)
+    this.setState({highlight_data:[object]})
+  }
   setText = function(txt,position){
     var samprops = {...this.state.samprops}
     samprops.textname = txt;
@@ -313,7 +319,7 @@ export default class App extends React.PureComponent {
     var toolTipInfo = {...this.state.toolTipInfo}
     toolTipInfo.info = info
     toolTipInfo.text = ''
-    console.log(info)
+    //console.log(info)
     this.setState({toolTipInfo})
   };
   setClick = function(info){
@@ -321,18 +327,10 @@ export default class App extends React.PureComponent {
     toolTipInfo.info = info
     toolTipInfo.text = ''
     var samprops = {...this.state.samprops}
-    console.log('in App'+info.household_id)
+    //console.log('in App'+info.household_id)
     samprops.household_id = info.household_id
     samprops.openHousehold = 1
     this.setState({toolTipInfo,samprops})
-  };
-  formatDollars = function(number){
-    if (number!=undefined){
-        var numstring = number.toString();
-      return '$'+numstring+'/year'
-    }else{
-      return 'undefined'
-    }
   };
 
   // componentWillUnmount(){
@@ -365,67 +363,11 @@ export default class App extends React.PureComponent {
                   <img style={{width:"100%"}} src='/images/honors-the-honors-college-primary.png' />
                 </span>
               </div>
-              <div style={{position:"absolute",width:model_explanations(this.state.samprops.explainIndex).div_width,
-                            left:model_explanations(this.state.samprops.explainIndex).div_left,height:"95%",
-                            overflow: "scroll",backgroundColor:"#f8f8ff",zIndex:"3"}}>
+            <ModelDivs
+              samprops={this.state.samprops}
+              toolTipInfo={this.state.toolTipInfo}
+            />
 
-                <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"4",borderRadius:"25px"}}>
-                {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/></div>}
-                  <h2 style={{textAlign:"center"}}>{model_explanations(this.state.samprops.explainIndex).h2_title}</h2>
-                  {model_explanations(this.state.samprops.explainIndex).button}
-
-                  <div style={{textAlign:"center",fontWeight: "bold"}}>{model_explanations(this.state.samprops.explainIndex).author}</div>
-                  {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/><br/></div>}
-                  <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).text}</div>
-                  {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/><br/></div>}
-                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img} />
-
-                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img1} />
-                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img2} />
-                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img3} />
-                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img4} />
-                  <p style={{textAlign:"center",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).img_title}</p>
-                  <h3>{model_explanations(this.state.samprops.explainIndex).div2}</h3>
-                  <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).text2}</div>
-                  <h3>{model_explanations(this.state.samprops.explainIndex).div3}</h3>
-                  <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).text3}</div>
-                {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/></div>}
-                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations}</div>
-                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations1}</div>
-                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations2}</div>
-                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations3}</div>
-                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations4}</div>
-                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations5}</div>
-
-                {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/></div>}
-                  {this.state.toolTipInfo.text}
-                  {this.state.toolTipInfo.info ?
-                    <div style={{position:"relative"}}>
-                      {this.state.toolTipInfo.info.age != "NA" & this.state.toolTipInfo.info.age != ""   &&
-                        <div> Age -  {this.state.toolTipInfo.info.age} </div>}
-                      {this.state.toolTipInfo.info.household_id != "NA" & this.state.toolTipInfo.info.household_id != ""   &&
-                        <div> household_id -  {this.state.toolTipInfo.info.household_id} </div>}
-                      {this.state.toolTipInfo.info.citizenship != "NA" & this.state.toolTipInfo.info.citizenship != "" &&
-                        <div> Citizen -  {this.state.toolTipInfo.info.citizenship} </div>}
-                      {this.state.toolTipInfo.info.educational_attainment != "NA" & this.state.toolTipInfo.info.educational_attainment != "" &&
-                        <div> Education -  {this.state.toolTipInfo.info.educational_attainment} </div>}
-                      {this.state.toolTipInfo.info.employment != "NA" & this.state.toolTipInfo.info.employment != "" &&
-                        <div> Employment -  {this.state.toolTipInfo.info.employment} </div>}
-                      {this.state.toolTipInfo.info.sex != "NA" & this.state.toolTipInfo.info.sex != "" &&
-                        <div> Sex -  {this.state.toolTipInfo.info.sex} </div>}
-                      {this.state.toolTipInfo.info.race != "NA" & this.state.toolTipInfo.info.race != "" &&
-                        <div> Race -  {this.state.toolTipInfo.info.race} </div>}
-                      {this.state.toolTipInfo.info.household_income != "NA" & this.state.toolTipInfo.info.household_income != "" &&
-                        <div> Household Income -  {this.formatDollars(this.state.toolTipInfo.info.household_income)} </div>}
-                      {this.state.toolTipInfo.info.household_type != "NA" & this.state.toolTipInfo.info.household_type != "" &&
-                        <div> Household Type -  {this.state.toolTipInfo.info.household_type} </div>}
-                      {this.state.toolTipInfo.info.quality_description != "NA" & this.state.toolTipInfo.info.quality_description != "" &&
-                        <div> HCAD Quality Rating -  {this.state.toolTipInfo.info.quality_description} </div>}
-                      </div>
-                      : null
-                    }
-                </span>
-              </div>
             <LegendBox
               samprops={this.state.samprops}
               onPopChange={this.handlePopulationChange}
@@ -441,10 +383,12 @@ export default class App extends React.PureComponent {
             <SamDataForm
               mapprops={this.state.mapprops}
               samprops={this.state.samprops}
+              highlight_data={this.state.highlight_data}
               onMapChange={this.onMapChange}
               setToolInfo={this.setToolInfo}
               setText={this.setText}
               setClick={this.setClick}
+              setHighlight={this.setHighlight}
               setWaiting={this.setWaiting}
               handlePopulationChange={this.handlePopulationChange}
               />
