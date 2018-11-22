@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import DeckGL, { GeoJsonLayer, ScatterplotLayer, ArcLayer, TextLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, ContourLayer, MapController, Controller } from 'deck.gl';
+import DeckGL, { CompositeLayer, GeoJsonLayer, ScatterplotLayer, ArcLayer, TextLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, ContourLayer, MapController, Controller } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import WebMercatorViewport, {getDistanceScales} from 'viewport-mercator-project';
 //import debounce from 'lodash.debounce';
 import SamMapControls from './SamMapController';
+import RoundedRectangleLayer from './rounded_rectangle_layer';
 
 const west = -95.91;
 const east = -94.67;
@@ -31,11 +32,52 @@ const firstgeojson = {
     "name": "Dinagat Islands"
   }
 };
+class MapCompositeLayer extends CompositeLayer {
+
+  shouldUpdateState({props, oldProps, context, oldContext, changeFlags}){
+    console.log(props[0].props.waiting)
+    console.log(this.state)
+    //if(this.state.gl_local_wait){this.setState({gl_local_wait:0})}
+
+    if(!props[0].props.waiting && changeFlags.propsChanged){
+      this.setState({gl_local_wait:1})
+      //props[0].props.setWaiting(0)
+    }
+
+
+    //if(changeFlags.propsOrDataChanged){console.log('changeFlags.propsOrDataChanged: ' +changeFlags.propsOrDataChanged)}
+    //if(changeFlags.dataChanged){console.log('changeFlags.dataChanged: ' +changeFlags.dataChanged)}
+     //if(changeFlags.propsChanged){console.log('changeFlags.propsChanged: ' +changeFlags.propsChanged)}
+    // if(changeFlags.stateChanged){console.log('changeFlags.stateChanged: ' +changeFlags.stateChanged)}
+    // if(changeFlags.updateTriggersChanged){console.log('changeFlags.updateTriggersChanged: ' +changeFlags.updateTriggersChanged)}
+    // console.log(changeFlags)
+    // console.log(oldContext)
+    //if(this.props[2].lifecycle == "Matched. State transferred from previous layer"){console.log("Matched. State transferred from previous layer")}
+    // console.log(changeFlags)
+    return this.state.gl_local_wait ? super.shouldUpdateState : false
+  }
+
+
+  // finalizeState() {
+  //   console.log('final')
+  // }
+
+  renderLayers() {
+    //console.log(this.props[2]) // need to move logic into this component
+    return [
+      this.props[0],
+      this.props[1],
+      this.props[2]
+      //this.props[2]
+      //this._renderGroupOfSubLayers()//, // returns an array of layers
+  //    this.props.showScatterplot && new ScatterplotLayer(...)
+    ];
+  }
+}
 
 export default class MapBox extends Component {
   constructor(props) {
       super(props);
-      console.log('setting state in mapbox')
       this.SamControls = new SamMapControls();
       this.setToolInfo = this.props.setToolInfo;
       this.setClick = this.props.setClick;
@@ -43,12 +85,15 @@ export default class MapBox extends Component {
       this.setText = this.props.setText;
       this.setWaiting = this.props.setWaiting;
       this.handlePopulationChange = this.props.handlePopulationChange;
+      this.factorcounts = 0,
       this.state = {
             mapboxApiAccessToken: 'pk.eyJ1IjoibWRjaW90dGkiLCJhIjoiY2l1cWdyamw5MDAxcTJ2bGFmdzJxdGFyNyJ9.2b6aTKZNlT1_DEJiJ9l3hw',
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
             time: 0,
             samdata: this.props.samdata || [],
-            waiting: 1,
+            waiting: this.props.waiting,
+            gl_wait: 1, //perhaps from app.js??
+            cellSize: this.props.samprops.cellSize,
             highlight_data: this.props.highlight_data || [],
             textdata: [{text:this.props.samprops.textname,coords:this.props.samprops.textposition}],
             //toTest: {white:[230,159,0],black:[213,94,0]},
@@ -65,7 +110,7 @@ export default class MapBox extends Component {
       }
 
       returnColors (factor) {
-        //if(this.props.samprops.toShow[this.props.samprops.categIndex].type == 'factor'){
+          this.factorcounts = this.factorcounts+1
           return this.props.samprops.forColors[factor]
         //}
       }
@@ -75,7 +120,19 @@ export default class MapBox extends Component {
       }
 
     static getDerivedStateFromProps(props, state) {
-      //console.log('hovercoords: '+state.textdata[0].coords + ' : '+ props.samprops.textposition)
+      props.setWaiting(0)
+
+      if(props.data && state.waiting){
+        //props.setWaiting(0)
+        return {samdata:props.data,waiting:0}
+      }
+      if(props.data != state.samdata && !state.waiting){
+        return {samdata:props.data}
+      }
+
+      if (state.cellSize != props.samprops.cellSize){
+        return {cellSize: props.samprops.cellSize}
+      }
       if (state.textdata[0].coords != props.samprops.textposition){
         //have to load in and do a push??
         //console.log('prevState.textdata[0].text: '+state.textdata[0].text + ' : '+ props.samprops.textname)
@@ -100,34 +157,39 @@ export default class MapBox extends Component {
     };
 
     componentDidUpdate(newProps, prevState) {
+      console.log(this.factorcounts) //it is running through the whole thing twice!!!
+      //if (!newProps.waiting){this.setWaiting(0)};
       //console.log('map-box updated'+JSON.stringify(newProps.samprops.waiting)+JSON.stringify(prevState.waiting))
-
+      if (prevState.cellSize != newProps.samprops.cellSize){
+        //this.GridMap.setState({cellSize:newProps.samprops.cellSize})
+      }
       if (this.props.geojsonsam != newProps.geojsonsam){
-        console.log(this.props.geojsonsam)
+        //console.log(this.props.geojsonsam)
          this.setState({geojsonsam:this.props.geojsonsam})
-       };
+      };
+
       // if (prevState.textdata[0].text != newProps.samprops.textname){
       //   //have to load in and do a push??
       //   console.log('prevState.textdata[0].text: '+prevState.textdata[0].text + ' : '+ newProps.samprops.textname)
       //   this.setState({textdata: [{text:newProps.samprops.textname,coords:newProps.samprops.textposition}]});
       // }
-      if (this.props.data && prevState.waiting == 1){
-      //  this.setState({geojsonsam:this.props.geojsonsam})
-        console.log('set samdata '+(Date.now()))
-        this.setState({samdata: this.props.data, waiting: 0});
-        this.setWaiting(0);
-        // if (this.props.samprops.limit < 10001){
-        //   this.handlePopulationChange(this.props.samprops.limit+500)
-        // }
-      };
-      if (this.props.data != prevState.samdata && prevState.waiting == 0){
-        console.log('set samdata new '+(Date.now()))
-        this.setState({samdata: this.props.data});
-        this.setWaiting(0);
-        // if (this.props.samprops.limit < 10001){ //instead of 40001
-        //   this.handlePopulationChange(this.props.samprops.limit+7000)
-        // }
-      };
+      // if (newProps.data && newProps.waiting){
+      // // //  this.setState({geojsonsam:this.props.geojsonsam})
+      // //   console.log('set samdata '+(Date.now())+JSON.stringify(newProps))
+      // //   this.setState({samdata: this.props.data, waiting: 0});
+      //    this.setWaiting(0);
+      // //   // if (this.props.samprops.limit < 10001){
+      // //   //   this.handlePopulationChange(this.props.samprops.limit+500)
+      // //   // }
+      // };
+      // if (this.props.data != prevState.samdata && prevState.waiting == 0){
+      //   console.log('set samdata new '+(Date.now()))
+      //   this.setState({samdata: this.props.data});
+      //   this.setWaiting(0);
+      //   // if (this.props.samprops.limit < 10001){ //instead of 40001
+      //   //   this.handlePopulationChange(this.props.samprops.limit+7000)
+      //   // }
+      // };
       if (this.state.viewport != prevState.viewport){
         var scale = getDistanceScales(this.state.viewport).metersPerPixel[0];
         var width = window.innerWidth;
@@ -143,13 +205,11 @@ export default class MapBox extends Component {
       };
     };
 
-
 //https://github.com/uber-common/viewport-mercator-project/blob/master/docs/api-reference/web-mercator-utils.md
 
   render() {
     //console.log('in mb render: '+this.state.highlight_data)
     //const data = this.state.geojsonsam;
-    //this.props.geojsonsam
   const GeoMap = new GeoJsonLayer({
     id: 'geojson-layer',
     data: this.state.geojsonsam,
@@ -189,8 +249,8 @@ export default class MapBox extends Component {
     //onHover: ({object}) => this.setToolInfo(object),
     onClick: ({object}) => this.setClick(object)
   });
-//const showCat = 'race'
-  const ScatterMap = new ScatterplotLayer({
+
+  const ScatterMap = new RoundedRectangleLayer({ // ScatterplotLayer({
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
 		getPosition: d => [d.coords[0], d.coords[1]],
@@ -221,7 +281,10 @@ export default class MapBox extends Component {
     pickable: this.props.samprops.pickable,
     autoHighlight: true,
     //onHover: ({object}) => this.setToolInfo(object),
-    onClick: ({object}) => this.setClick(object)
+    onClick: ({object}) => this.setClick(object),
+    waiting: this.state.waiting,
+    gl_wait: this.state.gl_wait,
+    setWaiting: this.props.setWaiting
   });
   const HexMap = new HexagonLayer({
     id: 'hex-layer',
@@ -229,7 +292,7 @@ export default class MapBox extends Component {
     pickable: true,
     extruded: true,
     autoHighlight: true,
-    radius: this.props.samprops.cellSize,
+    radius: this.state.cellSize,
     elevationScale: 1,
     opacity: .1,
     getPosition: d => [d.coords[0], d.coords[1]],
@@ -243,9 +306,13 @@ export default class MapBox extends Component {
     extruded: true,
     opacity: .1,
     autoHighlight: true,
-    cellSize: this.props.samprops.cellSize,
+    cellSize: this.state.cellSize,
     elevationScale: .21, //4
     getPosition: d => [d.coords[0], d.coords[1]],
+    updateTriggers: {
+        getPosition: [this.state.cellSize],
+        cellSize: [this.state.cellSize]
+    },
     onHover: ({object}) => this.setText(object.count,object.position),
     onClick: ({object}) => this.setText(object.count,object.position)
   });
@@ -296,7 +363,7 @@ export default class MapBox extends Component {
   ];
   //const main_layers = [TextMap,main_layers_list[this.props.mapprops.mode]]
   const main_layers = [HighlightMap,TextMap,main_layers_list[this.props.mapprops.mode]]
-
+  const CompositeMap = new MapCompositeLayer(main_layers);
 
     return (
       <ReactMapGL
@@ -306,7 +373,6 @@ export default class MapBox extends Component {
         mapControls={this.SamControls}
         onViewportChange={(viewport) => this.setState({viewport})}
       >
-
       <div style={{position:"absolute",zIndex:"5",
                   textAlign:"center",width:"100%",top:"15%"}}>
       {this.state.text}
@@ -315,7 +381,7 @@ export default class MapBox extends Component {
           {...this.state.viewport}
           initialViewState={this.state.viewport}
           onViewportChange={(viewport) => this.setState({viewport})}
-          layers={main_layers}
+          layers={CompositeMap}
           >
           </DeckGL>
       </ReactMapGL>

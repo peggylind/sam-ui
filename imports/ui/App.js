@@ -5,7 +5,7 @@ import LoginForm from "./LoginForm";
 import debounce from 'lodash.debounce'
 //import asyncComponent from './asyncComponent'; //may not use - still testing
 import SamDataForm from './SamDataForm'; //change to just samdatamap??
-import Slide from './slider-input';
+
 import LegendBox from './legend-box';
 import {model_explanations} from "./model_explanations";
 import {categories} from "./categories";
@@ -128,7 +128,7 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   longitude: -95.315,
   latitude: 29.75,
   zoom: firstzoom,
-  cellSize: firstdist/50,
+  cellSize: 5000,
   opacity: calcOpacity(firstzoom),
   radiusMinPixels: 2.5,
   radiusMaxPixels: 100,
@@ -155,6 +155,7 @@ export default class App extends React.PureComponent {
    constructor(props) {
        super(props);
        this.handlePopulationChange = this.handlePopulationChange.bind(this);
+       this.onGridSizeChange = this.onGridSizeChange.bind(this);
        this.onCatChange = this.onCatChange.bind(this);
        this.onScaleChange = this.onScaleChange.bind(this);
        this.onFactortoShow = this.onFactortoShow.bind(this);
@@ -196,6 +197,11 @@ export default class App extends React.PureComponent {
   setWaiting = function(wait){
     this.setState({waiting:wait})
   };
+  onGridSizeChange = function(size) {
+    var samprops = {...this.state.samprops}
+    samprops.cellSize = size;
+    this.setState({samprops});
+  };
   //use generally for slider in HOC
   handlePopulationChange = function(limit) {
     var samprops = {...this.state.samprops}
@@ -211,12 +217,11 @@ export default class App extends React.PureComponent {
     var samprops = {...this.state.samprops}
     var mapprops = {...this.state.mapprops}
     if(event==''){
-      mapprops.mode = 4
-      // if (mapprops.mode>0 && mapprops.mode<5){
-      //   mapprops.mode+=1
-      //   }else{
-      //   mapprops.mode=1
-      // }
+      if (mapprops.mode>0 && mapprops.mode<5){
+        mapprops.mode+=1
+        }else{
+        mapprops.mode=1
+      }
     }else{
       samprops.toShowScale.forEach(function(row,r){
         if(row.category == event.target.value){
@@ -280,7 +285,7 @@ export default class App extends React.PureComponent {
     samprops.longitude = mapstuff.longitude;
     samprops.zoom = mapstuff.zoom;
     samprops.dist = dist;
-    samprops.cellSize = dist/50;
+    //samprops.cellSize = dist/50;
     samprops.height = height;
     samprops.opacity = calcOpacity(mapstuff.zoom);
     samprops.strokeWidth = calcStrokeWidth(mapstuff.zoom);
@@ -369,6 +374,7 @@ export default class App extends React.PureComponent {
             />
 
             <LegendBox
+              mapprops={this.state.mapprops}
               samprops={this.state.samprops}
               onPopChange={this.handlePopulationChange}
               onCatChange={this.onCatChange}
@@ -376,6 +382,7 @@ export default class App extends React.PureComponent {
               onFactortoShow={this.onFactortoShow}
               onChangetoShow={this.onChangetoShow}
               onMapChange={this.onMapChange}
+              onGridSizeChange={this.onGridSizeChange}
               setExplanation={this.setExplanation}
               setToolInfo={this.setToolInfo}
             />
@@ -390,6 +397,7 @@ export default class App extends React.PureComponent {
               setClick={this.setClick}
               setHighlight={this.setHighlight}
               setWaiting={this.setWaiting}
+              waiting={this.state.waiting}
               handlePopulationChange={this.handlePopulationChange}
               />
           </div>

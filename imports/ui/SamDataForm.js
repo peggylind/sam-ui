@@ -199,6 +199,7 @@ class SamDataForm extends React.PureComponent {
             setHighlight={this.props.setHighlight}
             setText={this.props.setText}
             setWaiting={this.props.setWaiting}
+            waiting={this.props.waiting}
             data={this.props.samcity}
             highlight_data={this.props.highlight_data}
             returnColors = {this.returnColors}

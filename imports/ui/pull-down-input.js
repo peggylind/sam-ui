@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {model_explanations} from "./model_explanations";
-
+import Slide from './slider-input';
 //if aggregation pipeline lets you get $sum on same output, then put here???
 
 const SelectText = ({allcolors, onChange, factor}) => {
@@ -31,8 +31,10 @@ export default class PullDown extends React.PureComponent {
     this.onFactortoShow = this.onFactortoShow.bind(this);
     this.onScaleChange = this.onScaleChange.bind(this);
     this.onCatChange = this.onCatChange.bind(this);
+    this.onGridSizeChange = this.onGridSizeChange.bind(this);
     this.onChangetoShow = this.onChangetoShow.bind(this);
     this.state = {
+      gridmode: this.props.mapprops.mode,
       samprops : this.props.samprops,
       changeColors : this.props.samprops.changeColors
     }
@@ -48,6 +50,9 @@ export default class PullDown extends React.PureComponent {
   }
   onCatChange(event) { //if you take value of index, it does the map function differently - very odd
     this.props.onCatChange(event);
+  }
+  onGridSizeChange(event) { //if you take value of index, it does the map function differently - very odd
+    this.props.onGridSizeChange(event);
   }
   onChangetoShow(e) {
      var showObj = {catName:this.props.samprops.toShow[this.state.samprops.categIndex].category,factorName:e.target.id,factorColor:e.target.value};
@@ -152,6 +157,8 @@ export default class PullDown extends React.PureComponent {
         </select>
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
+      <div title="Showing count in area" onClick={(e) => this.onScaleChange('')}
+          style={{fontSize:"1.5em"}}>Counts</div>
       <button key="102"
         onClick={(e) => this.onScaleChange('')}
         style={{backgroundColor:'#ffffff',
@@ -159,6 +166,14 @@ export default class PullDown extends React.PureComponent {
           borderWidth: "3px", borderStyle:"solid", height:"2em"}}>
           grid population
       </button>
+      {(this.props.mapprops.mode==4 || this.props.mapprops.mode==2) &&
+      <div>  <p>Need to force rerender of webgl</p>
+      <Slide
+        onChange={this.onGridSizeChange}
+        min={100}
+        max={100000}
+        step={100}
+      /></div>}
   </div>
     )
   }
