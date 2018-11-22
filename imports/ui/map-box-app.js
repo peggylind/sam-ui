@@ -35,8 +35,8 @@ const firstgeojson = {
 class MapCompositeLayer extends CompositeLayer {
 
   shouldUpdateState({props, oldProps, context, oldContext, changeFlags}){
-    console.log(props[0].props.waiting)
-    console.log(this.state)
+    // console.log(props[0].props.waiting)
+    // console.log(this.state)
     //if(this.state.gl_local_wait){this.setState({gl_local_wait:0})}
 
     if(!props[0].props.waiting && changeFlags.propsChanged){
@@ -120,15 +120,24 @@ export default class MapBox extends Component {
       }
 
     static getDerivedStateFromProps(props, state) {
-      props.setWaiting(0)
-
+      //props.setWaiting(0)
+      // if(props.data){
+      // console.log('props.data.length'+props.data.length)}
+      // console.log(props.waiting)
       if(props.data && state.waiting){
-        //props.setWaiting(0)
+        props.setWaiting(0)
         return {samdata:props.data,waiting:0}
       }
-      if(props.data != state.samdata && !state.waiting){
-        return {samdata:props.data}
-      }
+      if (props.data){
+      if(props.data.length > 0 && props.data != state.samdata){
+        props.setWaiting(0)
+        return {samdata:props.data,waiting:0}
+      }}
+
+      // if(state.samdata.length>0 && state.waiting){
+      //     props.setWaiting(0)
+      //     return {samdata:props.data,waiting:0}
+      // }
 
       if (state.cellSize != props.samprops.cellSize){
         return {cellSize: props.samprops.cellSize}
