@@ -32,48 +32,66 @@ const firstgeojson = {
     "name": "Dinagat Islands"
   }
 };
-class MapCompositeLayer extends CompositeLayer {
-
-  shouldUpdateState({props, oldProps, context, oldContext, changeFlags}){
-    // console.log(props[0].props.waiting)
-    // console.log(this.state)
-    //if(this.state.gl_local_wait){this.setState({gl_local_wait:0})}
-
-    if(!props[0].props.waiting && changeFlags.propsChanged){
-      this.setState({gl_local_wait:1})
-      //props[0].props.setWaiting(0)
-    }
-
-
-    //if(changeFlags.propsOrDataChanged){console.log('changeFlags.propsOrDataChanged: ' +changeFlags.propsOrDataChanged)}
-    //if(changeFlags.dataChanged){console.log('changeFlags.dataChanged: ' +changeFlags.dataChanged)}
-     //if(changeFlags.propsChanged){console.log('changeFlags.propsChanged: ' +changeFlags.propsChanged)}
-    // if(changeFlags.stateChanged){console.log('changeFlags.stateChanged: ' +changeFlags.stateChanged)}
-    // if(changeFlags.updateTriggersChanged){console.log('changeFlags.updateTriggersChanged: ' +changeFlags.updateTriggersChanged)}
-    // console.log(changeFlags)
-    // console.log(oldContext)
-    //if(this.props[2].lifecycle == "Matched. State transferred from previous layer"){console.log("Matched. State transferred from previous layer")}
-    // console.log(changeFlags)
-    return this.state.gl_local_wait ? super.shouldUpdateState : false
-  }
-
-
-  // finalizeState() {
-  //   console.log('final')
-  // }
-
-  renderLayers() {
-    //console.log(this.props[2]) // need to move logic into this component
-    return [
-      this.props[0],
-      this.props[1],
-      this.props[2]
-      //this.props[2]
-      //this._renderGroupOfSubLayers()//, // returns an array of layers
-  //    this.props.showScatterplot && new ScatterplotLayer(...)
-    ];
-  }
-}
+// class MapCompositeLayer extends CompositeLayer {
+//   renderLayers() {
+//     return [
+//       this._renderGroupOfSubLayers()//, // returns an array of layers
+//       //this.props.showScatterplot && new ScatterplotLayer(...)
+//     ];
+//   }
+//
+//   shouldUpdateState({props, oldProps, context, oldContext, changeFlags}){
+//     // console.log(props[0].props.waiting)
+//     // console.log(this.state)
+//     //if(this.state.gl_local_wait){this.setState({gl_local_wait:0})}
+//
+//     // if(!props[0].props.waiting && changeFlags.propsChanged){
+//     //   this.setState({gl_local_wait:1})
+//     //   //props[0].props.setWaiting(0)
+//     // }
+//     if(oldProps[2].props.cellSize){
+//         if(oldProps[2].props.cellSize != props[2].props.cellSize){
+//         //  props[2].draw();
+//         //  this.draw(props[2])
+//         //  this.setState({cellSize:props[2].props.cellSize})
+//           console.log(props[2].props.cellSize)
+//           console.log(oldProps[2].props)//.cellSize)
+//       }
+//     }
+//   //}
+//
+//
+//     //if(changeFlags.propsOrDataChanged){console.log('changeFlags.propsOrDataChanged: ' +changeFlags.propsOrDataChanged)}
+//     //if(changeFlags.dataChanged){console.log('changeFlags.dataChanged: ' +changeFlags.dataChanged)}
+//      //if(changeFlags.propsChanged){console.log('changeFlags.propsChanged: ' +changeFlags.propsChanged)}
+//     // if(changeFlags.stateChanged){console.log('changeFlags.stateChanged: ' +changeFlags.stateChanged)}
+//     // if(changeFlags.updateTriggersChanged){console.log('changeFlags.updateTriggersChanged: ' +changeFlags.updateTriggersChanged)}
+//     // console.log(changeFlags)
+//     // console.log(oldContext)
+//     //if(this.props[2].lifecycle == "Matched. State transferred from previous layer"){console.log("Matched. State transferred from previous layer")}
+//     // console.log(changeFlags)
+//     //return this.state.gl_local_wait ? super.shouldUpdateState : false
+//     return super.shouldUpdateState
+//   }
+//
+//
+//
+//   // finalizeState() {
+//   //   console.log('final')
+//   // }
+//
+//   renderLayers() {
+//     //console.log(this.props[2]) // need to move logic into this component
+//     return [
+//       this.props[0],
+//       this.props[1],
+//       this.props[2]
+//       //this.props[2]
+//       //this._renderGroupOfSubLayers()//, // returns an array of layers
+//   //    this.props.showScatterplot && new ScatterplotLayer(...)
+//     ];
+//   }
+// }
 
 export default class MapBox extends Component {
   constructor(props) {
@@ -85,7 +103,7 @@ export default class MapBox extends Component {
       this.setText = this.props.setText;
       this.setWaiting = this.props.setWaiting;
       this.handlePopulationChange = this.props.handlePopulationChange;
-      this.factorcounts = 0,
+      //this.factorcounts = 0,
       this.state = {
             mapboxApiAccessToken: 'pk.eyJ1IjoibWRjaW90dGkiLCJhIjoiY2l1cWdyamw5MDAxcTJ2bGFmdzJxdGFyNyJ9.2b6aTKZNlT1_DEJiJ9l3hw',
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
@@ -110,7 +128,7 @@ export default class MapBox extends Component {
       }
 
       returnColors (factor) {
-          this.factorcounts = this.factorcounts+1
+          //this.factorcounts = this.factorcounts+1
           return this.props.samprops.forColors[factor]
         //}
       }
@@ -166,7 +184,7 @@ export default class MapBox extends Component {
     };
 
     componentDidUpdate(newProps, prevState) {
-      console.log(this.factorcounts) //it is running through the whole thing twice!!!
+      //console.log(this.factorcounts) //it is running through the whole thing twice!!!
       //if (!newProps.waiting){this.setWaiting(0)};
       //console.log('map-box updated'+JSON.stringify(newProps.samprops.waiting)+JSON.stringify(prevState.waiting))
       if (prevState.cellSize != newProps.samprops.cellSize){
@@ -301,12 +319,12 @@ export default class MapBox extends Component {
     pickable: true,
     extruded: true,
     autoHighlight: true,
-    radius: this.state.cellSize,
+    radius: this.state.cellSize/2, //without operation it doesn't rerender size
     elevationScale: 1,
     opacity: .1,
     getPosition: d => [d.coords[0], d.coords[1]],
-    onClick: ({object}) => this.setText(object.index,object.centroid),
-    onHover: ({object}) => this.setText(object.index,object.centroid),
+    // onClick: ({object}) => this.setText(object.index,object.centroid),
+    // onHover: ({object}) => this.setText(object.index,object.centroid),
   });
   const GridMap = new GridLayer({
     id: 'grid-layer',
@@ -315,13 +333,13 @@ export default class MapBox extends Component {
     extruded: true,
     opacity: .1,
     autoHighlight: true,
-    cellSize: this.state.cellSize,
+    cellSize: this.state.cellSize/2,
     elevationScale: .21, //4
     getPosition: d => [d.coords[0], d.coords[1]],
-    updateTriggers: {
-        getPosition: [this.state.cellSize],
-        cellSize: [this.state.cellSize]
-    },
+    // updateTriggers: {
+    //   ...updateTrigger,
+    //   cellSize: [this.state.cellSize]
+    // },
     onHover: ({object}) => this.setText(object.count,object.position),
     onClick: ({object}) => this.setText(object.count,object.position)
   });
@@ -372,7 +390,7 @@ export default class MapBox extends Component {
   ];
   //const main_layers = [TextMap,main_layers_list[this.props.mapprops.mode]]
   const main_layers = [HighlightMap,TextMap,main_layers_list[this.props.mapprops.mode]]
-  const CompositeMap = new MapCompositeLayer(main_layers);
+  //const CompositeMap = new MapCompositeLayer(main_layers); onHover stopped working!
 
     return (
       <ReactMapGL
@@ -390,7 +408,7 @@ export default class MapBox extends Component {
           {...this.state.viewport}
           initialViewState={this.state.viewport}
           onViewportChange={(viewport) => this.setState({viewport})}
-          layers={CompositeMap}
+          layers={main_layers}
           >
           </DeckGL>
       </ReactMapGL>
