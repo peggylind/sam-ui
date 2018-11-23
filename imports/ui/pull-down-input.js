@@ -42,9 +42,9 @@ export default class PullDown extends React.PureComponent {
   };
   static getDerivedStateFromProps(props, state) {
     if(props.samprops != state.samprops){  //this is just for initial load to find something; it updates
-      console.log(props.samprops.datacount.race)
       var samprops = {...props.samprops}
       if(!samprops.datacount[samprops.toShow[samprops.categIndex].category]){
+      //if (props.waiting){
         samprops.datacount[samprops.toShow[samprops.categIndex].category] = {}
       }
       return {samprops:samprops}

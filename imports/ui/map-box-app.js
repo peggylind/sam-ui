@@ -110,7 +110,7 @@ export default class MapBox extends Component {
             time: 0,
             samdata: this.props.samdata || [],
             waiting: this.props.waiting,
-            gl_wait: 1, //perhaps from app.js??
+            //gl_wait: 1, //perhaps from app.js??
             cellSize: this.props.samprops.cellSize,
             highlight_data: this.props.highlight_data || [],
             textdata: [{text:this.props.samprops.textname,coords:this.props.samprops.textposition}],
@@ -136,6 +136,9 @@ export default class MapBox extends Component {
         console.log('returnText '+txt)
         return txt //toString(parseInt(txt)*parseInt(this.props.samprops.one_of))
       }
+      // setClick (info) {
+      //   console.log()
+      // }
 
     static getDerivedStateFromProps(props, state) {
       //props.setWaiting(0)
@@ -278,7 +281,7 @@ export default class MapBox extends Component {
     onClick: ({object}) => this.setClick(object)
   });
 
-  const ScatterMap = new RoundedRectangleLayer({ // ScatterplotLayer({
+  const ScatterMap = new ScatterplotLayer({  //RoundedRectangleLayer({ // doesn't pass the onHover and onClick properly; not sure why
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
 		getPosition: d => [d.coords[0], d.coords[1]],
@@ -291,9 +294,9 @@ export default class MapBox extends Component {
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
     //autoHighlight: true,
-    onHover: ({object}) => this.setToolInfo(object),
+    onHover: ({object}) => this.props.setToolInfo(object),
     //onHover: ({object}) => this.setHighlight(object),
-    onClick: ({object}) => this.setClick(object)
+    onClick: ({object}) => this.props.setClick(object)
   });
   const HighlightMap = new ScatterplotLayer({
     id: 'highlight-layer',

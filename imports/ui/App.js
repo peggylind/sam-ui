@@ -146,7 +146,7 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   scaleIndex: 0,
   catShow: 'race', //faster color in map-box-app - if can also read opacity off of toShow[categIndex], then have per color control.
   scaleShow: 'none', //'income',
-  openHousehold: 1,
+  openHousehold: 0,
   textname: '',
   textposition: []
   //this logic will apply to everything we want to show - component should feed whole object here
@@ -202,7 +202,7 @@ export default class App extends React.PureComponent {
   countData = function(data){
     var samprops = {...this.state.samprops}
     let category = samprops.toShow[samprops.categIndex].category
-    if(!samprops.datacount[category]){
+    if(!samprops.datacount[category] || this.state.waiting){ //neeed for other sorts of changing viewport not to count... // and change to bbox
       samprops.datacount[category] = {}
     }
     for(let i=0; i<data.length; i++) {
@@ -354,7 +354,6 @@ export default class App extends React.PureComponent {
     toolTipInfo.info = info
     //toolTipInfo.text = ''
     var samprops = {...this.state.samprops}
-    //console.log('in App'+info.household_id)
     samprops.household_id = info.household_id
     samprops.openHousehold = 1
     this.setState({toolTipInfo,samprops})

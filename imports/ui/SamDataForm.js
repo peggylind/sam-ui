@@ -42,8 +42,7 @@ const GetHousehold = ({ household_id }) => (
         if(data.samcity.length>0){
           let loc_name = data.samcity[0].loc_name.charAt(0).toUpperCase() + data.samcity[0].loc_name.slice(1).toLowerCase()
           hr = <hr></hr>
-          clicker = <span style={{position:"absolute",borderStyle:"solid",borderRadius:"50px",borderColor:"black",zIndex:"6",left:"98%",top:"2%",fontSize:"1.1em"}} onClick={this.onXClick}>X</span>
-          house_header = <div style={{fontSize:"1.8em",textAlign:"center"}}>Household Characteristics</div>
+          house_header = <div style={{fontSize:"1.2em",textAlign:"center"}}>Household Characteristics</div>
           house_header2 = <div>Household Income: ${data.samcity[0].household_income}, HCAD quality of housing: {data.samcity[0].quality_description}</div>
           house_title = <div>This is not real data, but represents a plausible household for: <br></br> {data.samcity[0].loc_num} {loc_name}, TX {data.samcity[0].zip} based on census data.</div>
           house = data.samcity.map((citizen, ind) => (
@@ -94,16 +93,11 @@ const GetHousehold = ({ household_id }) => (
 class SamDataForm extends React.PureComponent {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
        super(props);
-       //this.plotcontain = React.createRef();
-       this.onXClick = this.onXClick.bind(this);
        this.setWaiting = this.props.setWaiting;
        this.countData = this.props.countData;
        this.state = {
          household_id: this.props.samprops.household_id,
-         openHousehold: 0, //this.props.samprops.openHousehold,
-         //setWaiting: this.props.setWaiting,
-         plotOpen : false,  //plot stuff is just turned off at the button with a ! inline
-         plotOpen2 : false,
+         openHousehold: this.props.samprops.openHousehold,
          plotWidth: '8%',
          plotHeight: '4%',
          containerwidth: '8',
@@ -111,12 +105,6 @@ class SamDataForm extends React.PureComponent {
          //highlight_data: [],
          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
        };
-   }
-   onXClick = () => {
-     console.log('onXClick')
-        this.setState({
-          openHousehold: 0
-        });
    }
 
    async componentDidMount() {
@@ -132,12 +120,12 @@ class SamDataForm extends React.PureComponent {
      // console.log('component did update in SamDataForm'+JSON.stringify(newProps.samcity.length))}
      // console.log('prevState.household_id: '+prevState.household_id)
      // console.log(newProps.samprops.household_id)
-     if(prevState.plotOpen && !prevState.plotOpen2){ //trying to get window to open first - might be able to keep it from reloading
-       this.setState({plotOpen2:true})
-     };
-     if(!prevState.plotOpen && prevState.plotOpen2){
-       this.setState({plotOpen2:false})
-     };
+     // if(prevState.plotOpen && !prevState.plotOpen2){ //trying to get window to open first - might be able to keep it from reloading
+     //   this.setState({plotOpen2:true})
+     // };
+     // if(!prevState.plotOpen && prevState.plotOpen2){
+     //   this.setState({plotOpen2:false})
+     // };
      //this was not setting in time for the plot
      // if (prevState.containerwidth != this.plotcontain.current.offsetWidth ||
      //     prevState.containerheight != this.plotcontain.current.offsetHeight ){
@@ -187,7 +175,9 @@ class SamDataForm extends React.PureComponent {
         <div style={{position:"absolute",width:"100%",height:"100%"}}>
           {this.state.openHousehold && (
             <div style={{position:"absolute",zIndex:"5",top:"15%",left:"20%",width:"50%",fontSize:"1.2em",backgroundColor:"#f8f8ff"}}>
-            <span style={{position:"absolute",zIndex:"6",left:"95%",top:"6%",fontSize:"1.1em",backgroundColor:"#ffffff"}} onClick={this.onXClick}>X</span>
+            <button style={{position:"absolute",cursor:"pointer",zIndex:"2",left:"95%",top:"4%",fontSize:".8em"}}
+                onClick={ () => this.setState({ openHousehold: 0 }) }
+                >X</button>
               <GetHousehold household_id={this.state.household_id}/></div>
             )}
         </div>
