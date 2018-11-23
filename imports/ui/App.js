@@ -124,6 +124,7 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   zip: '',
   zip_education_entropy_index: null,
   zip_racial_entropy_index: null,
+  datacount: {initialcount:1,totalpop:0},
   height: 40000,
   longitude: -95.315,
   latitude: 29.75,
@@ -167,6 +168,7 @@ export default class App extends React.PureComponent {
        this.setText = this.setText.bind(this);
        this.setExplanation = this.setExplanation.bind(this);
        this.setWaiting = this.setWaiting.bind(this);
+       this.countData = this.countData.bind(this);
        //bbox is NW,NE,SE,SW
        const bbox = [[-95.91,28.93],[-94.67,28.93],[-94.67,30.47],[-95.91,30.47]];
        this.state = {
@@ -197,6 +199,26 @@ export default class App extends React.PureComponent {
   setWaiting = function(wait){
     this.setState({waiting:wait})
   };
+  countData = function(data){
+    var samprops = {...this.state.samprops}
+    let category = samprops.toShow[samprops.categIndex].category
+    if(!samprops.datacount[category]){
+      samprops.datacount[category] = {}
+    }
+    for(let i=0; i<data.length; i++) {
+      let factor = data[i][category]
+      if(samprops.datacount.initialcount){
+        samprops.datacount['totalpop'] += samprops.one_of
+      };
+      if(!samprops.datacount[category][factor]){
+        samprops.datacount[category][factor] = 0
+      }
+
+      //have to reset to zero for zoom but not for .fnd ones
+      samprops.datacount[category][factor] += samprops.one_of
+    }
+    this.setState({samprops});
+  }
   onGridSizeChange = function(size) {
     var samprops = {...this.state.samprops}
     samprops.cellSize = size;
@@ -397,6 +419,7 @@ export default class App extends React.PureComponent {
               setClick={this.setClick}
               setHighlight={this.setHighlight}
               setWaiting={this.setWaiting}
+              countData={this.countData}
               waiting={this.state.waiting}
               handlePopulationChange={this.handlePopulationChange}
               />

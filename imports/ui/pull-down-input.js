@@ -33,12 +33,27 @@ export default class PullDown extends React.PureComponent {
     this.onCatChange = this.onCatChange.bind(this);
     this.onGridSizeChange = this.onGridSizeChange.bind(this);
     this.onChangetoShow = this.onChangetoShow.bind(this);
+
     this.state = {
       gridmode: this.props.mapprops.mode,
-      samprops : this.props.samprops,
+      //samprops : this.props.samprops,
       changeColors : this.props.samprops.changeColors
     }
   };
+  static getDerivedStateFromProps(props, state) {
+    if(props.samprops != state.samprops){  //this is just for initial load to find something; it updates
+      console.log(props.samprops.datacount.race)
+      var samprops = {...props.samprops}
+      if(!samprops.datacount[samprops.toShow[samprops.categIndex].category]){
+        samprops.datacount[samprops.toShow[samprops.categIndex].category] = {}
+      }
+      return {samprops:samprops}
+    }
+    // if(state.samprops.datacount != props.samprops.datacount){
+    //     console.log('do I need to update state here?'+state.samprops.datacount)
+    //     return null
+    //   }
+  }
   setExplanation(e){
     this.props.setExplanation(e) //not sure this does anything!!!! bind seems to work by itself, but haven't fully tested
   }
@@ -60,12 +75,11 @@ export default class PullDown extends React.PureComponent {
   };
   componentDidUpdate(prevProps, prevState) {
     var samprops = {...this.state.samprops}
-    if (this.props.samprops != prevProps.samprops){
+    if (this.props.samprops.categIndex != prevProps.samprops.categIndex){
       samprops.categIndex = this.props.samprops.categIndex;
       this.setState({samprops});
     };
   };
-
   //could put an apolloquery here that return count and then have it for each below??
   //test out the aggregation pipeling???
 
@@ -113,36 +127,38 @@ export default class PullDown extends React.PureComponent {
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
 
-      <div style={{fontSize:"1em", overflow:"auto"}}>
+              <div style={{fontSize:"1em", overflow:"auto"}}>
 
-        {this.state.samprops.toShow[this.state.samprops.categIndex].factors.map((factor,ind) =>
-          this.state.samprops.toShow[this.state.samprops.categIndex].fnd != factor.factorName &&
-          <button key={ind}
-            onClick={(e) => this.onFactortoShow(factor)}
-            style={{backgroundColor: this.state.samprops.allcolors[factor.factorColor].HEX,
-              borderColor: this.state.samprops.allcolors[factor.factorColor].HEX,
-              position:'relative',width:'100%',
-              borderWidth: "3px", borderStyle:"dashed", height:"2em"}}>
-            {factor.factorName.substring(0,24)}
-            {this.state.changeColors &&
-              <div>
+                {this.state.samprops.toShow[this.state.samprops.categIndex].factors.map((factor,ind) =>
+                  this.state.samprops.toShow[this.state.samprops.categIndex].fnd != factor.factorName &&
+                  <button key={ind}
+                    onClick={(e) => this.onFactortoShow(factor)}
+                    style={{backgroundColor: this.state.samprops.allcolors[factor.factorColor].HEX,
+                      borderColor: this.state.samprops.allcolors[factor.factorColor].HEX,
+                      position:'relative',width:'100%',
+                      borderWidth: "3px", borderStyle:"dashed", height:"2em"}}>
+                    {factor.factorName.substring(0,24)} : {this.state.samprops.datacount['totalcount']}
+                    {this.state.samprops.datacount[this.state.samprops.toShow[this.state.samprops.categIndex].category][factor.factorName]}
+                    {this.state.changeColors &&
+                      <div>
 
-            <SelectText allcolors={this.state.samprops.allcolors} onChange={this.onChangetoShow} factor={factor}/>
+                    <SelectText allcolors={this.state.samprops.allcolors} onChange={this.onChangetoShow} factor={factor}/>
 
+                      </div>
+                    }
+                  </button>)}
+
+                  <button key="100"
+                    onClick={(e) => this.onFactortoShow('')}
+                    style={{backgroundColor:'#ffffff',
+                      borderColor:'#ffffff',position:'relative',width:'100%',
+                      borderWidth: "3px", borderStyle:"solid", height:"2em"}}>
+                      show all {this.state.samprops.toShow[this.state.samprops.categIndex].pretty_name} factors
+                  </button>
+
+                  <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
               </div>
-            }
-          </button>)}
 
-          <button key="100"
-            onClick={(e) => this.onFactortoShow('')}
-            style={{backgroundColor:'#ffffff',
-              borderColor:'#ffffff',position:'relative',width:'100%',
-              borderWidth: "3px", borderStyle:"solid", height:"2em"}}>
-              show all {this.state.samprops.toShow[this.state.samprops.categIndex].pretty_name} factors
-          </button>
-
-          <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
-      </div>
       <div title="Categories for display with scale" onClick={(e) => this.onScaleChange('')}
           style={{fontSize:"1.5em"}}>Scales</div>
 

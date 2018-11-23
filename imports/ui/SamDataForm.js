@@ -97,10 +97,11 @@ class SamDataForm extends React.PureComponent {
        //this.plotcontain = React.createRef();
        this.onXClick = this.onXClick.bind(this);
        this.setWaiting = this.props.setWaiting;
+       this.countData = this.props.countData;
        this.state = {
          household_id: this.props.samprops.household_id,
          openHousehold: 0, //this.props.samprops.openHousehold,
-         setWaiting: this.props.setWaiting,
+         //setWaiting: this.props.setWaiting,
          plotOpen : false,  //plot stuff is just turned off at the button with a ! inline
          plotOpen2 : false,
          plotWidth: '8%',
@@ -199,6 +200,7 @@ class SamDataForm extends React.PureComponent {
             setHighlight={this.props.setHighlight}
             setText={this.props.setText}
             setWaiting={this.props.setWaiting}
+            countData={this.props.countData}
             waiting={this.props.waiting}
             data={this.props.samcity}
             highlight_data={this.props.highlight_data}
