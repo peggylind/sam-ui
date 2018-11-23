@@ -46,6 +46,7 @@ SamCity <- mongo("samcity", url = "mongodb://localhost/SamCity");
 #remove first!!
 SamCity$drop()
 SamCity$find(limit = 2)
+SamCity$find("account"==0020680000006_6)
 #mongolite throws  Error: No method asJSON S3 class: sfg , so tried an extra toJSON
 sam2insert <- sam
 
@@ -68,7 +69,7 @@ stopCluster(cl)
 
 
 SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1}')
-SamCity$index(add = '{"coords" : "2dsphere", "household_id" : -1}')
+SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1, "household_id" : -1}')
 SamCity$index(add = '{"coords" : "2dsphere", "race" : -1}')
 Sys.time()
 

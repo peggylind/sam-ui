@@ -3,11 +3,12 @@ export default `
 scalar FloatwNA
 
 type SamCitizen {
-  _id: ID!
   age: Int
   asthma: String
   autism_by_CRH: String
   autism_by_maternal_age: String
+  bbox_bl:[Float]
+  bbox_ur:[Float]
   bracket_age: String
   citizenship: String
   coords: [Float]
@@ -69,10 +70,11 @@ type Query {
     totalcount:Int
   ),:[count],
   samcity(
-      _id: ID
       age: Int,
       asthma:String,
       autism_by_maternal_age: String,
+      bbox_bl:[Float],
+      bbox_ur:[Float],
       bottom_range: Int,
       bracket_age: String,
       citizenship: String,

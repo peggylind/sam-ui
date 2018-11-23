@@ -6,6 +6,8 @@ export default samQuery = gql`
     $asthma: String,
     $autism_by_CRH: String,
     $autism_by_maternal_age: String,
+    $bbox_bl:[Float],
+    $bbox_ur:[Float],
     $bottom_range: Int,
     $citizenship: String,
     $coords: [Float],
@@ -47,7 +49,9 @@ export default samQuery = gql`
       asthma: $asthma,
       autism_by_CRH: $autism_by_CRH,
       autism_by_maternal_age: $autism_by_maternal_age,
-      bottom_range: $bottom_range
+      bbox_bl:$bbox_bl,
+      bbox_ur:$bbox_ur,
+      bottom_range: $bottom_range,
       citizenship: $citizenship,
       coords: $coords,
       disability: $disability,
@@ -87,6 +91,8 @@ export default samQuery = gql`
       asthma
       autism_by_CRH
       autism_by_maternal_age
+      bbox_bl
+      bbox_ur
       citizenship
       coords
       disability

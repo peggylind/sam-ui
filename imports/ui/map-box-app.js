@@ -32,6 +32,7 @@ const firstgeojson = {
     "name": "Dinagat Islands"
   }
 };
+
 // class MapCompositeLayer extends CompositeLayer {
 //   renderLayers() {
 //     return [
@@ -107,6 +108,7 @@ export default class MapBox extends Component {
       this.state = {
             mapboxApiAccessToken: 'pk.eyJ1IjoibWRjaW90dGkiLCJhIjoiY2l1cWdyamw5MDAxcTJ2bGFmdzJxdGFyNyJ9.2b6aTKZNlT1_DEJiJ9l3hw',
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
+            bbox: this.props.mapprops.bbox,
             time: 0,
             samdata: this.props.samdata || [],
             waiting: this.props.waiting,
@@ -141,7 +143,10 @@ export default class MapBox extends Component {
       // }
 
     static getDerivedStateFromProps(props, state) {
-      //props.setWaiting(0)
+      //console.log(state.viewport.unproject([0,0]))
+
+
+
       // if(props.data){
       // console.log('props.data.length'+props.data.length)}
       // console.log(props.waiting)
@@ -150,12 +155,34 @@ export default class MapBox extends Component {
       //   return {samdata:props.data,waiting:0}
       // }
       if (props.data){
-      if(props.data.length > 0 && props.data != state.samdata){
-        props.setWaiting(0)
-        props.countData(props.data)
-        return {samdata:props.data,waiting:0}
-      }}
-
+        console.log(props)
+        if(props.data.length > 0 && props.data != state.samdata){
+          props.setWaiting(0)
+          props.countData(props.data)
+          return {samdata:props.data,waiting:0}
+        }
+      }
+      if (props.waiting){
+        var tmpViewPort = new WebMercatorViewport(state.viewport) //the state.viewport can't be accessed after first time so have to make a new one
+        var scale = getDistanceScales(state.viewport).metersPerPixel[0];
+        var width = window.innerWidth;
+        var worldWidth = width*scale;
+        var height = window.innerHeight;
+        var worldHeight = height*scale; //number of meters in window
+        if (worldHeight>worldWidth){
+          var dist4search = worldHeight
+        }else{
+          var dist4search = worldWidth
+        };
+        //var tl = tmpViewPort.unproject([0,0])
+        var tr = tmpViewPort.unproject([0,width])
+        var bl = tmpViewPort.unproject([height,0])
+        //var br = tmpViewPort.unproject([height,width])
+        var bbox = [bl,tr] //https://docs.mongodb.com/manual/reference/operator/query/box/
+        console.log(bbox)
+        props.onMapChange(state.viewport,dist4search,worldHeight,tr,bl);
+        return {bbox}
+      }
       // if(state.samdata.length>0 && state.waiting){
       //     props.setWaiting(0)
       //     return {samdata:props.data,waiting:0}
@@ -188,6 +215,7 @@ export default class MapBox extends Component {
     };
 
     componentDidUpdate(newProps, prevState) {
+      //console.log(this.state.viewport.unproject([0,0]))
       //console.log(this.factorcounts) //it is running through the whole thing twice!!!
       //if (!newProps.waiting){this.setWaiting(0)};
       //console.log('map-box updated'+JSON.stringify(newProps.samprops.waiting)+JSON.stringify(prevState.waiting))
@@ -222,6 +250,8 @@ export default class MapBox extends Component {
       //   // }
       // };
       if (this.state.viewport != prevState.viewport){
+        //console.log(this.state.viewport)
+        //console.log(pixelsToWorld([0,0]))
         var scale = getDistanceScales(this.state.viewport).metersPerPixel[0];
         var width = window.innerWidth;
         var worldWidth = width*scale;
@@ -232,7 +262,14 @@ export default class MapBox extends Component {
         }else{
           var dist4search = worldWidth
         };
-        this.props.onMapChange(this.state.viewport,dist4search,worldHeight);
+
+        // var tl = this.state.viewport.unproject([0,0])
+        // var tr = this.state.viewport.unproject([0,width])
+        // var bl = this.state.viewport.unproject([height,0])
+        // var br = this.state.viewport.unproject([height,width])
+        // var bbox = [tl,tr,bl,br]
+        // console.log(bbox)
+        this.props.onMapChange(this.state.viewport,dist4search,worldHeight,this.state.bbox);
       };
     };
 

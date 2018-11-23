@@ -169,7 +169,7 @@ class SamDataForm extends React.PureComponent {
       //   backgroundColor: 'white',
       //   bottom: '0'
       // };
-
+//it's not reloading the samcity stuff???
     return (
       <div>
         <div style={{position:"absolute",width:"100%",height:"100%"}}>
@@ -250,6 +250,8 @@ export default graphql(samQuery,
         asthma: props.samprops.asthma,
         autism_by_CRH: props.samprops.autism_by_CRH,
         autism_by_maternal_age: props.samprops.autism_by_maternal_age,
+        bbox_bl: props.mapprops.bbox_bl,
+        bbox_ur: props.mapprops.bbox_ur,
         bottom_range: props.samprops.bottom_range,
         bracket_age: props.samprops.bracket_age,
         citizenship: props.samprops.citizenship,

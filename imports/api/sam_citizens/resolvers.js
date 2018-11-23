@@ -23,18 +23,25 @@ export default {
 //have to make sure they're only factors somehow
     //https://stackoverflow.com/questions/15259493/listing-counting-factors-of-unique-mongo-db-values-over-all-keys
     async samcitycount(args){
-      var qdb = {
-        coords: {
-        $near: {
-          $geometry: {
-            type: "Point" ,
-            coordinates: args.coords
-          },
-          $maxDistance: args.dist//, //in meters
-          //$minDistance: 10
+    //   var qdb = {
+    //     coords: {
+    //     $near: {
+    //       $geometry: {
+    //         type: "Point" ,
+    //         coordinates: args.coords
+    //       },
+    //       $maxDistance: args.dist//, //in meters
+    //       //$minDistance: 10
+    //     }
+    //   },
+    // };
+    var qdb = {
+      coords: {
+        $geoWithin: {
+          $box: args.bbox //needs [[bottom-left],[upper-right]]
         }
-      },
-    };
+      }
+    }
     for (var arg in args){
       //if(factor_vars.indexOf(arg) >=0){
         if(args[arg]){
@@ -42,6 +49,7 @@ export default {
         }
       //};
     };
+    console.log(qdb)
     //have to do a forEach for all the args?
     //then use either distinct or toShow categories.js to populate??
     //let cnt = SamCitizens.rawCollection().aggregate( [ { $collStats: { count: { } } } ] )
@@ -79,25 +87,33 @@ export default {
 
 //can we get args from new apollo client more flexibly??
     async samcity(obj, args, { _id }){
-      console.log('args: '+JSON.stringify(args))
-      console.log('obj: '+JSON.stringify(obj))
+      // console.log('args: '+JSON.stringify(args))
+      // console.log('obj: '+JSON.stringify(obj))
       // console.log('parent: '+parent)
       // console.log('context: '+context)
       // console.log('info: '+info)
+      // var qdb = {
+      //   coords: {
+      //     $near: {
+      //       $geometry: {
+      //         type: "Point" ,
+      //         coordinates: args.coords
+      //       },
+      //       $maxDistance: args.dist//, //in meters
+      //       //$minDistance: 10
+      //     }
+      //   },
+      //   one_of:{$gte : args.one_of},
+      // };
+//looks like geowithin is slower than geonear....
       var qdb = {
         coords: {
-          $near: {
-            $geometry: {
-              type: "Point" ,
-              coordinates: args.coords
-            },
-            $maxDistance: args.dist//, //in meters
-            //$minDistance: 10
+          $geoWithin: {
+            $box: [args.bbox_bl,args.bbox_ur] //needs [[bottom-left],[upper-right]]
           }
-        },
-        one_of:{$gte : args.one_of},
-      };
-
+        }
+      }
+      console.log(qdb)
       for (var arg in args){
         if(arg=='household_id'){
           qdb = {}

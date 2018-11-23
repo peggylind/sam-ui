@@ -79,7 +79,8 @@ const calcStrokeWidth = (zoom) =>
 const calcOneOf = (zoom) =>
   zoom > 14.3 ? 1 : zoom > 13 ? 10 : zoom > 11 ? 100 : 1000;
   //zoom > 12.7 ? 1 : zoom < 11 ? 1000: zoom > 11 ? 100 : 10;
-
+const bbox_bl = [-95.62,29.96];
+const bbox_ur = [-95.05,29.35];
 
 const samprops = { //have all decided with same logic?? //a bunch of stuff should be fixed if we go apollo 3.1 - for now need it in both for search!!
   //racial_entropy_index: '',
@@ -88,6 +89,8 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   limit: 14000,
   one_of: calcOneOf(firstzoom),
   // member: "",
+  _id: '',
+  account: '',
   age: 55,
   asthma: '',
   autism_by_CRH: '',
@@ -170,7 +173,7 @@ export default class App extends React.PureComponent {
        this.setWaiting = this.setWaiting.bind(this);
        this.countData = this.countData.bind(this);
        //bbox is NW,NE,SE,SW
-       const bbox = [[-95.91,28.93],[-94.67,28.93],[-94.67,30.47],[-95.91,30.47]];
+
        this.state = {
          waiting: 1,
          toolTipInfo : {text:'Hover cursor for info.'},
@@ -178,7 +181,8 @@ export default class App extends React.PureComponent {
          highlight_data : [],
          samprops : samprops,
          mapprops : {
-              bbox: bbox, //may use later for searches - now based on geonear in circle
+              bbox_ur: bbox_ur,
+              bbox_bl: bbox_bl, //may use later for searches - now based on geonear in circle
               mode: 1, //[GeoMap,ScatterMap,HexMap,PointCloudMap,GridMap,GridCellMap,ContourMap]
               viewport: {
                 width: window.innerWidth,
@@ -300,9 +304,10 @@ export default class App extends React.PureComponent {
      this.setState({samprops});
   };
 
-  onMapChange = function(mapstuff,dist,height){ //height is used for normalizing for plot -- and can be used to make height of legendbox, too
-    console.log("mapstuff dist "+dist+"  "+height)
+  onMapChange = function(mapstuff,dist,height,bl,ur){ //height is used for normalizing for plot -- and can be used to make height of legendbox, too
+    //console.log("mapstuff dist " +bbox)
     var samprops = {...this.state.samprops}
+    var mapprops = {...this.state.mapprops}
     samprops.latitude = mapstuff.latitude;
     samprops.longitude = mapstuff.longitude;
     samprops.zoom = mapstuff.zoom;
@@ -312,8 +317,10 @@ export default class App extends React.PureComponent {
     samprops.opacity = calcOpacity(mapstuff.zoom);
     samprops.strokeWidth = calcStrokeWidth(mapstuff.zoom);
     samprops.one_of = calcOneOf(mapstuff.zoom);
+    mapprops.bbox_bl = bl;
+    mapprops.bbox_ur = ur;
     if(this.state.samprops.one_of != samprops.one_of){this.setWaiting(1)}
-    this.setState({samprops});
+    this.setState({samprops,mapprops});
   };
 //not using onSamDataChange??
   onSamDataChange = function(datactrls){
