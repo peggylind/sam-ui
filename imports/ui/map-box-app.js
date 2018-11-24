@@ -158,8 +158,8 @@ export default class MapBox extends Component {
       //   return {samdata:props.data,waiting:0}
       // }
       if (props.data){
-        //console.log(props)
         if(props.data.length > 0 && props.data != state.samdata){
+          console.log(props)
           props.setWaiting(0)
           props.countData(props.data)
           return {samdata:props.data,waiting:0}
@@ -296,7 +296,7 @@ export default class MapBox extends Component {
     //onHover: ({object}) => this.setToolInfo(object),
     onClick: ({object}) => this.setClick(object),
     waiting: this.state.waiting,
-    gl_wait: this.state.gl_wait,
+    //gl_wait: this.state.gl_wait,
     setWaiting: this.props.setWaiting
   });
   //You can subClassing HexagonLayer and override the _onGetSublayerElevation method with your own. This method takes each cell {centroid: [], points: []. index} as input , and returns the elevation. Note the points: [] is the array of data points that contained by each cell. You can use these array of points to calculate your own elevation.

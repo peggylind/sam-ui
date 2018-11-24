@@ -22,67 +22,15 @@ export default {
 //use toShow for potential fields/factors
 //have to make sure they're only factors somehow
     //https://stackoverflow.com/questions/15259493/listing-counting-factors-of-unique-mongo-db-values-over-all-keys
-    async samcitycount(args){
-    //   var qdb = {
-    //     coords: {
-    //     $near: {
-    //       $geometry: {
-    //         type: "Point" ,
-    //         coordinates: args.coords
-    //       },
-    //       $maxDistance: args.dist//, //in meters
-    //       //$minDistance: 10
-    //     }
-    //   },
-    // };
-    var qdb = {
-      coords: {
-        $geoWithin: {
-          $box: args.bbox //needs [[bottom-left],[upper-right]]
-        }
-      }
-    }
-    for (var arg in args){
-      //if(factor_vars.indexOf(arg) >=0){
-        if(args[arg]){
-          qdb[arg] = args[arg];
-        }
-      //};
-    };
-    console.log(qdb)
-    //have to do a forEach for all the args?
-    //then use either distinct or toShow categories.js to populate??
-    //let cnt = SamCitizens.rawCollection().aggregate( [ { $collStats: { count: { } } } ] )
-    let cnt = SamCitizens.rawCollection().aggregate([
-    // { "$match": {
-    //     "price": { "$gte": 100, "$lte" 500 }
-    // }},
-    { "$group": {
-        "race": {
-            "$cond": [
-                { "race": "white" },
-                "white",
-                { "$cond": [
-                    { "race": "black" },
-                    "black",
-                    { "$cond": [
-                        { "hispanic": "hispanic" },
-                        "hispanic",
-                        "other_race"
-                    ]}
-                ]}
-            ]
-        },
-        "count": { "$sum": 1 }
-    }}
-])
+    async samhouse(obj, args, { _id }){
+      console.log('success '+args.household_id)
+      const rtn = await SamCitizens.find(
+           {household_id:parseInt(args.household_id)}
+         ).fetch();
+      console.log('rtn'+JSON.stringify(rtn))
+      return rtn
+    },
 
-    const rtn = await SamCitizens.find(
-         qdb
-       ).count();
-
-    return rtn
-  },
 
 
 //can we get args from new apollo client more flexibly??
@@ -116,7 +64,16 @@ export default {
       };
       console.log(args.bbox_bl)
       for (var arg in args){
-        if(arg=='household_id'){
+        if(factor_vars.indexOf(arg) >=0){
+          if(args[arg]){
+            qdb[arg] = args[arg];
+          }
+        };
+      };
+        // if(arg!='household_id'){
+        //   qdb[arg] = args[arg]
+        // }; //have to check to make sure they all work
+/*        if(arg=='household_id'){
           qdb = {}
           qdb[arg] = parseInt(args[arg])
         };
@@ -131,9 +88,9 @@ export default {
             //qdb[arg] = {$gte : args['bottom_range'],$lte : args['top_range']};
           // and some mechanism for obj with $gte, etc.
           }
-        };
-      }
+        };*/
 
+console.log(qdb)
 
     const rtn = await SamCitizens.find(
          qdb,

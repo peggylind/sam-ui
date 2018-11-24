@@ -4,11 +4,20 @@ import { graphql, Query } from "react-apollo";
 import MapBox from "./map-box-app";
 import D3Scatter from "./d3-scatter";
 import samQuery from "./samquery.graphql.js";
+import houseQuery from "./housequery.graphql.js";
 //import asyncComponent from "./asyncComponent";
 
 //adding $age to query makes it fail with unexpected EOF??????
 //if thesee don't match type coming from mongo, it just dies without an error!
 
+const formatDollars = function(number){
+  if (number!=undefined){
+      var numstring = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return '$'+numstring+'/year'
+  }else{
+    return null
+  }
+};
 
 //https://www.howtographql.com/ --lots more to use with new graphql 2.1 features.
 //could have ldg shared between 2
@@ -18,7 +27,7 @@ import samQuery from "./samquery.graphql.js";
 //https://blog.apollographql.com/tutorial-graphql-mutations-optimistic-ui-and-store-updates-f7b6b66bf0e2
 const GetHousehold = ({ household_id }) => (
   <Query
-    query={samQuery}
+    query={houseQuery}
     variables={{ household_id }}
     notifyOnNetworkStatusChange
   >
@@ -38,14 +47,14 @@ const GetHousehold = ({ household_id }) => (
       }else{
         ldg = <span></span>
       };
-      if(data.samcity){
-        if(data.samcity.length>0){
-          let loc_name = data.samcity[0].loc_name.charAt(0).toUpperCase() + data.samcity[0].loc_name.slice(1).toLowerCase()
+      if(data.samhouse){
+        if(data.samhouse.length>0){
+          let loc_name = data.samhouse[0].loc_name.charAt(0).toUpperCase() + data.samhouse[0].loc_name.slice(1).toLowerCase()
           hr = <hr></hr>
           house_header = <div style={{fontSize:"1.2em",textAlign:"center"}}>Household Characteristics</div>
-          house_header2 = <div>Household Income: ${data.samcity[0].household_income}, HCAD quality of housing: {data.samcity[0].quality_description}</div>
-          house_title = <div>This is not real data, but represents a plausible household for: <br></br> {data.samcity[0].loc_num} {loc_name}, TX {data.samcity[0].zip} based on census data.</div>
-          house = data.samcity.map((citizen, ind) => (
+          house_header2 = <div>Household Income: {formatDollars(data.samhouse[0].household_income)}, HCAD quality of housing: {data.samhouse[0].quality_description}</div>
+          house_title = <div>This is not real data, but represents a plausible household for: <br></br> {data.samhouse[0].loc_num} {loc_name}, TX {data.samhouse[0].zip} based on census data.</div>
+          house = data.samhouse.map((citizen, ind) => (
             <div key={ind+"cit"}><div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
             <div></div></div>//need second .map with categories that are searchable in PullDown per model, and to deal with NA, etc. above
         ))

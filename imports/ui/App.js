@@ -327,12 +327,12 @@ export default class App extends React.PureComponent {
     this.setState({samprops});
   };
 //not using onSamDataChange??
-  onSamDataChange = function(datactrls){
-    var samprops = {...this.state.samprops}
-    samprops.toShow = datactrls.toShow;
-    samprops.mapOrPlot = datactrls.mapOrPlot;//also use to set map to 80 degrees??May need to turn off map??
-    this.setState({samprops});
-  };
+  // onSamDataChange = function(datactrls){
+  //   var samprops = {...this.state.samprops}
+  //   samprops.toShow = datactrls.toShow;
+  //   samprops.mapOrPlot = datactrls.mapOrPlot;//also use to set map to 80 degrees??May need to turn off map??
+  //   this.setState({samprops});
+  // };
   //expl should be an object {text: valid_html} - will usually be set from model selector
   setExplanation = function(e){
     //console.log(e.target.value) //should have a target - should set the explainIndex, and the explanation?? pull in model_explanation.js??
