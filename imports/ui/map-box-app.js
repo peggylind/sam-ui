@@ -112,6 +112,7 @@ export default class MapBox extends Component {
             time: 0,
             samdata: this.props.samdata || [],
             waiting: this.props.waiting,
+            categIndex: this.props.samprops.categIndex,
             //gl_wait: 1, //perhaps from app.js??
             cellSize: this.props.samprops.cellSize,
             highlight_data: this.props.highlight_data || [],
@@ -130,9 +131,7 @@ export default class MapBox extends Component {
       }
 
       returnColors (factor) {
-          //this.factorcounts = this.factorcounts+1
           return this.props.samprops.forColors[factor]
-        //}
       }
       returnText (txt) {
         console.log('returnText '+txt)
@@ -143,10 +142,14 @@ export default class MapBox extends Component {
       // }
 
     static getDerivedStateFromProps(props, state) {
-      //console.log(state.viewport.unproject([0,0]))
-
-
-
+      // console.log('mapbox getDerivedStateFromProps ')
+      // console.log(state.categIndex)
+      if(props.samprops){
+        if(props.samprops.categIndex != state.categIndex){
+          props.countData(props.data)
+          return {categIndex:props.samprops.categIndex}
+        }
+      }
       // if(props.data){
       // console.log('props.data.length'+props.data.length)}
       // console.log(props.waiting)
@@ -155,7 +158,7 @@ export default class MapBox extends Component {
       //   return {samdata:props.data,waiting:0}
       // }
       if (props.data){
-        console.log(props)
+        //console.log(props)
         if(props.data.length > 0 && props.data != state.samdata){
           props.setWaiting(0)
           props.countData(props.data)
@@ -163,6 +166,7 @@ export default class MapBox extends Component {
         }
       }
       if (props.waiting){
+        console.log('props.waiting in map-box: '+Date.now())
         var tmpViewPort = new WebMercatorViewport(state.viewport) //the state.viewport can't be accessed after first time so have to make a new one
         var scale = getDistanceScales(state.viewport).metersPerPixel[0];
         var width = window.innerWidth;
@@ -175,19 +179,15 @@ export default class MapBox extends Component {
           var dist4search = worldWidth
         };
         //var tl = tmpViewPort.unproject([0,0])
-        var tr = tmpViewPort.unproject([0,width])
-        var bl = tmpViewPort.unproject([height,0])
+        var tr = tmpViewPort.unproject([0,height])
+        var bl = tmpViewPort.unproject([width,0])
         //var br = tmpViewPort.unproject([height,width])
-        var bbox = [bl,tr] //https://docs.mongodb.com/manual/reference/operator/query/box/
-        console.log(bbox)
+        //var bbox = [bl,tr] //https://docs.mongodb.com/manual/reference/operator/query/box/
+        //console.log(bl)
         props.onMapChange(state.viewport,dist4search,worldHeight,tr,bl);
-        return {bbox}
+        return {tr,bl}
       }
-      // if(state.samdata.length>0 && state.waiting){
-      //     props.setWaiting(0)
-      //     return {samdata:props.data,waiting:0}
-      // }
-
+      
       if (state.cellSize != props.samprops.cellSize){
         return {cellSize: props.samprops.cellSize}
       }
@@ -208,69 +208,14 @@ export default class MapBox extends Component {
       }}
     }
 
-    componentDidMount(){
-      // console.log('componentDidMount in mapbox '+this.props.samprops.catShow)
-      // if (this.props.data){console.log('data')}
-      //this.setState({geojsonsam:this.props.geojsonsam})
-    };
-
     componentDidUpdate(newProps, prevState) {
-      //console.log(this.state.viewport.unproject([0,0]))
-      //console.log(this.factorcounts) //it is running through the whole thing twice!!!
-      //if (!newProps.waiting){this.setWaiting(0)};
-      //console.log('map-box updated'+JSON.stringify(newProps.samprops.waiting)+JSON.stringify(prevState.waiting))
-      if (prevState.cellSize != newProps.samprops.cellSize){
-        //this.GridMap.setState({cellSize:newProps.samprops.cellSize})
-      }
       if (this.props.geojsonsam != newProps.geojsonsam){
         //console.log(this.props.geojsonsam)
          this.setState({geojsonsam:this.props.geojsonsam})
       };
-
-      // if (prevState.textdata[0].text != newProps.samprops.textname){
-      //   //have to load in and do a push??
-      //   console.log('prevState.textdata[0].text: '+prevState.textdata[0].text + ' : '+ newProps.samprops.textname)
-      //   this.setState({textdata: [{text:newProps.samprops.textname,coords:newProps.samprops.textposition}]});
-      // }
-      // if (newProps.data && newProps.waiting){
-      // // //  this.setState({geojsonsam:this.props.geojsonsam})
-      // //   console.log('set samdata '+(Date.now())+JSON.stringify(newProps))
-      // //   this.setState({samdata: this.props.data, waiting: 0});
-      //    this.setWaiting(0);
-      // //   // if (this.props.samprops.limit < 10001){
-      // //   //   this.handlePopulationChange(this.props.samprops.limit+500)
-      // //   // }
-      // };
-      // if (this.props.data != prevState.samdata && prevState.waiting == 0){
-      //   console.log('set samdata new '+(Date.now()))
-      //   this.setState({samdata: this.props.data});
-      //   this.setWaiting(0);
-      //   // if (this.props.samprops.limit < 10001){ //instead of 40001
-      //   //   this.handlePopulationChange(this.props.samprops.limit+7000)
-      //   // }
-      // };
       if (this.state.viewport != prevState.viewport){
-        //console.log(this.state.viewport)
-        //console.log(pixelsToWorld([0,0]))
-        var scale = getDistanceScales(this.state.viewport).metersPerPixel[0];
-        var width = window.innerWidth;
-        var worldWidth = width*scale;
-        var height = window.innerHeight;
-        var worldHeight = height*scale; //number of meters in window
-        if (worldHeight>worldWidth){
-          var dist4search = worldHeight
-        }else{
-          var dist4search = worldWidth
-        };
-
-        // var tl = this.state.viewport.unproject([0,0])
-        // var tr = this.state.viewport.unproject([0,width])
-        // var bl = this.state.viewport.unproject([height,0])
-        // var br = this.state.viewport.unproject([height,width])
-        // var bbox = [tl,tr,bl,br]
-        // console.log(bbox)
-        this.props.onMapChange(this.state.viewport,dist4search,worldHeight,this.state.bbox);
-      };
+        newProps.setWaiting(1)
+       };
     };
 
 //https://github.com/uber-common/viewport-mercator-project/blob/master/docs/api-reference/web-mercator-utils.md
@@ -318,7 +263,7 @@ export default class MapBox extends Component {
     onClick: ({object}) => this.setClick(object)
   });
 
-  const ScatterMap = new ScatterplotLayer({  //RoundedRectangleLayer({ // doesn't pass the onHover and onClick properly; not sure why
+  const ScatterMap = new RoundedRectangleLayer({ // doesn't pass the onHover and onClick properly; not sure why
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
 		getPosition: d => [d.coords[0], d.coords[1]],

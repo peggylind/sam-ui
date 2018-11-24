@@ -80,6 +80,13 @@ export default class PullDown extends React.PureComponent {
       this.setState({samprops});
     };
   };
+  numberWithCommas = function(x) {
+    if(x!=undefined){
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }else{
+      return null
+    }
+  }
   //could put an apolloquery here that return count and then have it for each below??
   //test out the aggregation pipeling???
 
@@ -99,6 +106,7 @@ export default class PullDown extends React.PureComponent {
       </select>
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
+
       <div title="Select Boundaries to Show" style={{fontSize:"1.5em"}}>Geography</div>
       <div style={{fontSize:"1.5em"}}>
         <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
@@ -109,11 +117,16 @@ export default class PullDown extends React.PureComponent {
         </select>
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
+
       <div title="Categories for display with colors" style={{fontSize:"1.5em"}}>Categories</div>
+      <span style={{fontSize:".7em"}}>total:{this.numberWithCommas(this.state.samprops.datacount['totalpop'])}</span>
       {this.state.samprops.toShow.map((category,ind) =>
         category.fnd &&
           <div style={{fontSize:"0.9em", backgroundColor:"#7f7f7f33",paddingLeft:"1em",textIndent:"-1em"}} key={ind}>
-            Showing {category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20).toLowerCase()}</div>
+            {category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20).toLowerCase()}
+            <br></br>
+              {this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
+          </div>
       )}
       <div style={{fontSize:"1.5em"}}>
         <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
@@ -124,6 +137,7 @@ export default class PullDown extends React.PureComponent {
               </option>)
             }
         </select>
+
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
 
@@ -136,9 +150,16 @@ export default class PullDown extends React.PureComponent {
                     style={{backgroundColor: this.state.samprops.allcolors[factor.factorColor].HEX,
                       borderColor: this.state.samprops.allcolors[factor.factorColor].HEX,
                       position:'relative',width:'100%',
-                      borderWidth: "3px", borderStyle:"dashed", height:"2em"}}>
-                    {factor.factorName.substring(0,24)} : {this.state.samprops.datacount['totalcount']}
-                    {this.state.samprops.datacount[this.state.samprops.toShow[this.state.samprops.categIndex].category][factor.factorName]}
+                      borderWidth: "3px", borderStyle:"dashed"}}>
+
+                    <span>
+                     {factor.factorName.substring(0,24)}
+                    </span>
+                    <br></br>
+                    <span>
+                      {this.numberWithCommas(this.state.samprops.datacount[this.state.samprops.toShow[this.state.samprops.categIndex].category][factor.factorName])}
+                    </span>
+
                     {this.state.changeColors &&
                       <div>
 

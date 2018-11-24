@@ -92,28 +92,29 @@ export default {
       // console.log('parent: '+parent)
       // console.log('context: '+context)
       // console.log('info: '+info)
-      // var qdb = {
-      //   coords: {
-      //     $near: {
-      //       $geometry: {
-      //         type: "Point" ,
-      //         coordinates: args.coords
-      //       },
-      //       $maxDistance: args.dist//, //in meters
-      //       //$minDistance: 10
-      //     }
-      //   },
-      //   one_of:{$gte : args.one_of},
-      // };
+      var qdbNear = {
+        coords: {
+          $near: {
+            $geometry: {
+              type: "Point" ,
+              coordinates: args.coords
+            },
+            $maxDistance: args.dist//, //in meters
+            //$minDistance: 10
+          }
+        },
+        one_of:{$gte : args.one_of},
+      };
 //looks like geowithin is slower than geonear....
       var qdb = {
         coords: {
           $geoWithin: {
             $box: [args.bbox_bl,args.bbox_ur] //needs [[bottom-left],[upper-right]]
           }
-        }
-      }
-      console.log(qdb)
+        },
+        one_of:{$gte : args.one_of}
+      };
+      console.log(args.bbox_bl)
       for (var arg in args){
         if(arg=='household_id'){
           qdb = {}

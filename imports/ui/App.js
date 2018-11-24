@@ -69,17 +69,17 @@ function list4plots (plots) {
   return makePlotColors(plotList) //which is a list of objects from toShow
 }
 
-const firstzoom = 10.3;
+const firstzoom = 9.2;
 const firstdist = 100000;
 const calcOpacity = (zoom) => { return 1 - (zoom/25)};
 const calcStrokeWidth = (zoom) =>
-  (zoom *1.3) < 22 ? 23 - (zoom * 1.3) : 1;
+  (zoom *1.3) < 22 ? 23 - (zoom * 1.2) : 1;
 // const calcRadiusScale = (zoom) =>
 //   (zoom *13) < 210 ? 216 - (zoom * 13) : 6;
 const calcOneOf = (zoom) =>
-  zoom > 14.3 ? 1 : zoom > 13 ? 10 : zoom > 11 ? 100 : 1000;
+  zoom > 14.3 ? 1 : zoom > 13 ? 10 : zoom > 11.3 ? 100 : 1000;
   //zoom > 12.7 ? 1 : zoom < 11 ? 1000: zoom > 11 ? 100 : 10;
-const bbox_bl = [-95.62,29.96];
+const bbox_bl = [-96.2,29.96];
 const bbox_ur = [-95.05,29.35];
 
 const samprops = { //have all decided with same logic?? //a bunch of stuff should be fixed if we go apollo 3.1 - for now need it in both for search!!
@@ -95,6 +95,8 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   asthma: '',
   autism_by_CRH: '',
   autism_by_maternal_age: '',
+  bbox_bl: bbox_bl,
+  bbox_ur: bbox_ur,
   bottom_range: 0,
   bracket_age: '',
   citizenship: '',
@@ -134,7 +136,7 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   zoom: firstzoom,
   cellSize: 5000,
   opacity: calcOpacity(firstzoom),
-  radiusMinPixels: 2.5,
+  radiusMinPixels: 2.8,
   radiusMaxPixels: 100,
   strokeWidth: calcStrokeWidth(firstzoom),
   //radiusScale: calcRadiusScale(firstzoom), //letting it do automatic
@@ -181,8 +183,8 @@ export default class App extends React.PureComponent {
          highlight_data : [],
          samprops : samprops,
          mapprops : {
-              bbox_ur: bbox_ur,
-              bbox_bl: bbox_bl, //may use later for searches - now based on geonear in circle
+              // bbox_ur: bbox_ur,
+              // bbox_bl: bbox_bl, //may use later for searches - now based on geonear in circle
               mode: 1, //[GeoMap,ScatterMap,HexMap,PointCloudMap,GridMap,GridCellMap,ContourMap]
               viewport: {
                 width: window.innerWidth,
@@ -196,6 +198,7 @@ export default class App extends React.PureComponent {
             }
          };
          this.onMapChange = debounce(this.onMapChange, 1000);
+         this.setWaiting = debounce(this.setWaiting, 1000);
          this.setToolInfo = debounce(this.setToolInfo, 200);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
@@ -217,10 +220,9 @@ export default class App extends React.PureComponent {
       if(!samprops.datacount[category][factor]){
         samprops.datacount[category][factor] = 0
       }
-
-      //have to reset to zero for zoom but not for .fnd ones
       samprops.datacount[category][factor] += samprops.one_of
     }
+    samprops.datacount['initialcount'] = 0;
     this.setState({samprops});
   }
   onGridSizeChange = function(size) {
@@ -288,7 +290,7 @@ export default class App extends React.PureComponent {
      var samprops = {...this.state.samprops}
      samprops.toShow.forEach(function (catRow, i){
        if (catRow.category==showObj.catName){
-         console.log(catRow.category+' tochange to categIndex '+i)
+         //console.log(catRow.category+' tochange to categIndex '+i)
          catRow.factors.forEach(function (factorRow, j){
            if (factorRow.factorName == showObj.factorName){
              factorRow.factorColor = showObj.factorColor;
@@ -305,9 +307,10 @@ export default class App extends React.PureComponent {
   };
 
   onMapChange = function(mapstuff,dist,height,bl,ur){ //height is used for normalizing for plot -- and can be used to make height of legendbox, too
-    //console.log("mapstuff dist " +bbox)
+    // console.log("mapstuff dist ")
+    // console.log(mapstuff)
     var samprops = {...this.state.samprops}
-    var mapprops = {...this.state.mapprops}
+    //var mapprops = {...this.state.mapprops}
     samprops.latitude = mapstuff.latitude;
     samprops.longitude = mapstuff.longitude;
     samprops.zoom = mapstuff.zoom;
@@ -317,10 +320,11 @@ export default class App extends React.PureComponent {
     samprops.opacity = calcOpacity(mapstuff.zoom);
     samprops.strokeWidth = calcStrokeWidth(mapstuff.zoom);
     samprops.one_of = calcOneOf(mapstuff.zoom);
-    mapprops.bbox_bl = bl;
-    mapprops.bbox_ur = ur;
+    samprops.bbox_bl = bl;
+    samprops.bbox_ur = ur;
+    //console.log(bbox_bl,bbox_ur)
     if(this.state.samprops.one_of != samprops.one_of){this.setWaiting(1)}
-    this.setState({samprops,mapprops});
+    this.setState({samprops});
   };
 //not using onSamDataChange??
   onSamDataChange = function(datactrls){
@@ -331,7 +335,7 @@ export default class App extends React.PureComponent {
   };
   //expl should be an object {text: valid_html} - will usually be set from model selector
   setExplanation = function(e){
-    console.log(e.target.value) //should have a target - should set the explainIndex, and the explanation?? pull in model_explanation.js??
+    //console.log(e.target.value) //should have a target - should set the explainIndex, and the explanation?? pull in model_explanation.js??
     var samprops = {...this.state.samprops}
     samprops.explainIndex = e.target.value;
     //explanation = expl

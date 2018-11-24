@@ -42,17 +42,13 @@ export default class ModelDivs extends React.PureComponent {
   };
   formatDollars = function(number){
     if (number!=undefined){
-        var numstring = number.toString();
+        var numstring = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       return '$'+numstring+'/year'
     }else{
-      return 'undefined'
+      return null
     }
   };
-  //think through side-panel...
-  leftDiv = function(width){
-    let left = 100-width;
-    return left+'%'
-  }
+
   render() {
     return (
 //should calculate div-left on fly!
