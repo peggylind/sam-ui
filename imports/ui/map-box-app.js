@@ -263,7 +263,7 @@ export default class MapBox extends Component {
     onClick: ({object}) => this.setClick(object)
   });
 
-  const ScatterMap = new ScatterplotLayer({ //RoundedRectangleLayer({ // doesn't pass the onHover and onClick properly; not sure why
+  const ScatterMap = new ScatterplotLayer({ //new RoundedRectangleLayer({ // doesn't pass the onHover and onClick properly; not sure why
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
 		getPosition: d => [d.coords[0], d.coords[1]],
@@ -275,6 +275,7 @@ export default class MapBox extends Component {
     //radiusScale: this.props.samprops.radiusScale,
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
+    cornerRadius: .2,
     //autoHighlight: true,
     onHover: ({object}) => this.props.setToolInfo(object), //for some reason, object is undefined if in RoundedRectangleLayer????
     onClick: ({object}) => this.props.setClick(object)

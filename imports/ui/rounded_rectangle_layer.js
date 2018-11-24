@@ -20,7 +20,12 @@ export default class RoundedRectangleLayer extends ScatterplotLayer {
     })
   }
 
-
+ getPickingInfo(object){
+   console.log(object)
+ }
+ decodePickingColor(object){
+   console.log(object)
+ }
   // shouldUpdateState({props, oldProps, context, oldContext, changeFlags}){
   //   return super.shouldUpdateState
   // }
@@ -34,9 +39,9 @@ export default class RoundedRectangleLayer extends ScatterplotLayer {
   }
 }
 
-RoundedRectangleLayer.defaultProps = {
-  ...ScatterplotLayer.defaultProps,
-  // cornerRadius: the amount of rounding at the rectangle corners
-  // 0 - rectangle. 1 - circle.
-  cornerRadius: 0.2
-}
+// RoundedRectangleLayer.defaultProps = {
+//   ...ScatterplotLayer.defaultProps,
+//   // cornerRadius: the amount of rounding at the rectangle corners
+//   // 0 - rectangle. 1 - circle.
+//   cornerRadius: 0.2
+// }
