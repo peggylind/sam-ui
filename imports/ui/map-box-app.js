@@ -142,7 +142,8 @@ export default class MapBox extends Component {
       // }
 
     static getDerivedStateFromProps(props, state) {
-      // console.log('mapbox getDerivedStateFromProps ')
+      console.log('mapbox getDerivedStateFromProps ')
+      console.log(props)
       // console.log(state.categIndex)
       if(props.samprops){
         if(props.samprops.categIndex != state.categIndex){

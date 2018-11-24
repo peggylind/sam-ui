@@ -173,7 +173,7 @@ export default class PullDown extends React.PureComponent {
                     onClick={(e) => this.onFactortoShow('')}
                     style={{backgroundColor:'#ffffff',
                       borderColor:'#ffffff',position:'relative',width:'100%',
-                      borderWidth: "3px", borderStyle:"solid", height:"2em"}}>
+                      borderWidth: "3px", borderStyle:"solid"}}>
                       show all {this.state.samprops.toShow[this.state.samprops.categIndex].pretty_name} factors
                   </button>
 

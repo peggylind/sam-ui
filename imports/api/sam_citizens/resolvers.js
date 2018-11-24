@@ -25,7 +25,7 @@ export default {
     async samhouse(obj, args, { _id }){
       const rtn = await SamCitizens.find(
            {account:args.account}
-         ).fetch();
+         );//.fetch();
       return rtn
     },
 //can we get args from new apollo client more flexibly??

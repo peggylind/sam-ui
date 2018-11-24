@@ -384,18 +384,12 @@ export default class App extends React.PureComponent {
   // }
 
   render(){
-    let patience = <div></div>
-    if (this.state.waiting){ patience =
-        <div style={{position:"absolute",zIndex:'10',width:"100%",height:"100%",backgroundColor:"#7f7f7f33"}}>
-        <div style={{marginTop:"30%", marginLeft:"3%", color:"green", fontSize:"2em",textAlign:"center"}}>
-        <div>Loading Data ... </div><div>thank you for your patience</div></div></div>
-      }
+
 
 
       //if (loading) return null;
       return (
           <div>
-          {patience}
               <div style={{position:"absolute",width:"100%",fontSize:"4em",textAlign:"center", zIndex:"3"}}>
                 <span title="Houston on a first name basis" style={{backgroundColor:"#7f7f7f33",borderRadius:"25px"}}>Sam City</span>
               </div>

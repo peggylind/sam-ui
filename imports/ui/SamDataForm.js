@@ -25,7 +25,7 @@ const formatDollars = function(number){
 
 //try optimistic UI, and a feed for the loading??
 //https://blog.apollographql.com/tutorial-graphql-mutations-optimistic-ui-and-store-updates-f7b6b66bf0e2
-const GetHousehold = ({ account, household_id }) => (
+const GetHousehold = ({ account, household_id, showapts }) => (
   <Query
     query={houseQuery}
     variables={{ account, household_id }}
@@ -39,6 +39,7 @@ const GetHousehold = ({ account, household_id }) => (
       let house = <span></span>
       let hr = <span></span>
       let apt = <span></span>
+      let storybutton = <span></span>
       let ldg = <span></span>  //copying patience from App.js
       if (loading){
         ldg =
@@ -62,11 +63,13 @@ const GetHousehold = ({ account, household_id }) => (
               <div key={ind+"cit"+citizen.household_id}>
               <div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
               <div></div></div> : null))
+          if(showapts){
           apt = data.samhouse.map((citizen, ind) =>
             (citizen.household_id != household_id ?
               <div key={ind+"cit"+citizen.household_id}>
               <div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
-              <div></div></div> : null))
+              <div></div></div> : null))}
+          storybutton = <button style={{width:"100%"}}>Show this person's story</button>
           //need second .map with categories that are searchable in PullDown per model, and to deal with NA, etc. above
 
       }}
@@ -85,6 +88,7 @@ const GetHousehold = ({ account, household_id }) => (
             {hr}
             {house_header2}
             {hr}
+            {storybutton}
             {house}
             {hr}
             {hr}
@@ -123,6 +127,7 @@ class SamDataForm extends React.PureComponent {
          household_id: this.props.samprops.household_id,
          account: this.props.samprops.account,
          openHousehold: this.props.samprops.openHousehold,
+         showapts: 0,
          // plotWidth: '8%',
          // plotHeight: '4%',
          // containerwidth: '8',
@@ -159,10 +164,10 @@ class SamDataForm extends React.PureComponent {
      // };
    }
    static getDerivedStateFromProps(props, state) {
+     props.error ? console.log(props.error) : null
      // if(props.samcity){
      // console.log('inside getDerivedStateFromProps in SamDataForm'+props.samcity.length)}
      if(props.samprops.openHousehold){
-       console.log(props.samprops.account)
        return{
          openHousehold:props.samprops.openHousehold,
          household_id:props.samprops.household_id,
@@ -194,16 +199,27 @@ class SamDataForm extends React.PureComponent {
       //   backgroundColor: 'white',
       //   bottom: '0'
       // };
-//it's not reloading the samcity stuff???
+      let patience = <div></div>
+      if (this.props.loading){ patience =
+          <div style={{position:"absolute",zIndex:'10',width:"100%",height:"100%",backgroundColor:"#7f7f7f33"}}>
+          <div style={{marginTop:"30%", marginLeft:"3%", color:"green", fontSize:"2em",textAlign:"center"}}>
+          <div>Loading Data ... </div><div>thank you for your patience</div></div></div>
+        }
     return (
       <div>
+      {patience}
         <div style={{position:"absolute",width:"100%",height:"100%"}}>
           {this.props.samprops.openHousehold && (
             <div style={{position:"absolute",zIndex:"5",top:"15%",left:"20%",width:"50%",fontSize:"1.2em",overflow:"scroll",backgroundColor:"#f8f8ff"}}>
-            <button style={{position:"absolute",cursor:"pointer",zIndex:"2",left:"95%",top:"4px",fontSize:".8em"}}
-                onClick={ () => this.props.setOpenHousehold(0) }
-                >X</button>
-              <GetHousehold account={this.state.account} household_id={this.state.household_id}/></div>
+            <button style={{position:"absolute",cursor:"pointer",zIndex:"2",left:"85%",top:"4px",fontSize:".8em",backgroundColor:"#f8f8ff",borderRadius:"25px"}}
+                onClick={ () => this.props.setOpenHousehold(0) }>
+                close
+            </button>
+            <button style={{position:"absolute",cursor:"pointer",zIndex:"2",left:"5%",top:"4px",fontSize:".8em",backgroundColor:"#f8f8ff",borderRadius:"25px"}}
+                onClick={ () => this.setState({showapts: !this.state.showapts})}>
+                neighbors
+            </button>
+              <GetHousehold account={this.state.account} household_id={this.state.household_id} showapts={this.state.showapts}/></div>
             )}
         </div>
 
@@ -319,7 +335,7 @@ export default graphql(samQuery,
         zip_racial_entropy_index: props.samprops.zip_racial_entropy_index
       }
     }),
-    props: ({ data }) => ({ ...data })
+    props: ({ loading, error, data }) => ({ loading, error, ...data })
   })(SamDataForm)
 
 //export default graphql(sam20kQuery, queryOptsWrap())(SamDataForm);
