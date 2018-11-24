@@ -8,7 +8,7 @@ import SamCitizens from "./sam_citizens";
 //https://github.com/APIs-guru/graphql-voyager
 //will do it only on full_sam, and with nested calls on one_of == 'tenthousands', 'thousands', etc.
 //the nested calls made from SamDataForm and combine with $limit
-const factor_vars = [//'household_id', //id isn't really a factor, but process same way
+const factor_vars = [//'household_id', //id isn't really a factor, but process same way //love to get this working with an automated pipeline for all the gql
   'race','member','citizenship',
   'employment','quality_description','educational_attainment',
   'veteran_status','disability','asthma'];
@@ -23,16 +23,11 @@ export default {
 //have to make sure they're only factors somehow
     //https://stackoverflow.com/questions/15259493/listing-counting-factors-of-unique-mongo-db-values-over-all-keys
     async samhouse(obj, args, { _id }){
-      console.log('success '+args.household_id)
       const rtn = await SamCitizens.find(
-           {household_id:parseInt(args.household_id)}
+           {account:args.account}
          ).fetch();
-      console.log('rtn'+JSON.stringify(rtn))
       return rtn
     },
-
-
-
 //can we get args from new apollo client more flexibly??
     async samcity(obj, args, { _id }){
       // console.log('args: '+JSON.stringify(args))
@@ -62,21 +57,7 @@ export default {
         },
         one_of:{$gte : args.one_of}
       };
-      console.log(args.bbox_bl)
       for (var arg in args){
-        if(factor_vars.indexOf(arg) >=0){
-          if(args[arg]){
-            qdb[arg] = args[arg];
-          }
-        };
-      };
-        // if(arg!='household_id'){
-        //   qdb[arg] = args[arg]
-        // }; //have to check to make sure they all work
-/*        if(arg=='household_id'){
-          qdb = {}
-          qdb[arg] = parseInt(args[arg])
-        };
         if(factor_vars.indexOf(arg) >=0){
           if(args[arg]){
             qdb[arg] = args[arg];
@@ -84,13 +65,12 @@ export default {
         };
         if(range_vars.indexOf(arg) >=0){
           if(args[arg]){
-            console.log(args['bottom_range'])
+            console.log("args['bottom_range']" + args['bottom_range'])
             //qdb[arg] = {$gte : args['bottom_range'],$lte : args['top_range']};
           // and some mechanism for obj with $gte, etc.
           }
-        };*/
-
-console.log(qdb)
+        };
+      };
 
     const rtn = await SamCitizens.find(
          qdb,

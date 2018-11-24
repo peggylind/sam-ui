@@ -173,6 +173,7 @@ export default class App extends React.PureComponent {
        this.setText = this.setText.bind(this);
        this.setExplanation = this.setExplanation.bind(this);
        this.setWaiting = this.setWaiting.bind(this);
+       this.setOpenHousehold = this.setOpenHousehold.bind(this);
        this.countData = this.countData.bind(this);
        //bbox is NW,NE,SE,SW
 
@@ -205,6 +206,12 @@ export default class App extends React.PureComponent {
   //if update to Apollo 3, won't need
   setWaiting = function(wait){
     this.setState({waiting:wait})
+  };
+  setOpenHousehold = function(open){
+    console.log(open)
+    var samprops = {...this.state.samprops}
+    samprops.openHousehold = open
+    this.setState({samprops})
   };
   countData = function(data){
     var samprops = {...this.state.samprops}
@@ -361,13 +368,15 @@ export default class App extends React.PureComponent {
     this.setState({toolTipInfo})
   };
   setClick = function(info){
-    var toolTipInfo = {...this.state.toolTipInfo}
-    toolTipInfo.info = info
+    // var toolTipInfo = {...this.state.toolTipInfo}
+    // toolTipInfo.info = info
     //toolTipInfo.text = ''
     var samprops = {...this.state.samprops}
     samprops.household_id = info.household_id
+    console.log(info)
+    samprops.account = info.account
     samprops.openHousehold = 1
-    this.setState({toolTipInfo,samprops})
+    this.setState({samprops})
   };
 
   // componentWillUnmount(){
@@ -431,6 +440,7 @@ export default class App extends React.PureComponent {
               setWaiting={this.setWaiting}
               countData={this.countData}
               waiting={this.state.waiting}
+              setOpenHousehold={this.setOpenHousehold}
               handlePopulationChange={this.handlePopulationChange}
               />
           </div>

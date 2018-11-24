@@ -25,18 +25,20 @@ const formatDollars = function(number){
 
 //try optimistic UI, and a feed for the loading??
 //https://blog.apollographql.com/tutorial-graphql-mutations-optimistic-ui-and-store-updates-f7b6b66bf0e2
-const GetHousehold = ({ household_id }) => (
+const GetHousehold = ({ account, household_id }) => (
   <Query
     query={houseQuery}
-    variables={{ household_id }}
+    variables={{ account, household_id }}
     notifyOnNetworkStatusChange
   >
   {({ loading, error, data, refetch, networkStatus }) => {
+      let account_count = <span></span>
       let house_header = <span></span>
       let house_header2 = <span></span>
       let house_title = <span></span>
       let house = <span></span>
       let hr = <span></span>
+      let apt = <span></span>
       let ldg = <span></span>  //copying patience from App.js
       if (loading){
         ldg =
@@ -49,15 +51,24 @@ const GetHousehold = ({ household_id }) => (
       };
       if(data.samhouse){
         if(data.samhouse.length>0){
+          account_count = <div style={{fontSize:".8em",textAlign:"center"}}>{data.samhouse.length} people live at this house/apartment address</div>
           let loc_name = data.samhouse[0].loc_name.charAt(0).toUpperCase() + data.samhouse[0].loc_name.slice(1).toLowerCase()
           hr = <hr></hr>
           house_header = <div style={{fontSize:"1.2em",textAlign:"center"}}>Household Characteristics</div>
           house_header2 = <div>Household Income: {formatDollars(data.samhouse[0].household_income)}, HCAD quality of housing: {data.samhouse[0].quality_description}</div>
           house_title = <div>This is not real data, but represents a plausible household for: <br></br> {data.samhouse[0].loc_num} {loc_name}, TX {data.samhouse[0].zip} based on census data.</div>
-          house = data.samhouse.map((citizen, ind) => (
-            <div key={ind+"cit"}><div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
-            <div></div></div>//need second .map with categories that are searchable in PullDown per model, and to deal with NA, etc. above
-        ))
+          house = data.samhouse.map((citizen, ind) =>
+            (citizen.household_id == household_id ?
+              <div key={ind+"cit"+citizen.household_id}>
+              <div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
+              <div></div></div> : null))
+          apt = data.samhouse.map((citizen, ind) =>
+            (citizen.household_id != household_id ?
+              <div key={ind+"cit"+citizen.household_id}>
+              <div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
+              <div></div></div> : null))
+          //need second .map with categories that are searchable in PullDown per model, and to deal with NA, etc. above
+
       }}
       //if (error) return `Error!: ${error}`;
 
@@ -68,12 +79,16 @@ const GetHousehold = ({ household_id }) => (
           <div>
             {house_header}
             {hr}
+            {account_count}
+            {hr}
             {house_title}
             {hr}
             {house_header2}
             {hr}
             {house}
             {hr}
+            {hr}
+            {apt}
           </div>
         </div>
       );
@@ -106,11 +121,12 @@ class SamDataForm extends React.PureComponent {
        this.countData = this.props.countData;
        this.state = {
          household_id: this.props.samprops.household_id,
+         account: this.props.samprops.account,
          openHousehold: this.props.samprops.openHousehold,
-         plotWidth: '8%',
-         plotHeight: '4%',
-         containerwidth: '8',
-         containerheight: '4',
+         // plotWidth: '8%',
+         // plotHeight: '4%',
+         // containerwidth: '8',
+         // containerheight: '4',
          //highlight_data: [],
          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
        };
@@ -145,12 +161,12 @@ class SamDataForm extends React.PureComponent {
    static getDerivedStateFromProps(props, state) {
      // if(props.samcity){
      // console.log('inside getDerivedStateFromProps in SamDataForm'+props.samcity.length)}
-     if(props.samprops.household_id != state.household_id){
-       //props.setWaiting(1)
+     if(props.samprops.openHousehold){
+       console.log(props.samprops.account)
        return{
-         openHousehold:1,
+         openHousehold:props.samprops.openHousehold,
          household_id:props.samprops.household_id,
-         highlight_data:props.highlight_data //assuming we always want this one.
+         account:props.samprops.account
        }
      }else{
        if(props.highlight_data != state.highlight_data){
@@ -182,14 +198,15 @@ class SamDataForm extends React.PureComponent {
     return (
       <div>
         <div style={{position:"absolute",width:"100%",height:"100%"}}>
-          {this.state.openHousehold && (
-            <div style={{position:"absolute",zIndex:"5",top:"15%",left:"20%",width:"50%",fontSize:"1.2em",backgroundColor:"#f8f8ff"}}>
-            <button style={{position:"absolute",cursor:"pointer",zIndex:"2",left:"95%",top:"4%",fontSize:".8em"}}
-                onClick={ () => this.setState({ openHousehold: 0 }) }
+          {this.props.samprops.openHousehold && (
+            <div style={{position:"absolute",zIndex:"5",top:"15%",left:"20%",width:"50%",fontSize:"1.2em",overflow:"scroll",backgroundColor:"#f8f8ff"}}>
+            <button style={{position:"absolute",cursor:"pointer",zIndex:"2",left:"95%",top:"4px",fontSize:".8em"}}
+                onClick={ () => this.props.setOpenHousehold(0) }
                 >X</button>
-              <GetHousehold household_id={this.state.household_id}/></div>
+              <GetHousehold account={this.state.account} household_id={this.state.household_id}/></div>
             )}
         </div>
+
         <div>
           <MapBox
             onMapChange={this.props.onMapChange}
@@ -255,6 +272,7 @@ export default graphql(samQuery,
   {
     options: props => ({
       variables: {
+        account: props.samprops.account,
         age: props.samprops.age,
         asthma: props.samprops.asthma,
         autism_by_CRH: props.samprops.autism_by_CRH,

@@ -4,6 +4,7 @@ scalar FloatwNA
 
 type SamCitizen {
   age: Int
+  account: String
   asthma: String
   autism_by_CRH: String
   autism_by_maternal_age: String
@@ -68,6 +69,7 @@ type count {
 type Query {
   samhouse(
     age: Int,
+    account:String,
     asthma:String,
     autism_by_maternal_age: String,
     bbox_bl:[Float],
@@ -112,6 +114,7 @@ type Query {
     zip_racial_entropy_index: Float
   ),:[SamCitizen],
   samcity(
+      account: String,
       age: Int,
       asthma:String,
       autism_by_maternal_age: String,

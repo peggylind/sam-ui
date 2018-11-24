@@ -16,7 +16,7 @@ sam <- clean_names(sam)
 #seems to have been 4or5 places with weird characters in the notes columns - 1782584,1850900,1868732,1937535
 #find them or just delete whole notes column:
 library (dplyr)
-sam <- sam %>% select(-note,-use_code,-building_style_code,-hcad_num,-condo_flag,
+sam <- sam %>% select(-note,-building_style_code,-hcad_num,-condo_flag,
                                  -loc_addr,-shape_area,-shape_len,-valid,-ms_replacement_cost,
                                  -county_2,-tract_2,-class_structure,-class_struc_description,
                                  -cama_replacement_cost,-accrued_depr_pct,-appraised_by,-appraised_date,
@@ -46,7 +46,7 @@ SamCity <- mongo("samcity", url = "mongodb://localhost/SamCity");
 #remove first!!
 SamCity$drop()
 SamCity$find(limit = 2)
-SamCity$find("account"==0020680000006_6)
+SamCity$find({account:"0020680000006_6"})
 #mongolite throws  Error: No method asJSON S3 class: sfg , so tried an extra toJSON
 sam2insert <- sam
 
@@ -69,7 +69,9 @@ stopCluster(cl)
 
 
 SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1}')
+SamCity$index(add = '{"coords" : 1, "one_of" : -1}')
 SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1, "household_id" : -1}')
+SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1, "account" : -1}')
 SamCity$index(add = '{"coords" : "2dsphere", "race" : -1}')
 Sys.time()
 

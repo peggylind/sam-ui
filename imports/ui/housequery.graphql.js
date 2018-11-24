@@ -1,6 +1,8 @@
+//save as from samquery.graphql.js with samQuery changed to houseQuery and samcity to samhouse, then copies in schema and resolver
+
 import gql from "graphql-tag";
 
-export default samQuery = gql`
+export default houseQuery = gql`
   query SamCitizens(
     $account: String,
     $age: Int,
@@ -45,7 +47,7 @@ export default samQuery = gql`
     $zip_education_entropy_index: Float,
     $zip_racial_entropy_index: Float
   ) {
-    samcity(
+    samhouse(
       account: $account,
       age: $age,
       asthma: $asthma,

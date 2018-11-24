@@ -259,7 +259,7 @@ export default class MapBox extends Component {
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
     autoHighlight: true,
-    //onHover: ({object}) => this.setToolInfo(object),
+    onHover: ({object}) => this.setToolInfo(object),
     onClick: ({object}) => this.setClick(object)
   });
 
