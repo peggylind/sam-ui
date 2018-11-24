@@ -187,7 +187,7 @@ export default class MapBox extends Component {
         props.onMapChange(state.viewport,dist4search,worldHeight,tr,bl);
         return {tr,bl}
       }
-      
+
       if (state.cellSize != props.samprops.cellSize){
         return {cellSize: props.samprops.cellSize}
       }
@@ -263,7 +263,7 @@ export default class MapBox extends Component {
     onClick: ({object}) => this.setClick(object)
   });
 
-  const ScatterMap = new RoundedRectangleLayer({ // doesn't pass the onHover and onClick properly; not sure why
+  const ScatterMap = new ScatterplotLayer({ //RoundedRectangleLayer({ // doesn't pass the onHover and onClick properly; not sure why
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
 		getPosition: d => [d.coords[0], d.coords[1]],
@@ -276,8 +276,7 @@ export default class MapBox extends Component {
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
     //autoHighlight: true,
-    onHover: ({object}) => this.props.setToolInfo(object),
-    //onHover: ({object}) => this.setHighlight(object),
+    onHover: ({object}) => this.props.setToolInfo(object), //for some reason, object is undefined if in RoundedRectangleLayer????
     onClick: ({object}) => this.props.setClick(object)
   });
   const HighlightMap = new ScatterplotLayer({
@@ -375,8 +374,8 @@ export default class MapBox extends Component {
      GridCellMap//,
   //   ContourMap
   ];
-  //const main_layers = [TextMap,main_layers_list[this.props.mapprops.mode]]
-  const main_layers = [HighlightMap,TextMap,main_layers_list[this.props.mapprops.mode]]
+  const main_layers = [main_layers_list[this.props.mapprops.mode]]
+  //const main_layers = [HighlightMap,TextMap,main_layers_list[this.props.mapprops.mode]]
   //const CompositeMap = new MapCompositeLayer(main_layers); onHover stopped working!
 
     return (
