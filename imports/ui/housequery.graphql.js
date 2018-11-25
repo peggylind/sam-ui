@@ -1,5 +1,5 @@
 //save as from samquery.graphql.js with samQuery changed to houseQuery and samcity to samhouse, then copies in schema and resolver
-
+//in current implementation, will only need a couple of types defined. Haven't had time to fix.
 import gql from "graphql-tag";
 
 export default houseQuery = gql`

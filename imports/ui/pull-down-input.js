@@ -119,7 +119,7 @@ export default class PullDown extends React.PureComponent {
       </div>
 
       <div title="Categories for display with colors" style={{fontSize:"1.5em"}}>Categories</div>
-      <span style={{fontSize:".7em"}}>total:{this.numberWithCommas(this.state.samprops.datacount['totalpop'])}</span>
+      <span style={{fontSize:".7em"}}>first total:{this.numberWithCommas(this.state.samprops.datacount['totalpop'])}</span>
       {this.state.samprops.toShow.map((category,ind) =>
         category.fnd &&
           <div style={{fontSize:"0.9em", backgroundColor:"#7f7f7f33",paddingLeft:"1em",textIndent:"-1em"}} key={ind}>
@@ -174,8 +174,15 @@ export default class PullDown extends React.PureComponent {
                     style={{backgroundColor:'#ffffff',
                       borderColor:'#ffffff',position:'relative',width:'100%',
                       borderWidth: "3px", borderStyle:"solid"}}>
-                      show all {this.state.samprops.toShow[this.state.samprops.categIndex].pretty_name} factors
+                      <span>
+                      total {this.state.samprops.toShow[this.state.samprops.categIndex].pretty_name}
+                      </span>
+                      <br></br>
+                      <span>
+                        {this.numberWithCommas(this.state.samprops.datacount[this.state.samprops.toShow[this.state.samprops.categIndex].category]['all'])}
+                      </span>
                   </button>
+
 
                   <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
               </div>
@@ -197,19 +204,20 @@ export default class PullDown extends React.PureComponent {
       <div title="Showing count in area" onClick={(e) => this.onScaleChange('')}
           style={{fontSize:"1.5em"}}>Counts</div>
       <button key="102"
-        onClick={(e) => this.onScaleChange('')}
+        onClick={(e) => this.onScaleChange('4')}
         style={{backgroundColor:'#ffffff',
           borderColor:'#ffffff',position:'relative',width:'100%',
           borderWidth: "3px", borderStyle:"solid", height:"2em"}}>
           grid population
       </button>
       {(this.props.mapprops.mode==4 || this.props.mapprops.mode==2) &&
-      <div>  <p>Need to force rerender of webgl</p>
+      <div>
       <Slide
         onChange={this.onGridSizeChange}
         min={100}
         max={100000}
         step={100}
+        eval_description={' m/side'}
       /></div>}
   </div>
     )

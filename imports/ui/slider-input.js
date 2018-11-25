@@ -41,10 +41,17 @@ export default class Slide extends Component {
     }
     const readOut = {
       position: 'relative',
-      width:'14%',
-      marginLeft: '85%',
+      width:'95%',
+      marginLeft: '5%',
       height: '97%'
     }
+    const formatCommas = function(number){
+      if (number!=undefined){
+          return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }else{
+        return null
+      }
+    };
 
     return (
 
@@ -57,7 +64,7 @@ export default class Slide extends Component {
     onChange={this.handleChange}
     style={rangeStyle}/>
   <div style={readOut}>
-    {this.evalue}
+    {formatCommas(this.evalue)}{this.props.eval_description}
   </div>
 </div>
 

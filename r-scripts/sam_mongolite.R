@@ -68,10 +68,12 @@ stopCluster(cl)
 
 
 SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1}')
-SamCity$index(add = '{"coords" : 1, "one_of" : -1}')
+#SamCity$index(add = '{"coords" : 1, "one_of" : -1}') #need to test for geoWithin - which just uses > < on coords
 SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1, "household_id" : -1}')
+#trying indices in both directions... starting with coords, then one_of then factor seems better
 SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1, "account" : -1}')
-SamCity$index(add = '{"coords" : "2dsphere", "race" : -1}')
+#SamCity$index(add = '{"coords" : "2dsphere", "account" : -1, "one-of" : -1}')
+SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1, "race" : -1}')
 Sys.time()
 
 #these don't work from mongolite, but do from mongo command line?

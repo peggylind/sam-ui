@@ -179,7 +179,7 @@ export default class App extends React.PureComponent {
 
        this.state = {
          waiting: 1,
-         toolTipInfo : {text:'Hover cursor for info.'},
+         toolTipInfo : {text:'Hover or click for info.'},
          //explanation : model_explanations()[samprops.explainIndex],//{text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
          highlight_data : [],
          samprops : samprops,
@@ -217,7 +217,7 @@ export default class App extends React.PureComponent {
     var samprops = {...this.state.samprops}
     let category = samprops.toShow[samprops.categIndex].category
     if(!samprops.datacount[category] || this.state.waiting){ //neeed for other sorts of changing viewport not to count... // and change to bbox
-      samprops.datacount[category] = {}
+      samprops.datacount[category] = {all:0}
     }
     for(let i=0; i<data.length; i++) {
       let factor = data[i][category]
@@ -228,6 +228,7 @@ export default class App extends React.PureComponent {
         samprops.datacount[category][factor] = 0
       }
       samprops.datacount[category][factor] += samprops.one_of
+      samprops.datacount[category]['all'] += samprops.one_of
     }
     samprops.datacount['initialcount'] = 0;
     this.setState({samprops});
@@ -251,22 +252,25 @@ export default class App extends React.PureComponent {
   onScaleChange = function(event){
     var samprops = {...this.state.samprops}
     var mapprops = {...this.state.mapprops}
-    if(event==''){
-      if (mapprops.mode>0 && mapprops.mode<5){
-        mapprops.mode+=1
-        }else{
-        mapprops.mode=1
+    if(isNaN(event)){
+      if(event==''){
+        if (mapprops.mode>0 && mapprops.mode<5){
+          mapprops.mode+=1
+          }else{
+          mapprops.mode=1
+        }
+      }else{
+        samprops.toShowScale.forEach(function(row,r){
+          if(row.category == event.target.value){
+            samprops.scaleIndex = r;
+            samprops.scaleShow = row.category; //only used in map-box right now --fix this and catShow!!
+            if(r==0){mapprops.mode=1}else{mapprops.mode=3}; //other scale possibilities later
+            //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
+        }})
       }
     }else{
-      samprops.toShowScale.forEach(function(row,r){
-        if(row.category == event.target.value){
-          samprops.scaleIndex = r;
-          samprops.scaleShow = row.category; //only used in map-box right now --fix this and catShow!!
-          if(r==0){mapprops.mode=1}else{mapprops.mode=3}; //other scale possibilities later
-          //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
-      }})
+      mapprops.mode=event
     };
-
     this.setState({samprops,mapprops});
   }
   onCatChange = function(event){
@@ -349,9 +353,9 @@ export default class App extends React.PureComponent {
     this.setState({samprops,exp_width: model_explanations(samprops.explainIndex).div_width})
     //could also set the toShow, etc. to go along with different models, if the pull-downs are too long
   };
-  setHighlight = function(object){
-    console.log(object)
-    this.setState({highlight_data:[object]})
+  setHighlight = function(array){
+    console.log(array)
+    this.setState({highlight_data:array})
   }
   setText = function(txt,position){ //not sure what's wrong with this - need to control deck.gl render!!!
     var samprops = {...this.state.samprops}

@@ -35,7 +35,7 @@ export default class LegendBox extends React.PureComponent {
         position: 'absolute',
         zindex: '3',
         width: '25%',
-        height: '80%',
+        height: '92%',
         borderRadius:'25px',
         backgroundColor: 'white',
         overflow: 'scroll'

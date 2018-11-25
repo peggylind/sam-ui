@@ -14,6 +14,7 @@ const coords = [[east,south],[west,north]];
 const age = [];
 const race = [];
 
+//didn't use LIGHT_SETTINGS ... yet
 const LIGHT_SETTINGS = {
   lightsPosition: [-125, 50.5, 5000, -122.8, 48.5, 8000],
   ambientRatio: 0.2,
@@ -30,6 +31,22 @@ const firstgeojson = {
   },
   "properties": {
     "name": "Dinagat Islands"
+  }
+};
+const formatKms = function(number){
+  if (number!=undefined){
+      var num = number/1000
+      var numstring = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return numstring+'/km2'
+  }else{
+    return null
+  }
+};
+const formatCommas = function(number){
+  if (number!=undefined){
+      return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }else{
+    return null
   }
 };
 
@@ -196,7 +213,7 @@ export default class MapBox extends Component {
         //have to load in and do a push??
         //console.log('prevState.textdata[0].text: '+state.textdata[0].text + ' : '+ props.samprops.textname)
         return {
-          text: 'pop: '+props.samprops.textname*props.samprops.one_of,
+          text: formatCommas(props.samprops.textname*props.samprops.one_of),
           textdata:
           [{text:props.samprops.textname,
             coords:props.samprops.textposition}]}
@@ -289,7 +306,7 @@ export default class MapBox extends Component {
     opacity: 1, //this.props.samprops.opacity,
     radiusMinPixels: this.props.samprops.radiusMinPixels,
     radiusMaxPixels: this.props.samprops.radiusMaxPixels,
-    strokeWidth: this.props.samprops.strokeWidth*200,
+    strokeWidth: this.props.samprops.strokeWidth*20,
     //radiusScale: 2000,
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
@@ -328,8 +345,10 @@ export default class MapBox extends Component {
     //   ...updateTrigger,
     //   cellSize: [this.state.cellSize]
     // },
-    onHover: ({object}) => this.setText(object.count,object.position),
-    onClick: ({object}) => this.setText(object.count,object.position)
+    onHover: ({object}) => object? this.setText(object.count,object.position) : null,
+    onClick: ({object}) => object?
+              window.alert(formatCommas(object.count*this.props.samprops.one_of)+
+                ' people in '+formatKms(this.state.cellSize*this.state.cellSize)) : null
   });
   const GridCellMap = new GridCellLayer({
     id: 'grid-cell-layer',
@@ -390,7 +409,11 @@ export default class MapBox extends Component {
       >
       <div style={{position:"absolute",zIndex:"5",
                   textAlign:"center",width:"100%",top:"15%"}}>
-      {this.state.text}
+                  {this.state.text}
+      {this.state.text ?
+        <span style={{backgroundColor:"#7f7f7f33",borderRadius:"12px"}}><span> people in </span><br></br>
+        <span>{formatKms(this.state.cellSize*this.state.cellSize)}</span></span> : null}
+
       </div>
         <DeckGL
           {...this.state.viewport}
