@@ -69,7 +69,7 @@ function list4plots (plots) {
   return makePlotColors(plotList) //which is a list of objects from toShow
 }
 
-const firstzoom = 9.2;
+const firstzoom = 9.6;
 const firstdist = 100000;
 const calcOpacity = (zoom) => { return 1 - (zoom/25)};
 const calcStrokeWidth = (zoom) =>
@@ -79,8 +79,8 @@ const calcStrokeWidth = (zoom) =>
 const calcOneOf = (zoom) =>
   zoom > 14.3 ? 1 : zoom > 13 ? 10 : zoom > 11.3 ? 100 : 1000;
   //zoom > 12.7 ? 1 : zoom < 11 ? 1000: zoom > 11 ? 100 : 10;
-const bbox_bl = [-96.2,29.96];
-const bbox_ur = [-95.05,29.35];
+const bbox_bl = [-97.1,28.16]; //first one should get everything
+const bbox_ur = [-94.1,30.94];
 
 const samprops = { //have all decided with same logic?? //a bunch of stuff should be fixed if we go apollo 3.1 - for now need it in both for search!!
   //racial_entropy_index: '',
@@ -91,7 +91,7 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   // member: "",
   _id: '',
   account: '',
-  age: 55,
+  age: null,
   asthma: '',
   autism_by_CRH: '',
   autism_by_maternal_age: '',
@@ -114,7 +114,7 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   lowbirthweightbyrace: '',
   maternal_CRH: '',
   means_of_transportation_to_work: '',
-  member: "",
+  member: '',
   nativity: '',
   pregnant: '',
   prenatal_first_tri: '',
@@ -123,7 +123,7 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   racial_entropy_index: null,
   stresslevelincome: '',
   stresslevelrace: '',
-  top_range: 100,
+  top_range: null,
   travel_time_to_work: '',
   veteran_status: '',
   zip: '',
@@ -131,8 +131,8 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   zip_racial_entropy_index: null,
   datacount: {initialcount:1,totalpop:0},
   height: 40000,
-  longitude: -95.315,
-  latitude: 29.75,
+  longitude: -95.355, //starting center
+  latitude: 29.8,
   zoom: firstzoom,
   cellSize: 5000,
   opacity: calcOpacity(firstzoom),

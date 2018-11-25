@@ -8,11 +8,44 @@ import SamCitizens from "./sam_citizens";
 //https://github.com/APIs-guru/graphql-voyager
 //will do it only on full_sam, and with nested calls on one_of == 'tenthousands', 'thousands', etc.
 //the nested calls made from SamDataForm and combine with $limit
-const factor_vars = [//'household_id', //id isn't really a factor, but process same way //love to get this working with an automated pipeline for all the gql
-  'race','member','citizenship',
-  'employment','quality_description','educational_attainment',
-  'veteran_status','disability','asthma'];
-const range_vars = ['household_income','age']; //finish later
+const factor_vars = [//add use_code from HCAD - B1 gives all renters //love to get this working with an automated pipeline for all the gql
+  'age',
+  'asthma',
+  'autism_by_CRH',
+  'autism_by_maternal_age',
+  'citizenship',
+  'disability',
+  'educational_attainment',
+  'employment',
+  'english_speaking_skills',
+  'health_insurance',
+  'household_type',
+  'loc_num',
+  'loc_name',
+  'lowbirthweightbyrace',
+  'maternal_CRH',
+  'means_of_transportation_to_work',
+  'member',
+  'nativity',
+  'one_of',
+  'pregnant',
+  'prenatal_first_tri',
+  'quality_description',
+  'race',
+  'travel_time_to_work',
+  'veteran_status',
+  'zip'
+];
+const range_vars = [
+  'age',
+  'education_entropy_index',
+  'household_income',
+  'racial_entropy_index',
+  'stresslevelincome',
+  'stresslevelrace',
+  'zip_education_entropy_index',
+  'zip_racial_entropy_index'
+  ]; //finish later
 
 export default {
 
@@ -25,7 +58,10 @@ export default {
     async samhouse(obj, args, { _id }){
       const rtn = await SamCitizens.find(
            {account:args.account}
-         );//.fetch();
+         )//.sort({
+            // "household_id" : 1,
+            // "member" : 1
+     //})//.fetch();
       return rtn
     },
 //can we get args from new apollo client more flexibly??
@@ -71,10 +107,9 @@ export default {
           }
         };
       };
-
     const rtn = await SamCitizens.find(
-         qdb,
-         {limit:args.limit}
+         qdb//,
+  //       {limit:args.limit}
        ).fetch();
 
     return rtn

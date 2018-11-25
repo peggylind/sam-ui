@@ -46,7 +46,6 @@ SamCity <- mongo("samcity", url = "mongodb://localhost/SamCity");
 #remove first!!
 SamCity$drop()
 SamCity$find(limit = 2)
-SamCity$find({account:"0020680000006_6"})
 #mongolite throws  Error: No method asJSON S3 class: sfg , so tried an extra toJSON
 sam2insert <- sam
 

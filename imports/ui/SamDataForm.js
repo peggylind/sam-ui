@@ -50,29 +50,32 @@ const GetHousehold = ({ account, household_id, showapts }) => (
       }else{
         ldg = <span></span>
       };
-      if(data.samhouse){
-        if(data.samhouse.length>0){
-          account_count = <div style={{fontSize:".8em",textAlign:"center"}}>{data.samhouse.length} people live at this house/apartment address</div>
-          let loc_name = data.samhouse[0].loc_name.charAt(0).toUpperCase() + data.samhouse[0].loc_name.slice(1).toLowerCase()
-          hr = <hr></hr>
-          house_header = <div style={{fontSize:"1.2em",textAlign:"center"}}>Household Characteristics</div>
-          house_header2 = <div>Household Income: {formatDollars(data.samhouse[0].household_income)}, HCAD quality of housing: {data.samhouse[0].quality_description}</div>
-          house_title = <div>This is not real data, but represents a plausible household for: <br></br> {data.samhouse[0].loc_num} {loc_name}, TX {data.samhouse[0].zip} based on census data.</div>
-          house = data.samhouse.map((citizen, ind) =>
-            (citizen.household_id == household_id ?
-              <div key={ind+"cit"+citizen.household_id}>
-              <div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
-              <div></div></div> : null))
-          if(showapts){
-          apt = data.samhouse.map((citizen, ind) =>
-            (citizen.household_id != household_id ?
-              <div key={ind+"cit"+citizen.household_id}>
-              <div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
-              <div></div></div> : null))}
-          storybutton = <button style={{width:"100%"}}>Show this person's story</button>
-          //need second .map with categories that are searchable in PullDown per model, and to deal with NA, etc. above
-
-      }}
+      if(data){
+        if(data.samhouse){
+          if(data.samhouse.length>0){
+            account_count = <div style={{fontSize:".8em",textAlign:"center"}}>{data.samhouse.length} people live at this house/apartment address</div>
+            let loc_name = data.samhouse[0].loc_name.charAt(0).toUpperCase() + data.samhouse[0].loc_name.slice(1).toLowerCase()
+            hr = <hr></hr>
+            house_header = <div style={{fontSize:"1.2em",textAlign:"center"}}>Household Characteristics</div>
+            house_header2 = <div>Household Income: {formatDollars(data.samhouse[0].household_income)}, HCAD quality of housing: {data.samhouse[0].quality_description}</div>
+            house_title = <div>This is not real data, but represents a plausible household for: <br></br> {data.samhouse[0].loc_num} {loc_name}, TX {data.samhouse[0].zip} based on census data.</div>
+            house = data.samhouse.map((citizen, ind) =>
+              (citizen.household_id == household_id ?
+                <div key={ind+"cit"+citizen.household_id}>
+                <div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
+                <div></div></div> : null))
+            if(showapts){
+            apt = data.samhouse.map((citizen, ind) =>
+              (citizen.household_id != household_id ?
+                <div key={ind+"cit"+citizen.household_id}>
+                <div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
+                <div></div></div> : null))
+            }
+            storybutton = <button style={{width:"100%"}}>Show this person's story</button>
+            //need second .map with categories that are searchable in PullDown per model, and to deal with NA, etc. above
+          }
+        }
+      }
       //if (error) return `Error!: ${error}`;
 
       //  <span style={{zIndex:"6",left:"98%",fontSize:"1.8em"}} onClick=(this.setState({openHousehold:0}))>X</span>

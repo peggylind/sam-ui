@@ -35,3 +35,10 @@ graphQL for fetchmore?? https://github.com/apollographql/react-docs/blob/master/
 change error handling: https://www.apollographql.com/docs/react/features/error-handling.html
 
 r for coordinates --
+
+
+loading as the only mechanism for setWaiting - take it all out....
+animate when select a person? view whole to close window? fly to neighborhood? choose between animations
+need buttons from model_div
+
+if we have a query on sam-citizens and one on sam_households, could use same households as highlight layer???
