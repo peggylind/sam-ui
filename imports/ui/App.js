@@ -253,13 +253,6 @@ export default class App extends React.PureComponent {
     var samprops = {...this.state.samprops}
     var mapprops = {...this.state.mapprops}
     if(isNaN(event)){
-      if(event==''){
-        if (mapprops.mode>0 && mapprops.mode<5){
-          mapprops.mode+=1
-          }else{
-          mapprops.mode=1
-        }
-      }else{
         samprops.toShowScale.forEach(function(row,r){
           if(row.category == event.target.value){
             samprops.scaleIndex = r;
@@ -267,7 +260,6 @@ export default class App extends React.PureComponent {
             if(r==0){mapprops.mode=1}else{mapprops.mode=3}; //other scale possibilities later
             //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
         }})
-      }
     }else{
       mapprops.mode=event
     };

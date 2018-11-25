@@ -107,7 +107,7 @@ export default class PullDown extends React.PureComponent {
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
 
-      <div title="Select Boundaries to Show" style={{fontSize:"1.5em"}}>Geography</div>
+      <div title="Select Boundaries to Show" style={{fontSize:"1.5em"}} onClick={(e) => this.onScaleChange(0)}>Geography</div>
       <div style={{fontSize:"1.5em"}}>
         <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
             defaultValue={"Background Map"}>
@@ -187,7 +187,7 @@ export default class PullDown extends React.PureComponent {
                   <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
               </div>
 
-      <div title="Categories for display with scale" onClick={(e) => this.onScaleChange('')}
+      <div title="Categories for display with scale" onClick={(e) => this.onScaleChange(2)}
           style={{fontSize:"1.5em"}}>Scales</div>
 
       <div style={{fontSize:"1.5em"}}>
@@ -201,7 +201,7 @@ export default class PullDown extends React.PureComponent {
         </select>
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
-      <div title="Showing count in area" onClick={(e) => this.onScaleChange('')}
+      <div title="Showing count in area" onClick={(e) => this.onScaleChange(4)}
           style={{fontSize:"1.5em"}}>Counts</div>
       <button key="102"
         onClick={(e) => this.onScaleChange('4')}
