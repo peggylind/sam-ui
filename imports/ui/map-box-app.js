@@ -35,7 +35,7 @@ const firstgeojson = {
 };
 const formatKms = function(number){
   if (number!=undefined){
-      var num = number/1000
+      var num = number/1000000 //for if it's coming in already squared
       var numstring = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return numstring+'/km2'
   }else{
@@ -159,8 +159,8 @@ export default class MapBox extends Component {
       // }
 
     static getDerivedStateFromProps(props, state) {
-      console.log('mapbox getDerivedStateFromProps ')
-      console.log(props)
+      // console.log('mapbox getDerivedStateFromProps ')
+      // console.log(props)
       // console.log(state.categIndex)
       if(props.samprops){
         if(props.samprops.categIndex != state.categIndex){
@@ -177,14 +177,14 @@ export default class MapBox extends Component {
       // }
       if (props.data){
         if(props.data.length > 0 && props.data != state.samdata){
-          console.log(props)
+          //console.log(props)
           props.setWaiting(0)
           props.countData(props.data)
           return {samdata:props.data,waiting:0}
         }
       }
-      if (props.waiting){
-        console.log('props.waiting in map-box: '+Date.now())
+      if (props.waiting){  //check if can do on props.loading - not clear it won't fire too many times
+        //console.log('props.waiting in map-box: '+Date.now())
         var tmpViewPort = new WebMercatorViewport(state.viewport) //the state.viewport can't be accessed after first time so have to make a new one
         var scale = getDistanceScales(state.viewport).metersPerPixel[0];
         var width = window.innerWidth;

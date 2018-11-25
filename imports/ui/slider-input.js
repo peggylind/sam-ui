@@ -47,7 +47,8 @@ export default class Slide extends Component {
     }
     const formatCommas = function(number){
       if (number!=undefined){
-          return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        var num=number/1000
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       }else{
         return null
       }

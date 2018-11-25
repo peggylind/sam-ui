@@ -203,7 +203,7 @@ export default class App extends React.PureComponent {
          this.setToolInfo = debounce(this.setToolInfo, 200);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
-  //if update to Apollo 3, won't need
+  //only still using to trigger measurement of display - could refactor around loading
   setWaiting = function(wait){
     this.setState({waiting:wait})
   };
@@ -369,7 +369,7 @@ export default class App extends React.PureComponent {
     //toolTipInfo.text = ''
     var samprops = {...this.state.samprops}
     samprops.household_id = info.household_id
-    console.log(info)
+  //  console.log(info)
     samprops.account = info.account
     samprops.openHousehold = 1
     this.setState({samprops})

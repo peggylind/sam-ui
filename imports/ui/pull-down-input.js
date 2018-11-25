@@ -217,7 +217,7 @@ export default class PullDown extends React.PureComponent {
         min={100}
         max={100000}
         step={100}
-        eval_description={' m/side'}
+        eval_description={' km/side'}
       /></div>}
   </div>
     )
