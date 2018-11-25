@@ -9,17 +9,35 @@ export default class ModelDivs extends React.PureComponent {
     this.state = {
       samprops : this.props.samprops,
       explainIndex: this.props.samprops.explainIndex,
+      steps: model_explanations(this.props.samprops.explainIndex).steps,
+      step_index : 0,
+      animate: 'six',
+      modeltext : '',
       toolTipInfo : this.props.toolTipInfo,
       isModelOpen: true
     }
   };
   static getDerivedStateFromProps(props, state) {
     //console.log('hovercoords: '+state.textdata[0].coords + ' : '+ props.samprops.textposition)
+    //if(state){
+      if(state.step_index != props.samprops.step_index){
+        let step_index = props.samprops.step_index
+        let modeltext = state.modeltext
+        if(props.samprops.step_index>state.steps.length-1){
+          step_index = 0
+        }
+        return {step_index:step_index}
+      }
+    //}
+    if(props.modeltext=='end'){
+      return {modeltext:''}
+    }
     if (state.explainIndex != props.samprops.explainIndex){
       //have to load in and do a push??
       //console.log('prevState.textdata[0].text: '+state.textdata[0].text + ' : '+ props.samprops.textname)
       return {
-        explainIndex:props.samprops.explainIndex
+        explainIndex:props.samprops.explainIndex,
+        step_index:0
         }
     }else{
       if(props.toolTipInfo.info != state.toolTipInfo.info){
@@ -51,7 +69,30 @@ export default class ModelDivs extends React.PureComponent {
 
   render() {
     return (
-//should calculate div-left on fly!
+      <div>
+      <div style={{position:"absolute",zIndex:"5",
+                  textAlign:"center",width:"100%",top:"15%"}}>
+
+      {this.state.modeltext ?
+        <div style={{position:"absolute",backgroundColor:"#7f7f7f66",left:"30%",width:"40%",borderRadius:"12px",fontWeight:"bold"}}>
+        <div>{this.state.modeltext}</div>
+        {this.state.steps[this.state.step_index].condition ?
+          <span>Demo conditional show within/can't do function calls because they are run when initiating</span>
+        :
+        null
+        }
+        <button key="step_button"
+          onClick={(e) => this.props.changeSamProps({step_index:this.state.step_index+1,categories:this.state.steps[this.state.step_index].category})}
+          style={{backgroundColor:'#08ff40',borderRadius:'25px',
+            borderColor:'#08ff40',position:'relative',width:'100%',
+            borderWidth: "3px", borderStyle:"solid"}}>{this.state.steps[this.state.step_index].button_text}
+        </button>
+        </div>
+        :
+        null}
+
+      </div>
+
 <div style={{position:"absolute",width:model_explanations(this.state.explainIndex).div_width,
               left:model_explanations(this.state.explainIndex).div_left,
               overflow: "scroll",backgroundColor:"#f8f8ff",zIndex:"3"}}>
@@ -96,10 +137,25 @@ export default class ModelDivs extends React.PureComponent {
   <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"4",borderRadius:"25px"}}>
   <div><br/><hr/></div>
     <h2 style={{textAlign:"center"}}>{model_explanations(this.state.explainIndex).h2_title}</h2>
-    {model_explanations(this.state.explainIndex).button}
 
     <div style={{textAlign:"center",fontWeight: "bold"}}>{model_explanations(this.state.explainIndex).author}</div>
-<hr/><br/>
+<hr/>
+    {this.state.modeltext ?
+      <button key="end_tour_button"
+        onClick={(e) => {this.setState({modeltext:''});this.props.changeSamProps({step_index:0})}}
+        style={{backgroundColor:'#08ff40',borderRadius:'25px',
+          borderColor:'#ff3300',position:'relative',width:'100%',
+          borderWidth: "3px", borderStyle:"solid"}}>end tour
+      </button>
+    :
+      <button key="tour_button"
+        onClick={(e) => this.setState({modeltext:this.state.steps[this.state.step_index].steptext})}
+        style={{backgroundColor:'#08ff40',borderRadius:'25px',
+          borderColor:'#08ff40',position:'relative',width:'100%',
+          borderWidth: "3px", borderStyle:"solid"}}>{this.state.steps[this.state.step_index].side_button_text}
+      </button>}
+<br/>
+
     <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.explainIndex).text}</div>
 <hr/><br/>
     <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.explainIndex).img} />
@@ -122,6 +178,7 @@ export default class ModelDivs extends React.PureComponent {
 <hr/>
   </span>
  )}
+</div>
 </div>
 
 )

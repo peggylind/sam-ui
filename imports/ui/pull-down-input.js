@@ -149,7 +149,7 @@ export default class PullDown extends React.PureComponent {
                     onClick={(e) => this.onFactortoShow(factor)}
                     style={{backgroundColor: this.state.samprops.allcolors[factor.factorColor].HEX,
                       borderColor: this.state.samprops.allcolors[factor.factorColor].HEX,
-                      position:'relative',width:'100%',
+                      position:'relative',width:'100%',cursor:'pointer',
                       borderWidth: "3px", borderStyle:"dashed"}}>
 
                     <span>
@@ -171,7 +171,7 @@ export default class PullDown extends React.PureComponent {
 
                   <button key="100"
                     onClick={(e) => this.onFactortoShow('')}
-                    style={{backgroundColor:'#ffffff',
+                    style={{backgroundColor:'#ffffff',cursor:'pointer',
                       borderColor:'#ffffff',position:'relative',width:'100%',
                       borderWidth: "3px", borderStyle:"solid"}}>
                       <span>
@@ -205,7 +205,7 @@ export default class PullDown extends React.PureComponent {
           style={{fontSize:"1.5em"}}>Counts</div>
       <button key="102"
         onClick={(e) => this.onScaleChange('4')}
-        style={{backgroundColor:'#ffffff',
+        style={{backgroundColor:'#ffffff',cursor:'pointer',
           borderColor:'#ffffff',position:'relative',width:'100%',
           borderWidth: "3px", borderStyle:"solid", height:"2em"}}>
           grid population

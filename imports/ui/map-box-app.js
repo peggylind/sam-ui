@@ -160,7 +160,7 @@ export default class MapBox extends Component {
 
     static getDerivedStateFromProps(props, state) {
       // console.log('mapbox getDerivedStateFromProps ')
-      // console.log(props)
+      // console.log(props.samprops)
       // console.log(state.categIndex)
       if(props.samprops){
         if(props.samprops.categIndex != state.categIndex){
@@ -343,10 +343,6 @@ export default class MapBox extends Component {
     cellSize: this.state.cellSize/2,
     elevationScale: .21, //4
     getPosition: d => [d.coords[0], d.coords[1]],
-    // updateTriggers: {
-    //   ...updateTrigger,
-    //   cellSize: [this.state.cellSize]
-    // },
     onHover: ({object}) => object? this.setText(object.count,object.position) : null,
     onClick: ({object}) => object?
               window.alert(formatCommas(object.count*this.props.samprops.one_of)+

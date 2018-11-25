@@ -63,10 +63,11 @@ export function categories(list) {
 
 ];
 let ret_cats = [];
-list.forEach(cat => {
-  ret_cats.push(cat_list[cat]);
-})
-
-
+list == -1 ?
+  ret_cats = cat_list
+  :
+  list.forEach(cat => {
+    ret_cats.push(cat_list[cat]);
+  })
 return ret_cats
 };

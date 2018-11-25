@@ -7,7 +7,7 @@ export function model_explanations(index) {
   author: 'Carol Upchurch and Manale Henini',
   h2_title: 'What is Sam?',
   text: `
-  We have simulated residents for all the houses in Harris County (don't look for yourself!) so that we can model community health at the individual scale
+  We have simulated residents for all the houses in Harris County (don't look for real people!) so that we can model community health at the individual scale
   and then allow patterns to emerge. Sam is a visual tool that helps us understand community interventions and their effects.
   Carol and Manale did the R implementation of the data and the user interface is Dan Price's fault.
   `,
@@ -20,7 +20,21 @@ export function model_explanations(index) {
   should add a place for source code and explanation of sources.
   `,
   //button: <span onClick={window.alert("ugh")}>X</span>,
-  tooltip_terms: {}
+  tooltip_terms: {terms:[0,2,5]}, //matches the indices for the categories in toShow
+  //need all the button_text, etc., so it knows how to back out
+//categories need to be read in for the step after - so they will show up for all the changes after this.
+  steps: [
+   {category:[{age:{low:20,high:50},race:{factor:'asian'}}], //can only do one range variable at a time now // reset all somewhere???
+      steptext:'This is what needs to be said',
+      condition:1,
+      side_button_text:'Start Tour',
+      button_text:'Tour Sam'},
+   {category:[{age:{low:20,high:50},race:{factor:'hispanic'}}],
+      steptext:'This is what wants to be said',
+      condition:0,
+      side_button_text:'Start Tour',
+      button_text:'Filter for hispanic adults'}
+         ] //can't pass nested selection object to resolver
 },
 {
   model_name: 'Birthweight and Autism',
@@ -95,7 +109,10 @@ conception increases, the importance of prenatal care also increases. `
   citations5:`
     Impact of Perceived Stress, Major Life Events and Pregnancy Attitudes on Low Birth Weight
     https://www.jstor.org/stable/2648197?seq=1#metadata_info_tab_contents
-  `
+  `,
+  steps: [{category:[{age:{low:20,high:50},race:{factor:'white'}}],
+           steptext:'This is what wants to be said',
+           button_text:'Filter'}]
 },
 {
   model_name: 'Diversity Entropy',

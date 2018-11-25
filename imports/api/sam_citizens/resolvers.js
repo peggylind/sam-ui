@@ -9,7 +9,6 @@ import SamCitizens from "./sam_citizens";
 //will do it only on full_sam, and with nested calls on one_of == 'tenthousands', 'thousands', etc.
 //the nested calls made from SamDataForm and combine with $limit
 const factor_vars = [//add use_code from HCAD - B1 gives all renters //love to get this working with an automated pipeline for all the gql
-  'age',
   'asthma',
   'autism_by_CRH',
   'autism_by_maternal_age',

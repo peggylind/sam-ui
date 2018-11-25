@@ -89,44 +89,44 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   limit: 14000,
   one_of: calcOneOf(firstzoom),
   // member: "",
-  _id: '',
-  account: '',
+  _id: null,
+  account: null,
   age: null,
-  asthma: '',
-  autism_by_CRH: '',
-  autism_by_maternal_age: '',
+  asthma: null,
+  autism_by_CRH: null,
+  autism_by_maternal_age: null,
   bbox_bl: bbox_bl,
   bbox_ur: bbox_ur,
   bottom_range: 0,
-  bracket_age: '',
-  citizenship: '',
-  date_erected: '',
-  disability: '',
+  bracket_age: null,
+  citizenship: null,
+  date_erected: null,
+  disability: null,
   dist: firstdist,
-  educational_attainment: '',
+  educational_attainment: null,
   education_entropy_index: null,
-  employment: '',
-  english_speaking_skills:'',
-  health_insurance: '',
-  household_type: '',
-  individual_id: '',
-  language_at_home: '',
-  lowbirthweightbyrace: '',
-  maternal_CRH: '',
-  means_of_transportation_to_work: '',
-  member: '',
-  nativity: '',
-  pregnant: '',
-  prenatal_first_tri: '',
-  quality_description: '',
-  race: "",
+  employment: null,
+  english_speaking_skills:null,
+  health_insurance: null,
+  household_type: null,
+  individual_id: null,
+  language_at_home: null,
+  lowbirthweightbyrace: null,
+  maternal_CRH: null,
+  means_of_transportation_to_work: null,
+  member: null,
+  nativity: null,
+  pregnant: null,
+  prenatal_first_tri: null,
+  quality_description: null,
+  race: null,
   racial_entropy_index: null,
-  stresslevelincome: '',
-  stresslevelrace: '',
+  stresslevelincome: null,
+  stresslevelrace: null,
   top_range: null,
-  travel_time_to_work: '',
-  veteran_status: '',
-  zip: '',
+  travel_time_to_work: null,
+  veteran_status: null,
+  zip: null,
   zip_education_entropy_index: null,
   zip_racial_entropy_index: null,
   datacount: {initialcount:1,totalpop:0},
@@ -151,6 +151,8 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   scaleIndex: 0,
   catShow: 'race', //faster color in map-box-app - if can also read opacity off of toShow[categIndex], then have per color control.
   scaleShow: 'none', //'income',
+  step_index : 0,
+  modeltext : '',
   openHousehold: 0,
   textname: '',
   textposition: []
@@ -172,9 +174,10 @@ export default class App extends React.PureComponent {
        this.setHighlight = this.setHighlight.bind(this);
        this.setText = this.setText.bind(this);
        this.setExplanation = this.setExplanation.bind(this);
-       this.setWaiting = this.setWaiting.bind(this);
+       this.setWaiting = this.setWaiting.bind(this); //still need for resetting boundaries
        this.setOpenHousehold = this.setOpenHousehold.bind(this);
        this.countData = this.countData.bind(this);
+       this.changeSamProps = this.changeSamProps.bind(this);
        //bbox is NW,NE,SE,SW
 
        this.state = {
@@ -216,10 +219,9 @@ export default class App extends React.PureComponent {
   countData = function(data){
     var samprops = {...this.state.samprops}
     let category = samprops.toShow[samprops.categIndex].category
-    if(!samprops.datacount[category] || this.state.waiting){ //neeed for other sorts of changing viewport not to count... // and change to bbox
-      samprops.datacount[category] = {all:0}
-    }
+    samprops.datacount[category] = {all:0}
     for(let i=0; i<data.length; i++) {
+      samprops.datacount[category]['all'] += samprops.one_of  
       let factor = data[i][category]
       if(samprops.datacount.initialcount){
         samprops.datacount['totalpop'] += samprops.one_of
@@ -228,9 +230,10 @@ export default class App extends React.PureComponent {
         samprops.datacount[category][factor] = 0
       }
       samprops.datacount[category][factor] += samprops.one_of
-      samprops.datacount[category]['all'] += samprops.one_of
+
     }
     samprops.datacount['initialcount'] = 0;
+    console.log(samprops.datacount)
     this.setState({samprops});
   }
   onGridSizeChange = function(size) {
@@ -345,11 +348,25 @@ export default class App extends React.PureComponent {
     this.setState({samprops,exp_width: model_explanations(samprops.explainIndex).div_width})
     //could also set the toShow, etc. to go along with different models, if the pull-downs are too long
   };
+  changeSamProps = function(obj){
+    //console.log(obj)
+    //clear old list
+    var samprops = {...this.state.samprops}
+    categories = categories(-1)
+    categories.forEach(function(cat){ //leaving none in list
+      samprops[cat.category] = null
+    })
+
+
+    samprops.step_index = obj.step_index
+    this.setState({samprops})
+  }
+
   setHighlight = function(array){
     console.log(array)
     this.setState({highlight_data:array})
   }
-  setText = function(txt,position){ //not sure what's wrong with this - need to control deck.gl render!!!
+  setText = function(txt,position){ //not sure what's wrong with this on TextLayer - need to control deck.gl render!!! for now, ignoring position
     var samprops = {...this.state.samprops}
     samprops.textname = txt;
     samprops.textposition = position;
@@ -399,14 +416,17 @@ export default class App extends React.PureComponent {
                   <img style={{width:"100%"}} src='/images/honors-the-honors-college-primary.png' />
                 </span>
               </div>
+
             <ModelDivs
               samprops={this.state.samprops}
               toolTipInfo={this.state.toolTipInfo}
+              changeSamProps={this.changeSamProps}
             />
 
             <LegendBox
               mapprops={this.state.mapprops}
               samprops={this.state.samprops}
+              changeSamProps={this.changeSamProps}
               onPopChange={this.handlePopulationChange}
               onCatChange={this.onCatChange}
               onScaleChange={this.onScaleChange}
