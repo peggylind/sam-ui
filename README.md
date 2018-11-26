@@ -24,7 +24,7 @@ to install e.g. on Mac OS or Linux:
 A) Clone or fork and run: `meteor npm install` This will install all necessary npm packages.
 B) Start up your MongoDB instance by running: `mongod`. 
 
-Import data (e.g. `sam_export`) into your MongoDB instance. When using the database export files as provided by DASH you won't have to manually configure anything.
+Create a database called "Samcity" and import data (e.g. `sam_export`) into your newly created Samcity database. When using the database export files as provided by DASH you won't have to manually configure anything.
 
 
 ## Testing in local development environment
