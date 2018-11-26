@@ -369,6 +369,15 @@ export default class App extends React.PureComponent {
           samprops.toShow[i].fnd = ocateg[categ.category] ? ocateg[categ.category].fnd ? ocateg[categ.category].fnd : null : null
         })
       })
+      samprops.toShowScale.forEach(function(categ,i){
+        //need to fix logic for range variables!!!
+        samprops.toShowScale[i].bottom_range = obj[0].bottom_range
+        samprops.toShowScale[i].top_range = obj[0].top_range
+        obj.forEach(function(ocateg,m){
+        //have to walk all to clear earlier ones if they start tour inside...
+          samprops.toShowScale[i].fnd = ocateg[categ.category] ? ocateg[categ.category].fnd ? ocateg[categ.category].fnd : null : null
+        })
+      })
     }
     this.setState({samprops})
   }

@@ -43,10 +43,6 @@ export default class PullDown extends React.PureComponent {
   static getDerivedStateFromProps(props, state) {
     if(props.samprops != state.samprops){  //this is just for initial load to find something; it updates
       // console.log(props.samprops.toShow)
-      // props.samprops.toShow.forEach(function(cat,k){
-      //   console.log('in')
-      //   console.log(cat)
-      // })
       var samprops = {...props.samprops}
       if(!samprops.datacount[samprops.toShow[samprops.categIndex].category]){
       //if (props.waiting){
@@ -54,10 +50,6 @@ export default class PullDown extends React.PureComponent {
       }
       return {samprops:samprops}
     }
-    // if(state.samprops.datacount != props.samprops.datacount){
-    //     console.log('do I need to update state here?'+state.samprops.datacount)
-    //     return null
-    //   }
   }
   setExplanation(e){
     this.props.setExplanation(e) //not sure this does anything!!!! bind seems to work by itself, but haven't fully tested
@@ -92,8 +84,17 @@ export default class PullDown extends React.PureComponent {
       return null
     }
   }
-  //could put an apolloquery here that return count and then have it for each below??
-  //test out the aggregation pipeling???
+  onChangeHeight = function(event){
+    //this won't require a reload, but may be hard to interpret
+    console.log(event)
+  }
+  onUpper = function(event){
+    //should be able to avoid reload with apollo at least some of the time!!!
+    console.log(event)
+  }
+  onLower = function(event){
+    console.log(event)
+  }
 
   render() {
     //this.model_explanations = model_explanations
@@ -129,6 +130,15 @@ export default class PullDown extends React.PureComponent {
         category.fnd &&
           <div style={{fontSize:"0.9em", backgroundColor:"#7f7f7f33",paddingLeft:"1em",textIndent:"-1em"}} key={ind}>
             {category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20).toLowerCase()}
+            <br></br>
+            {this.state.samprops.datacount[category.category] &&
+              this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
+          </div>
+      )}
+      {this.state.samprops.toShowScale.map((category,ind) =>
+        category.fnd &&
+          <div style={{fontSize:"0.9em", backgroundColor:"#7f7f7f33",paddingLeft:"1em",textIndent:"-1em"}} key={ind}>
+            {category.pretty_name.substring(0,20)} : {category.bottom_range} - {category.top_range}
             <br></br>
             {this.state.samprops.datacount[category.category] &&
               this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
@@ -205,6 +215,36 @@ export default class PullDown extends React.PureComponent {
               </option>)
             }
         </select>
+        {(this.state.samprops.scaleIndex>0) &&
+        <div style={{fontSize:".8em"}}>
+          <br/>
+          <Slide
+            onChange={this.onChangeHeight}
+            min={100}
+            max={100000}
+            step={100}
+            eval_description={' contrast'}
+          />
+
+          <br/>
+          <Slide
+            onChange={this.onUpper}
+            min={100}
+            max={100000}
+            step={100}
+            eval_description={' upper'}
+          />
+
+          <br/>
+          <Slide
+            onChange={this.onLower}
+            min={100}
+            max={100000}
+            step={100}
+            eval_description={' lower'}
+          />
+          <br/>
+        </div>}
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
       <div title="Showing count in area" onClick={(e) => this.onScaleChange(4)}
