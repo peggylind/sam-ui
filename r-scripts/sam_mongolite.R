@@ -16,7 +16,7 @@ sam <- clean_names(sam)
 #seems to have been 4or5 places with weird characters in the notes columns - 1782584,1850900,1868732,1937535
 #find them or just delete whole notes column:
 library (dplyr)
-sam <- sam %>% select(-note,-use_code,-building_style_code,-hcad_num,-condo_flag,
+sam <- sam %>% select(-note,-building_style_code,-hcad_num,-condo_flag,
                                  -loc_addr,-shape_area,-shape_len,-valid,-ms_replacement_cost,
                                  -county_2,-tract_2,-class_structure,-class_struc_description,
                                  -cama_replacement_cost,-accrued_depr_pct,-appraised_by,-appraised_date,
@@ -68,8 +68,12 @@ stopCluster(cl)
 
 
 SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1}')
-SamCity$index(add = '{"coords" : "2dsphere", "household_id" : -1}')
-SamCity$index(add = '{"coords" : "2dsphere", "race" : -1}')
+#SamCity$index(add = '{"coords" : 1, "one_of" : -1}') #need to test for geoWithin - which just uses > < on coords
+SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1, "household_id" : -1}')
+#trying indices in both directions... starting with coords, then one_of then factor seems better
+SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1, "account" : -1}')
+#SamCity$index(add = '{"coords" : "2dsphere", "account" : -1, "one-of" : -1}')
+SamCity$index(add = '{"coords" : "2dsphere", "one_of" : -1, "race" : -1}')
 Sys.time()
 
 #these don't work from mongolite, but do from mongo command line?

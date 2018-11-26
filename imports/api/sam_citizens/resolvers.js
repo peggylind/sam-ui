@@ -8,18 +8,69 @@ import SamCitizens from "./sam_citizens";
 //https://github.com/APIs-guru/graphql-voyager
 //will do it only on full_sam, and with nested calls on one_of == 'tenthousands', 'thousands', etc.
 //the nested calls made from SamDataForm and combine with $limit
+const factor_vars = [//add use_code from HCAD - B1 gives all renters //love to get this working with an automated pipeline for all the gql
+  'asthma',
+  'autism_by_CRH',
+  'autism_by_maternal_age',
+  'citizenship',
+  'disability',
+  'educational_attainment',
+  'employment',
+  'english_speaking_skills',
+  'health_insurance',
+  'household_type',
+  'loc_num',
+  'loc_name',
+  'lowbirthweightbyrace',
+  'maternal_CRH',
+  'means_of_transportation_to_work',
+  'member',
+  'nativity',
+  'one_of',
+  'pregnant',
+  'prenatal_first_tri',
+  'quality_description',
+  'race',
+  'travel_time_to_work',
+  'veteran_status',
+  'zip'
+];
+const range_vars = [
+  'age',
+  'education_entropy_index',
+  'household_income',
+  'racial_entropy_index',
+  'stresslevelincome',
+  'stresslevelrace',
+  'zip_education_entropy_index',
+  'zip_racial_entropy_index'
+  ]; //finish later
 
 export default {
+
   Query: {
     //should be able to speed it up by creating an aggregate pipeline, but not sure what I'm doing wrong.
     //  //return await SamCitizens.rawCollection().aggregate(pipeline, options).fetch();
-
+//use toShow for potential fields/factors
+//have to make sure they're only factors somehow
+    //https://stackoverflow.com/questions/15259493/listing-counting-factors-of-unique-mongo-db-values-over-all-keys
+    async samhouse(obj, args, { _id }){
+      const rtn = await SamCitizens.find(
+           {account:args.account}
+         )//.sort({
+            // "household_id" : 1,
+            // "member" : 1
+     //})//.fetch();
+      return rtn
+    },
+//can we get args from new apollo client more flexibly??
     async samcity(obj, args, { _id }){
-      console.log('args: '+JSON.stringify(args))
+      // console.log('args: '+JSON.stringify(args))
+      // console.log('obj: '+JSON.stringify(obj))
       // console.log('parent: '+parent)
       // console.log('context: '+context)
       // console.log('info: '+info)
-      var qdb = {
+      var qdbNear = {
         coords: {
           $near: {
             $geometry: {
@@ -32,36 +83,35 @@ export default {
         },
         one_of:{$gte : args.one_of},
       };
-      const factor_vars = [//'household_id', //id isn't really a factor, but process same way
-        'race','member','citizenship',
-        'employment','quality_description','educational_attainment',
-        'veteran_status','disability','asthma'];
-      const range_vars = ['household_income','age']; //finish later
+//looks like geowithin is slower than geonear....
+      var qdb = {
+        coords: {
+          $geoWithin: {
+            $box: [args.bbox_bl,args.bbox_ur] //needs [[bottom-left],[upper-right]]
+          }
+        },
+        one_of:{$gte : args.one_of}
+      };
       for (var arg in args){
-        if(arg=='household_id'){
-          qdb = {}
-          qdb[arg] = parseInt(args[arg])
-        };
         if(factor_vars.indexOf(arg) >=0){
           if(args[arg]){
             qdb[arg] = args[arg];
           }
         };
         if(range_vars.indexOf(arg) >=0){
+//because I'm having problems with gql, can only do one range variable right now...
           if(args[arg]){
-            console.log(args['bottom_range'])
-            //qdb[arg] = {$gte : args['bottom_range'],$lte : args['top_range']};
+            qdb[arg] = {$gte : args['bottom_range'],$lte : args['top_range']};
           // and some mechanism for obj with $gte, etc.
           }
         };
-      }
-      console.log('reafdasfsdfas: '+SamCitizens.find(
-           qdb).count())
-
-    return await SamCitizens.find(
-         qdb,
-         {limit:args.limit}
+      };
+    const rtn = await SamCitizens.find(
+         qdb//,
+  //       {limit:args.limit}
        ).fetch();
+
+    return rtn
     }
   },
 

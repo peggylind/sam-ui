@@ -35,13 +35,14 @@ export default class LegendBox extends React.PureComponent {
         position: 'absolute',
         zindex: '3',
         width: '25%',
-        height: '80%',
+        height: '92%',
         borderRadius:'25px',
         backgroundColor: 'white',
         overflow: 'scroll'
       }
       const boxButtonStyle = {
         position: 'relative',
+        cursor: 'pointer',
         left: '2%',
         top: '2%',
         zIndex: '3',
@@ -57,10 +58,12 @@ export default class LegendBox extends React.PureComponent {
               <PullDown
                 onChangetoShow={this.props.onChangetoShow}
                 onCatChange={this.props.onCatChange}
+                onGridSizeChange={this.props.onGridSizeChange}
                 onScaleChange={this.props.onScaleChange}
                 onFactortoShow={this.props.onFactortoShow}
                 setExplanation={this.props.setExplanation}
                 samprops={this.props.samprops}
+                mapprops={this.props.mapprops}
               ></PullDown>
 
             </div>

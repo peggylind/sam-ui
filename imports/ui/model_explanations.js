@@ -7,7 +7,7 @@ export function model_explanations(index) {
   author: 'Carol Upchurch and Manale Henini',
   h2_title: 'What is Sam?',
   text: `
-  We have simulated residents for all the houses in Harris County (don't look for yourself!) so that we can model community health at the individual scale
+  We have simulated residents for all the houses in Harris County (don't look for real people!) so that we can model community health at the individual scale
   and then allow patterns to emerge. Sam is a visual tool that helps us understand community interventions and their effects.
   Carol and Manale did the R implementation of the data and the user interface is Dan Price's fault.
   `,
@@ -19,7 +19,24 @@ export function model_explanations(index) {
   notes: `Have to decide - could make text have subobjects with paragraphs, etc.
   should add a place for source code and explanation of sources.
   `,
-  tooltip_terms: {}
+  //button: <span onClick={window.alert("ugh")}>X</span>,
+  tooltip_terms: {terms:[0,2,5]}, //matches the indices for the categories in toShow
+  //need all the button_text, etc., so it knows how to back out
+//categories need to be read in for the step after - so they will show up for all the changes after this.
+  steps: [ //n.b. range factor is bottom_range
+   {category:[{age:{factor:14,fnd:14},bottom_range:14,top_range:50,race:{factor:'asian',fnd:"asian"},employment:{factor:"Employed",fnd:"Employed"}}], //can only do one range variable at a time now // reset all somewhere???
+      categIndex: 0, //should be the same categIndex for the whole thing - the first one is the one that will write...
+      steptext:'This is what needs to be said',
+      condition:1,
+      side_button_text:'Start Tour',
+      button_text:'Tour Sam'},
+   {category:[{age:{factor:'range',fnd:14},bottom_range:14,top_range:50,race:{factor:'asian',fnd:"asian"},employment:{factor:"Employed",fnd:"Employed"}}],
+      categIndex: 0,
+      steptext:'This is what wants to be said',
+      condition:0,
+      side_button_text:'Start Tour',
+      button_text:'Filter for asians between 14 and 50'}
+         ] //can't pass nested selection object to resolver
 },
 {
   model_name: 'Birthweight and Autism',
@@ -94,7 +111,10 @@ conception increases, the importance of prenatal care also increases. `
   citations5:`
     Impact of Perceived Stress, Major Life Events and Pregnancy Attitudes on Low Birth Weight
     https://www.jstor.org/stable/2648197?seq=1#metadata_info_tab_contents
-  `
+  `,
+  steps: [{category:[{age:{low:20,high:50},race:{factor:'white'}}],
+           steptext:'This is what wants to be said',
+           button_text:'Filter'}]
 },
 {
   model_name: 'Diversity Entropy',
@@ -370,10 +390,6 @@ There could be a summary page that indicates how many of each occurred, and whet
   The simulation can then be used to examine proportions of patients harmed, helped, or unaffected by screenings. Possible expansions include forced additional screening on a known false positive/ false negative to see if the result could be corrected, examining the proportion saved by the information provided by their screenings, and perhaps examining how breast size specifically affects the false positive rate. The former two can be accomplished by similar methods to the above, the latter would be more qualitative and might require more concrete research on the topic.
   `,
   citations: ``
-},
-{
-  model_name: 'none',
-  div_width: '0%', //have to make it work for the hover
 }
 ];
 let retVals=models[index];

@@ -3,146 +3,43 @@ import gql from "graphql-tag";
 import { graphql, Query } from "react-apollo";
 import MapBox from "./map-box-app";
 import D3Scatter from "./d3-scatter";
+import samQuery from "./samquery.graphql.js";
+import houseQuery from "./housequery.graphql.js";
 //import asyncComponent from "./asyncComponent";
 
 //adding $age to query makes it fail with unexpected EOF??????
 //if thesee don't match type coming from mongo, it just dies without an error!
-const samQuery = gql`
-  query SamCitizens(
-    $age: Int,
-    $asthma: String,
-    $autism_by_CRH: String,
-    $autism_by_maternal_age: String,
-    $bottom_range: Int,
-    $citizenship: String,
-    $coords: [Float],
-    $disability: String,
-    $dist: Float,
-    $education_entropy_index: Float,
-    $educational_attainment: String,
-    $employment: String,
-    $english_speaking_skills: String,
-    $health_insurance: String,
-    $household_id: ID,
-    $household_income: Int,
-    $household_type: String,
-    $limit: Int,
-    $loc_num: String,
-    $loc_name: String,
-    $lowbirthweightbyrace: String,
-    $maternal_CRH: FloatwNA,
-    $means_of_transportation_to_work: String,
-    $member: String,
-    $nativity: String,
-    $one_of: Int,
-    $pregnant: String,
-    $prenatal_first_tri: String,
-    $quality_description: String,
-    $race: String,
-    $racial_entropy_index: Float,
-    $stresslevelincome: FloatwNA,
-    $stresslevelrace: FloatwNA,
-    $travel_time_to_work: FloatwNA,
-    $top_range: Int,
-    $veteran_status: String,
-    $zip: String,
-    $zip_education_entropy_index: Float,
-    $zip_racial_entropy_index: Float
-  ) {
-    samcity(
-      age: $age,
-      asthma: $asthma,
-      autism_by_CRH: $autism_by_CRH,
-      autism_by_maternal_age: $autism_by_maternal_age,
-      bottom_range: $bottom_range
-      citizenship: $citizenship,
-      coords: $coords,
-      disability: $disability,
-      dist: $dist,
-      education_entropy_index: $education_entropy_index,
-      educational_attainment: $educational_attainment,
-      employment: $employment,
-      english_speaking_skills: $english_speaking_skills,
-      health_insurance: $health_insurance,
-      household_id: $household_id,
-      household_income: $household_income,
-      household_type: $household_type,
-      limit: $limit,
-      loc_num: $loc_num,
-      loc_name: $loc_name,
-      lowbirthweightbyrace: $lowbirthweightbyrace,
-      maternal_CRH: $maternal_CRH,
-      means_of_transportation_to_work: $means_of_transportation_to_work,
-      member: $member,
-      nativity: $nativity,
-      one_of: $one_of,
-      pregnant: $pregnant,
-      prenatal_first_tri: $prenatal_first_tri,
-      quality_description: $quality_description,
-      race: $race,
-      racial_entropy_index: $racial_entropy_index,
-      stresslevelincome: $stresslevelincome,
-      stresslevelrace: $stresslevelrace,
-      top_range: $top_range,
-      travel_time_to_work: $travel_time_to_work,
-      veteran_status: $veteran_status,
-      zip: $zip,
-      zip_education_entropy_index: $zip_education_entropy_index,
-      zip_racial_entropy_index: $zip_racial_entropy_index
-    ) {
-      age
-      asthma
-      autism_by_CRH
-      autism_by_maternal_age
-      citizenship
-      coords
-      disability
-      education_entropy_index
-      educational_attainment
-      employment
-      english_speaking_skills
-      health_insurance
-      household_id
-      household_income
-      household_type
-      limit
-      loc_num
-      loc_name
-      lowbirthweightbyrace
-      maternal_CRH
-      means_of_transportation_to_work
-      member
-      nativity
-      one_of
-      pregnant
-      prenatal_first_tri
-      quality_description
-      race
-      racial_entropy_index
-      stresslevelincome
-      stresslevelrace
-      travel_time_to_work
-      veteran_status
-      zip
-      zip_education_entropy_index
-      zip_racial_entropy_index
-    }
+
+const formatDollars = function(number){
+  if (number!=undefined){
+      var numstring = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return '$'+numstring+'/year'
+  }else{
+    return null
   }
-`;
+};
 
 //https://www.howtographql.com/ --lots more to use with new graphql 2.1 features.
-const GetHousehold = ({ household_id }) => (
+//could have ldg shared between 2
+//there's a setting in the apollo to share the data
+
+//try optimistic UI, and a feed for the loading??
+//https://blog.apollographql.com/tutorial-graphql-mutations-optimistic-ui-and-store-updates-f7b6b66bf0e2
+const GetHousehold = ({ account, household_id, showapts }) => (
   <Query
-    query={samQuery}
-    variables={{ household_id }}
+    query={houseQuery}
+    variables={{ account, household_id }}
     notifyOnNetworkStatusChange
   >
   {({ loading, error, data, refetch, networkStatus }) => {
+      let account_count = <span></span>
       let house_header = <span></span>
       let house_header2 = <span></span>
       let house_title = <span></span>
       let house = <span></span>
       let hr = <span></span>
+      let apt = <span></span>
+      let storybutton = <span></span>
       let ldg = <span></span>  //copying patience from App.js
       if (loading){
         ldg =
@@ -153,19 +50,32 @@ const GetHousehold = ({ household_id }) => (
       }else{
         ldg = <span></span>
       };
-      if(data.samcity){
-        if(data.samcity.length>0){
-          let loc_name = data.samcity[0].loc_name.charAt(0).toUpperCase() + data.samcity[0].loc_name.slice(1).toLowerCase()
-          hr = <hr></hr>
-          clicker = <span style={{position:"absolute",zIndex:"6",left:"98%",top:"2%",fontSize:"1.1em"}} onClick={this.onXClick}>X</span>
-          house_header = <div style={{fontSize:"1.8em",textAlign:"center"}}>Household Characteristics</div>
-          house_header2 = <div>Household Income: ${data.samcity[0].household_income}, HCAD quality of housing: {data.samcity[0].quality_description}</div>
-          house_title = <div>This is not real data, but represents a plausible household for: <br></br> {data.samcity[0].loc_num} {loc_name}, TX {data.samcity[0].zip} based on census data.</div>
-          house = data.samcity.map((citizen, ind) => (
-            <div key={ind+"cit"}><div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
-            <div></div></div>//need second .map with categories that are searchable in PullDown per model, and to deal with NA, etc. above
-        ))
-      }}
+      if(data){
+        if(data.samhouse){
+          if(data.samhouse.length>0){
+            account_count = <div style={{fontSize:".8em",textAlign:"center"}}>{data.samhouse.length} people live at this house/apartment address</div>
+            let loc_name = data.samhouse[0].loc_name.charAt(0).toUpperCase() + data.samhouse[0].loc_name.slice(1).toLowerCase()
+            hr = <hr></hr>
+            house_header = <div style={{fontSize:"1.2em",textAlign:"center"}}>Household Characteristics</div>
+            house_header2 = <div>Household Income: {formatDollars(data.samhouse[0].household_income)}, HCAD quality of housing: {data.samhouse[0].quality_description}</div>
+            house_title = <div>This is not real data, but represents a plausible household for: <br></br> {data.samhouse[0].loc_num} {loc_name}, TX {data.samhouse[0].zip} based on census data.</div>
+            house = data.samhouse.map((citizen, ind) =>
+              (citizen.household_id == household_id ?
+                <div key={ind+"cit"+citizen.household_id}>
+                <div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
+                <div></div></div> : null))
+            if(showapts){
+            apt = data.samhouse.map((citizen, ind) =>
+              (citizen.household_id != household_id ?
+                <div key={ind+"cit"+citizen.household_id}>
+                <div>This {citizen.member.toLowerCase()} is {citizen.age} years old, {citizen.employment.toLowerCase()} a {citizen.nativity.toLowerCase()} {citizen.citizenship.toLowerCase()} of the U.S., with {citizen.educational_attainment.toLowerCase()}</div>
+                <div></div></div> : null))
+            }
+            storybutton = <button style={{width:"100%"}}>Show this person's story</button>
+            //need second .map with categories that are searchable in PullDown per model, and to deal with NA, etc. above
+          }
+        }
+      }
       //if (error) return `Error!: ${error}`;
 
       //  <span style={{zIndex:"6",left:"98%",fontSize:"1.8em"}} onClick=(this.setState({openHousehold:0}))>X</span>
@@ -175,12 +85,17 @@ const GetHousehold = ({ household_id }) => (
           <div>
             {house_header}
             {hr}
+            {account_count}
+            {hr}
             {house_title}
             {hr}
             {house_header2}
             {hr}
+            {storybutton}
             {house}
             {hr}
+            {hr}
+            {apt}
           </div>
         </div>
       );
@@ -209,34 +124,25 @@ const GetHousehold = ({ household_id }) => (
 class SamDataForm extends React.PureComponent {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
        super(props);
-       //this.plotcontain = React.createRef();
-       this.onXClick = this.onXClick.bind(this);
        this.setWaiting = this.props.setWaiting;
+       this.countData = this.props.countData;
        this.state = {
          household_id: this.props.samprops.household_id,
-         openHousehold: 0, //this.props.samprops.openHousehold,
-         setWaiting: this.props.setWaiting,
-         plotOpen : false,  //plot stuff is just turned off at the button with a ! inline
-         plotOpen2 : false,
-         plotWidth: '8%',
-         plotHeight: '4%',
-         containerwidth: '8',
-         containerheight: '4',
+         account: this.props.samprops.account,
+         openHousehold: this.props.samprops.openHousehold,
+         showapts: 0,
+         // plotWidth: '8%',
+         // plotHeight: '4%',
+         // containerwidth: '8',
+         // containerheight: '4',
+         //highlight_data: [],
          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
        };
-   }
-   onXClick = () => {
-     console.log('onXClick')
-        this.setState({
-          openHousehold: 0
-        });
    }
 
    async componentDidMount() {
      const retrn = await fetch('/json/'+this.props.samprops.geojson_title)
      const geojsonsam = await retrn.json()
-     //console.log(geojsonsam)
-
      this.setState({geojsonsam})
      // const res = await fetch('/json/sam_of_100.json') //only if loading json for faster process
      // const jsonsam = await res.json()
@@ -247,12 +153,12 @@ class SamDataForm extends React.PureComponent {
      // console.log('component did update in SamDataForm'+JSON.stringify(newProps.samcity.length))}
      // console.log('prevState.household_id: '+prevState.household_id)
      // console.log(newProps.samprops.household_id)
-     if(prevState.plotOpen && !prevState.plotOpen2){ //trying to get window to open first - might be able to keep it from reloading
-       this.setState({plotOpen2:true})
-     };
-     if(!prevState.plotOpen && prevState.plotOpen2){
-       this.setState({plotOpen2:false})
-     };
+     // if(prevState.plotOpen && !prevState.plotOpen2){ //trying to get window to open first - might be able to keep it from reloading
+     //   this.setState({plotOpen2:true})
+     // };
+     // if(!prevState.plotOpen && prevState.plotOpen2){
+     //   this.setState({plotOpen2:false})
+     // };
      //this was not setting in time for the plot
      // if (prevState.containerwidth != this.plotcontain.current.offsetWidth ||
      //     prevState.containerheight != this.plotcontain.current.offsetHeight ){
@@ -261,45 +167,67 @@ class SamDataForm extends React.PureComponent {
      // };
    }
    static getDerivedStateFromProps(props, state) {
+     props.error ? console.log(props.error) : null
      // if(props.samcity){
      // console.log('inside getDerivedStateFromProps in SamDataForm'+props.samcity.length)}
-     if(props.samprops.household_id != state.household_id){
-       //props.setWaiting(1)
-       return{
-         openHousehold:1,
-         household_id:props.samprops.household_id
-       }
-     }else{
-       return null
-     }
-   }
+       if(props.samprops.openHousehold){
+         return{
+           openHousehold:props.samprops.openHousehold,
+           household_id:props.samprops.household_id,
+           account:props.samprops.account
+         }
+       }else{
+         if(props.samprops != state.samprops){
+           //console.log(props.samprops)
+           return {samprops:props.samprops}
+         }else{
+           if(props.highlight_data != state.highlight_data){
+             return {highlight_data:props.highlight_data}
+           }
+        }
+        return null
+      }
+    }
    //data={this.props.samprops.zoom <14 ? this.state.jsonsam : this.props.samcity}
    //how can we get them both as part of the same data stream, and not reloading when you do search on new data characteristics?
     render(){
 
-      const plotStyle = {
-        position: 'absolute',
-        left: '20%',
-        bottom: '0',
-        zindex: '3',
-        backgroundColor: 'white', //transparent
-        overflow: 'scroll'
-      };
-      const plotButtonStyle = {
-        position: 'absolute',
-        left: '50%',
-        zIndex: '10',
-        backgroundColor: 'white',
-        bottom: '0'
-      };
-
+      // const plotStyle = {
+      //   position: 'absolute',
+      //   left: '20%',
+      //   bottom: '0',
+      //   zindex: '3',
+      //   backgroundColor: 'white', //transparent
+      //   overflow: 'scroll'
+      // };
+      // const plotButtonStyle = {
+      //   position: 'absolute',
+      //   left: '50%',
+      //   zIndex: '10',
+      //   backgroundColor: 'white',
+      //   bottom: '0'
+      // };
+      let patience = <div></div>
+      if (this.props.loading){ patience =
+          <div style={{position:"absolute",zIndex:'10',width:"100%",height:"100%",backgroundColor:"#7f7f7f33"}}>
+          <div style={{marginTop:"30%", marginLeft:"3%", color:"green", fontSize:"2em",textAlign:"center"}}>
+          <div>Loading Data ... </div><div>thank you for your patience</div></div></div>
+        }
     return (
       <div>
+      {patience}
         <div style={{position:"absolute",width:"100%",height:"100%"}}>
-          {this.state.openHousehold && (
-            <div style={{position:"absolute",zIndex:"5",top:"15%",left:"20%",width:"50%",fontSize:"1.2em",backgroundColor:"#f8f8ff"}}>
-            <span style={{position:"absolute",zIndex:"6",left:"95%",top:"6%",fontSize:"1.1em",backgroundColor:"#ffffff"}} onClick={this.onXClick}>X</span>
-              <GetHousehold household_id={this.state.household_id}/></div>
+          {this.props.samprops.openHousehold && (
+            <div style={{position:"absolute",zIndex:"5",top:"15%",left:"20%",width:"50%",fontSize:"1.2em",overflow:"scroll",backgroundColor:"#f8f8ff"}}>
+            <button style={{position:"absolute",cursor:"pointer",zIndex:"2",left:"85%",top:"4px",fontSize:".8em",backgroundColor:"#f8f8ff",borderRadius:"25px"}}
+                onClick={ () => this.props.setOpenHousehold(0) }>
+                close
+            </button>
+            <button style={{position:"absolute",cursor:"pointer",zIndex:"2",left:"5%",top:"4px",fontSize:".8em",backgroundColor:"#f8f8ff",borderRadius:"25px"}}
+                onClick={ () => this.setState({showapts: !this.state.showapts})}>
+                neighbors
+            </button>
+              <GetHousehold account={this.state.account} household_id={this.state.household_id} showapts={this.state.showapts}/></div>
             )}
         </div>
 
@@ -309,8 +237,13 @@ class SamDataForm extends React.PureComponent {
             setToolInfo={this.props.setToolInfo}
             handlePopulationChange={this.props.handlePopulationChange}
             setClick={this.props.setClick}
+            setHighlight={this.props.setHighlight}
+            setText={this.props.setText}
             setWaiting={this.props.setWaiting}
+            countData={this.props.countData}
+            waiting={this.props.waiting}
             data={this.props.samcity}
+            highlight_data={this.props.highlight_data}
             returnColors = {this.returnColors}
             //data={this.props.samprops.zoom <10 ? this.state.jsonsam : this.props.samcity}
             geojsonsam={this.state.geojsonsam}
@@ -363,21 +296,54 @@ export default graphql(samQuery,
   {
     options: props => ({
       variables: {
+        account: props.samprops.account,
         age: props.samprops.age,
+        asthma: props.samprops.asthma,
+        autism_by_CRH: props.samprops.autism_by_CRH,
+        autism_by_maternal_age: props.samprops.autism_by_maternal_age,
+        bbox_bl: props.samprops.bbox_bl,
+        bbox_ur: props.samprops.bbox_ur,
         bottom_range: props.samprops.bottom_range,
+        bracket_age: props.samprops.bracket_age,
+        citizenship: props.samprops.citizenship,
         coords: [props.samprops.longitude,props.samprops.latitude] || [-95.35,29.75],
+        date_erected: props.samprops.date_erected,
+        disability: props.samprops.disability,
         dist: props.samprops.dist,
+        education_entropy_index: props.samprops.education_entropy_index,
         educational_attainment: props.samprops.educational_attainment,
         employment: props.samprops.employment,
+        english_speaking_skills: props.samprops.english_speaking_skills,
+        health_insurance: props.samprops.health_insurance,
+        household_id: props.samprops.household_id,
+        household_income: props.samprops.household_income,
+        household_type: props.samprops.household_type,
+        individual_id: props.samprops.individual_id,
+        language_at_home: props.samprops.language_at_home,
         limit:  props.samprops.limit,
+        lowbirthweightbyrace: props.samprops.lowbirthweightbyrace,
+        maternal_CRH: props.samprops.maternal_CRH,
+        means_of_transportation_to_work: props.samprops.means_of_transportation_to_work,
         member: props.samprops.member,
+        nativity: props.samprops.nativity,
         one_of: props.samprops.one_of,
+        pregnant: props.samprops.pregnant,
+        prenatal_first_tri: props.samprops.prenatal_first_tri,
+        quality_description: props.samprops.quality_description,
         race: props.samprops.race,
+        racial_entropy_index: props.samprops.racial_entropy_index,
+        sex: props.samprops.sex,
         stresslevelincome: props.samprops.stresslevelincome,
-        top_range: props.samprops.top_range
+        stresslevelrace: props.samprops.stresslevelrace,
+        top_range: props.samprops.top_range,
+        travel_time_to_work: props.samprops.travel_time_to_work,
+        veteran_status: props.samprops.veteran_status,
+        zip: props.samprops.zip,
+        zip_education_entropy_index: props.samprops.zip_education_entropy_index,
+        zip_racial_entropy_index: props.samprops.zip_racial_entropy_index
       }
     }),
-    props: ({ data }) => ({ ...data })
+    props: ({ loading, error, data }) => ({ loading, error, ...data })
   })(SamDataForm)
 
 //export default graphql(sam20kQuery, queryOptsWrap())(SamDataForm);

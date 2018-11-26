@@ -5,10 +5,11 @@ import LoginForm from "./LoginForm";
 import debounce from 'lodash.debounce'
 //import asyncComponent from './asyncComponent'; //may not use - still testing
 import SamDataForm from './SamDataForm'; //change to just samdatamap??
-import Slide from './slider-input';
+
 import LegendBox from './legend-box';
 import {model_explanations} from "./model_explanations";
-import {categories} from "./categories"
+import {categories} from "./categories";
+import ModelDivs from './model_div';
 // var DASHlogo = require('/public/images/DASHlogo.png');
 // var UHLogo = require('/public/images/honors-the-honors-college-tertiary2.png');
 
@@ -68,38 +69,74 @@ function list4plots (plots) {
   return makePlotColors(plotList) //which is a list of objects from toShow
 }
 
-const firstzoom = 10.3;
+const firstzoom = 9.6;
+const firstdist = 100000;
 const calcOpacity = (zoom) => { return 1 - (zoom/25)};
 const calcStrokeWidth = (zoom) =>
-  (zoom *1.3) < 22 ? 23 - (zoom * 1.3) : 1;
+  (zoom *1.3) < 22 ? 23 - (zoom * 1.2) : 1;
 // const calcRadiusScale = (zoom) =>
 //   (zoom *13) < 210 ? 216 - (zoom * 13) : 6;
 const calcOneOf = (zoom) =>
-  zoom > 14.3 ? 1 : zoom > 13 ? 10 : zoom > 11 ? 100 : 1000;
+  zoom > 14.3 ? 1 : zoom > 13 ? 10 : zoom > 11.3 ? 100 : 1000;
   //zoom > 12.7 ? 1 : zoom < 11 ? 1000: zoom > 11 ? 100 : 10;
+const bbox_bl = [-97.1,28.16]; //first one should get everything
+const bbox_ur = [-94.1,30.94];
 
-
-const samprops = { //have all decided with same logic??
+const samprops = { //have all decided with same logic?? //a bunch of stuff should be fixed if we go apollo 3.1 - for now need it in both for search!!
   //racial_entropy_index: '',
   explainIndex: 0,
   geojson_title: 'Super_Neighborhoods.geojson',// 'Harvey_Houston.geojson',
   limit: 14000,
   one_of: calcOneOf(firstzoom),
   // member: "",
-  // race: "",
-  age: 55,
+  _id: null,
+  account: null,
+  age: null,
+  asthma: null,
+  autism_by_CRH: null,
+  autism_by_maternal_age: null,
+  bbox_bl: bbox_bl,
+  bbox_ur: bbox_ur,
   bottom_range: 0,
-  top_range: 100,
-  dist: 170000,
+  bracket_age: null,
+  citizenship: null,
+  date_erected: null,
+  disability: null,
+  dist: firstdist,
+  educational_attainment: null,
+  education_entropy_index: null,
+  employment: null,
+  english_speaking_skills:null,
+  health_insurance: null,
+  household_type: null,
+  individual_id: null,
+  language_at_home: null,
+  lowbirthweightbyrace: null,
+  maternal_CRH: null,
+  means_of_transportation_to_work: null,
+  member: null,
+  nativity: null,
+  pregnant: null,
+  prenatal_first_tri: null,
+  quality_description: null,
+  race: null,
+  racial_entropy_index: null,
+  stresslevelincome: null,
+  stresslevelrace: null,
+  top_range: null,
+  travel_time_to_work: null,
+  veteran_status: null,
+  zip: null,
+  zip_education_entropy_index: null,
+  zip_racial_entropy_index: null,
+  datacount: {initialcount:1,totalpop:0},
   height: 40000,
-  educational_attainment: '',
-  stresslevelincome: '',
-  employment: '',
-  longitude: -95.315,
-  latitude: 29.75,
+  longitude: -95.355, //starting center
+  latitude: 29.8,
   zoom: firstzoom,
+  cellSize: 5000,
   opacity: calcOpacity(firstzoom),
-  radiusMinPixels: 2.5,
+  radiusMinPixels: 2.8,
   radiusMaxPixels: 100,
   strokeWidth: calcStrokeWidth(firstzoom),
   //radiusScale: calcRadiusScale(firstzoom), //letting it do automatic
@@ -114,7 +151,11 @@ const samprops = { //have all decided with same logic??
   scaleIndex: 0,
   catShow: 'race', //faster color in map-box-app - if can also read opacity off of toShow[categIndex], then have per color control.
   scaleShow: 'none', //'income',
-  openHousehold: 1
+  step_index : 0,
+  modeltext : '',
+  openHousehold: 0,
+  textname: '',
+  textposition: []
   //this logic will apply to everything we want to show - component should feed whole object here
 };
 
@@ -122,6 +163,7 @@ export default class App extends React.PureComponent {
    constructor(props) {
        super(props);
        this.handlePopulationChange = this.handlePopulationChange.bind(this);
+       this.onGridSizeChange = this.onGridSizeChange.bind(this);
        this.onCatChange = this.onCatChange.bind(this);
        this.onScaleChange = this.onScaleChange.bind(this);
        this.onFactortoShow = this.onFactortoShow.bind(this);
@@ -129,17 +171,24 @@ export default class App extends React.PureComponent {
        this.onMapChange = this.onMapChange.bind(this);
        this.setToolInfo = this.setToolInfo.bind(this);
        this.setClick = this.setClick.bind(this);
+       this.setHighlight = this.setHighlight.bind(this);
+       this.setText = this.setText.bind(this);
        this.setExplanation = this.setExplanation.bind(this);
-       this.setWaiting = this.setWaiting.bind(this);
+       this.setWaiting = this.setWaiting.bind(this); //still need for resetting boundaries
+       this.setOpenHousehold = this.setOpenHousehold.bind(this);
+       this.countData = this.countData.bind(this);
+       this.changeSamProps = this.changeSamProps.bind(this);
        //bbox is NW,NE,SE,SW
-       const bbox = [[-95.91,28.93],[-94.67,28.93],[-94.67,30.47],[-95.91,30.47]];
+
        this.state = {
          waiting: 1,
-         toolTipInfo : {text:'Hover over features or sam citizens for info.'},
+         toolTipInfo : {text:'Hover or click for info.'},
          //explanation : model_explanations()[samprops.explainIndex],//{text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
+         highlight_data : [],
          samprops : samprops,
          mapprops : {
-              bbox: bbox, //may use later for searches - now based on geonear in circle
+              // bbox_ur: bbox_ur,
+              // bbox_bl: bbox_bl, //may use later for searches - now based on geonear in circle
               mode: 1, //[GeoMap,ScatterMap,HexMap,PointCloudMap,GridMap,GridCellMap,ContourMap]
               viewport: {
                 width: window.innerWidth,
@@ -147,19 +196,51 @@ export default class App extends React.PureComponent {
                 longitude: samprops.longitude, //-95.315,
                 latitude: samprops.latitude, //29.75,
                 zoom: samprops.zoom,//16.051394480575627, //which is zoom for 1 meter for testing
-                pitch: 10,
+                pitch: 5,
                 bearing: 0
               }
             }
          };
          this.onMapChange = debounce(this.onMapChange, 1000);
+         this.setWaiting = debounce(this.setWaiting, 1000);
          this.setToolInfo = debounce(this.setToolInfo, 200);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
-  //this lets you step up on data in scatter and mapbox; not just slider
+  //only still using to trigger measurement of display - could refactor around loading
   setWaiting = function(wait){
     this.setState({waiting:wait})
   };
+  setOpenHousehold = function(open){
+    console.log(open)
+    var samprops = {...this.state.samprops}
+    samprops.openHousehold = open
+    this.setState({samprops})
+  };
+  countData = function(data){
+    var samprops = {...this.state.samprops}
+    let category = samprops.toShow[samprops.categIndex].category
+    samprops.datacount[category] = {all:0}
+    for(let i=0; i<data.length; i++) {
+      samprops.datacount[category]['all'] += samprops.one_of
+      let factor = data[i][category]
+      if(samprops.datacount.initialcount){
+        samprops.datacount['totalpop'] += samprops.one_of
+      };
+      if(!samprops.datacount[category][factor]){
+        samprops.datacount[category][factor] = 0
+      }
+      samprops.datacount[category][factor] += samprops.one_of
+
+    }
+    samprops.datacount['initialcount'] = 0;
+    this.setState({samprops});
+  }
+  onGridSizeChange = function(size) {
+    var samprops = {...this.state.samprops}
+    samprops.cellSize = size;
+    this.setState({samprops});
+  };
+  //use generally for slider in HOC
   handlePopulationChange = function(limit) {
     var samprops = {...this.state.samprops}
     samprops.limit = limit;
@@ -173,22 +254,17 @@ export default class App extends React.PureComponent {
   onScaleChange = function(event){
     var samprops = {...this.state.samprops}
     var mapprops = {...this.state.mapprops}
-    if(event==''){
-      if (mapprops.mode>0 && mapprops.mode<5){
-        mapprops.mode+=1
-        }else{
-        mapprops.mode=1
-      }
+    if(isNaN(event)){
+        samprops.toShowScale.forEach(function(row,r){
+          if(row.category == event.target.value){
+            samprops.scaleIndex = r;
+            samprops.scaleShow = row.category; //only used in map-box right now --fix this and catShow!!
+            if(r==0){mapprops.mode=1}else{mapprops.mode=3}; //other scale possibilities later
+            //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
+        }})
     }else{
-    samprops.toShowScale.forEach(function(row,r){
-      if(row.category == event.target.value){
-        samprops.scaleIndex = r;
-        samprops.scaleShow = row.category; //only used in map-box right now --fix this and catShow!!
-        if(r==0){mapprops.mode=1}else{mapprops.mode=3}; //other scale possibilities later
-        //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
-      }})
+      mapprops.mode=event
     };
-
     this.setState({samprops,mapprops});
   }
   onCatChange = function(event){
@@ -219,7 +295,7 @@ export default class App extends React.PureComponent {
      var samprops = {...this.state.samprops}
      samprops.toShow.forEach(function (catRow, i){
        if (catRow.category==showObj.catName){
-         console.log(catRow.category+' tochange to categIndex '+i)
+         //console.log(catRow.category+' tochange to categIndex '+i)
          catRow.factors.forEach(function (factorRow, j){
            if (factorRow.factorName == showObj.factorName){
              factorRow.factorColor = showObj.factorColor;
@@ -235,61 +311,105 @@ export default class App extends React.PureComponent {
      this.setState({samprops});
   };
 
-  onMapChange = function(mapstuff,dist,height){ //height is used for normalizing for plot -- and can be used to make height of legendbox, too
-    console.log("mapstuff dist "+dist+"  "+height)
+  onMapChange = function(mapstuff,dist,height,bl,ur){ //height is used for normalizing for plot -- and can be used to make height of legendbox, too
+    // console.log("mapstuff dist ")
+    // console.log(mapstuff)
     var samprops = {...this.state.samprops}
+    //var mapprops = {...this.state.mapprops}
     samprops.latitude = mapstuff.latitude;
     samprops.longitude = mapstuff.longitude;
     samprops.zoom = mapstuff.zoom;
     samprops.dist = dist;
+    //samprops.cellSize = dist/50;
     samprops.height = height;
     samprops.opacity = calcOpacity(mapstuff.zoom);
     samprops.strokeWidth = calcStrokeWidth(mapstuff.zoom);
     samprops.one_of = calcOneOf(mapstuff.zoom);
+    samprops.bbox_bl = bl;
+    samprops.bbox_ur = ur;
+    //console.log(bbox_bl,bbox_ur)
     if(this.state.samprops.one_of != samprops.one_of){this.setWaiting(1)}
     this.setState({samprops});
   };
-
-  onSamDataChange = function(datactrls){
-    var samprops = {...this.state.samprops}
-    samprops.toShow = datactrls.toShow;
-    samprops.mapOrPlot = datactrls.mapOrPlot;//also use to set map to 80 degrees??May need to turn off map??
-    this.setState({samprops});
-  };
+//not using onSamDataChange??
+  // onSamDataChange = function(datactrls){
+  //   var samprops = {...this.state.samprops}
+  //   samprops.toShow = datactrls.toShow;
+  //   samprops.mapOrPlot = datactrls.mapOrPlot;//also use to set map to 80 degrees??May need to turn off map??
+  //   this.setState({samprops});
+  // };
   //expl should be an object {text: valid_html} - will usually be set from model selector
   setExplanation = function(e){
-    console.log(e.target.value) //should have a target - should set the explainIndex, and the explanation?? pull in model_explanation.js??
+    //console.log(e.target.value) //should have a target - should set the explainIndex, and the explanation?? pull in model_explanation.js??
     var samprops = {...this.state.samprops}
     samprops.explainIndex = e.target.value;
     //explanation = expl
-    this.setState({samprops})
+    this.setState({samprops,exp_width: model_explanations(samprops.explainIndex).div_width})
     //could also set the toShow, etc. to go along with different models, if the pull-downs are too long
   };
+  changeSamProps = function(obj){
+    var samprops = {...this.state.samprops}
+    samprops['categIndex'] = obj.categIndex;
+    samprops['step_index'] = obj.step_index;
+  //need something for no reload  - maybe separate call for ones that don't need a reload??
+    if(obj.categories){
+      obj = obj.categories
+      categories = categories(-1) //finds all of them, not just the subset for toShow, etc.
+      categories.forEach(function(cat,k){ //leaving none in list
+        obj.forEach(function(ocat,n){
+          samprops[cat.category] = ocat[cat.category] ? ocat[cat.category].factor : null
+          samprops['bottom_range'] = ocat['bottom_range'] ? ocat['bottom_range'] : null
+          samprops['top_range'] = ocat['top_range'] ? ocat['top_range'] : null
+        })
+      })
+  //need to get obj.fnd
+      samprops.toShow.forEach(function(categ,i){
+        obj.forEach(function(ocateg,m){
+        //have to walk all to clear earlier ones if they start tour inside...
+          samprops.toShow[i].fnd = ocateg[categ.category] ? ocateg[categ.category].fnd ? ocateg[categ.category].fnd : null : null
+        })
+      })
+      samprops.toShowScale.forEach(function(categ,i){
+        //need to fix logic for range variables!!!
+        samprops.toShowScale[i].bottom_range = obj[0].bottom_range
+        samprops.toShowScale[i].top_range = obj[0].top_range
+        obj.forEach(function(ocateg,m){
+        //have to walk all to clear earlier ones if they start tour inside...
+          samprops.toShowScale[i].fnd = ocateg[categ.category] ? ocateg[categ.category].fnd ? ocateg[categ.category].fnd : null : null
+        })
+      })
+    }
+    this.setState({samprops})
+  }
+
+  setHighlight = function(array){
+    console.log(array)
+    this.setState({highlight_data:array})
+  }
+  setText = function(txt,position){ //not sure what's wrong with this on TextLayer - need to control deck.gl render!!! for now, ignoring position
+    var samprops = {...this.state.samprops}
+    samprops.textname = txt;
+    samprops.textposition = position;
+    this.setState({samprops})
+  }
 //this is the tooltip
   setToolInfo = function(info){
     var toolTipInfo = {...this.state.toolTipInfo}
     toolTipInfo.info = info
-    toolTipInfo.text = ''
-    console.log(toolTipInfo)
+    //toolTipInfo.text = '' //should be set from
+    //console.log(info)
     this.setState({toolTipInfo})
   };
   setClick = function(info){
-    var toolTipInfo = {...this.state.toolTipInfo}
-    toolTipInfo.info = info
-    toolTipInfo.text = ''
+    // var toolTipInfo = {...this.state.toolTipInfo}
+    // toolTipInfo.info = info
+    //toolTipInfo.text = ''
     var samprops = {...this.state.samprops}
-    console.log('in App'+info.household_id)
     samprops.household_id = info.household_id
+  //  console.log(info)
+    samprops.account = info.account
     samprops.openHousehold = 1
-    this.setState({toolTipInfo,samprops})
-  };
-  formatDollars = function(number){
-    if (number!=undefined){
-        var numstring = number.toString();
-      return '$'+numstring+'/year'
-    }else{
-      return 'undefined'
-    }
+    this.setState({samprops})
   };
 
   // componentWillUnmount(){
@@ -297,18 +417,12 @@ export default class App extends React.PureComponent {
   // }
 
   render(){
-    let patience = <div></div>
-    if (this.state.waiting){ patience =
-        <div style={{position:"absolute",zIndex:'10',width:"100%",height:"100%",backgroundColor:"#7f7f7f33"}}>
-        <div style={{marginTop:"30%", marginLeft:"3%", color:"green", fontSize:"2em",textAlign:"center"}}>
-        <div>Loading Data ... </div><div>thank you for your patience</div></div></div>
-      }
+
 
 
       //if (loading) return null;
       return (
           <div>
-          {patience}
               <div style={{position:"absolute",width:"100%",fontSize:"4em",textAlign:"center", zIndex:"3"}}>
                 <span title="Houston on a first name basis" style={{backgroundColor:"#7f7f7f33",borderRadius:"25px"}}>Sam City</span>
               </div>
@@ -322,73 +436,24 @@ export default class App extends React.PureComponent {
                   <img style={{width:"100%"}} src='/images/honors-the-honors-college-primary.png' />
                 </span>
               </div>
-              <div style={{position:"absolute",width:model_explanations(this.state.samprops.explainIndex).div_width,
-                            left:model_explanations(this.state.samprops.explainIndex).div_left,height:"100%",
-                            overflow: "scroll",backgroundColor:"#f8f8ff",zIndex:"3"}}>
 
-                <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"4",borderRadius:"25px"}}>
-                {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/></div>}
-                  <h2 style={{textAlign:"center"}}>{model_explanations(this.state.samprops.explainIndex).h2_title}</h2>
-                  <div style={{textAlign:"center",fontWeight: "bold"}}>{model_explanations(this.state.samprops.explainIndex).author}</div>
-                  {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/><br/></div>}
-                  <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).text}</div>
-                  {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/><br/></div>}
-                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img} />
-
-                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img1} />
-                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img2} />
-                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img3} />
-                  <img style={{width:"70%",marginLeft:"15%"}} src={model_explanations(this.state.samprops.explainIndex).img4} />
-                  <p style={{textAlign:"center",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).img_title}</p>
-                  <h3>{model_explanations(this.state.samprops.explainIndex).div2}</h3>
-                  <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).text2}</div>
-                  <h3>{model_explanations(this.state.samprops.explainIndex).div3}</h3>
-                  <div style={{textAlign:"center",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).text3}</div>
-                {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/></div>}
-                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations}</div>
-                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations1}</div>
-                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations2}</div>
-                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations3}</div>
-                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations4}</div>
-                  <div style={{textAlign:"left",position:"relative",left:'5%',width:'90%'}}>{model_explanations(this.state.samprops.explainIndex).citations5}</div>
-
-                {(model_explanations(this.state.samprops.explainIndex).model_name != 'none') && <div><hr/></div>}
-                  {this.state.toolTipInfo.text}
-                  {this.state.toolTipInfo.info ?
-                    <div style={{position:"relative"}}>
-                      {this.state.toolTipInfo.info.age != "NA" & this.state.toolTipInfo.info.age != ""   &&
-                        <div> Age -  {this.state.toolTipInfo.info.age} </div>}
-                      {this.state.toolTipInfo.info.household_id != "NA" & this.state.toolTipInfo.info.household_id != ""   &&
-                        <div> household_id -  {this.state.toolTipInfo.info.household_id} </div>}
-                      {this.state.toolTipInfo.info.citizenship != "NA" & this.state.toolTipInfo.info.citizenship != "" &&
-                        <div> Citizen -  {this.state.toolTipInfo.info.citizenship} </div>}
-                      {this.state.toolTipInfo.info.educational_attainment != "NA" & this.state.toolTipInfo.info.educational_attainment != "" &&
-                        <div> Education -  {this.state.toolTipInfo.info.educational_attainment} </div>}
-                      {this.state.toolTipInfo.info.employment != "NA" & this.state.toolTipInfo.info.employment != "" &&
-                        <div> Employment -  {this.state.toolTipInfo.info.employment} </div>}
-                      {this.state.toolTipInfo.info.sex != "NA" & this.state.toolTipInfo.info.sex != "" &&
-                        <div> Sex -  {this.state.toolTipInfo.info.sex} </div>}
-                      {this.state.toolTipInfo.info.race != "NA" & this.state.toolTipInfo.info.race != "" &&
-                        <div> Race -  {this.state.toolTipInfo.info.race} </div>}
-                      {this.state.toolTipInfo.info.household_income != "NA" & this.state.toolTipInfo.info.household_income != "" &&
-                        <div> Household Income -  {this.formatDollars(this.state.toolTipInfo.info.household_income)} </div>}
-                      {this.state.toolTipInfo.info.household_type != "NA" & this.state.toolTipInfo.info.household_type != "" &&
-                        <div> Household Type -  {this.state.toolTipInfo.info.household_type} </div>}
-                      {this.state.toolTipInfo.info.quality_description != "NA" & this.state.toolTipInfo.info.quality_description != "" &&
-                        <div> HCAD Quality Rating -  {this.state.toolTipInfo.info.quality_description} </div>}
-                      </div>
-                      : null
-                    }
-                </span>
-              </div>
-            <LegendBox
+            <ModelDivs
               samprops={this.state.samprops}
+              toolTipInfo={this.state.toolTipInfo}
+              changeSamProps={this.changeSamProps}
+            />
+
+            <LegendBox
+              mapprops={this.state.mapprops}
+              samprops={this.state.samprops}
+              changeSamProps={this.changeSamProps}
               onPopChange={this.handlePopulationChange}
               onCatChange={this.onCatChange}
               onScaleChange={this.onScaleChange}
               onFactortoShow={this.onFactortoShow}
               onChangetoShow={this.onChangetoShow}
               onMapChange={this.onMapChange}
+              onGridSizeChange={this.onGridSizeChange}
               setExplanation={this.setExplanation}
               setToolInfo={this.setToolInfo}
             />
@@ -396,10 +461,16 @@ export default class App extends React.PureComponent {
             <SamDataForm
               mapprops={this.state.mapprops}
               samprops={this.state.samprops}
+              highlight_data={this.state.highlight_data}
               onMapChange={this.onMapChange}
               setToolInfo={this.setToolInfo}
+              setText={this.setText}
               setClick={this.setClick}
+              setHighlight={this.setHighlight}
               setWaiting={this.setWaiting}
+              countData={this.countData}
+              waiting={this.state.waiting}
+              setOpenHousehold={this.setOpenHousehold}
               handlePopulationChange={this.handlePopulationChange}
               />
           </div>
