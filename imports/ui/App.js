@@ -135,7 +135,7 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   latitude: 29.8,
   zoom: firstzoom,
   cellSize: 5000,
-  opacity: calcOpacity(firstzoom),
+  opacity: 1,//calcOpacity(firstzoom),
   radiusMinPixels: 2.8,
   radiusMaxPixels: 100,
   strokeWidth: calcStrokeWidth(firstzoom),
