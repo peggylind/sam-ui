@@ -99,9 +99,9 @@ export default {
           }
         };
         if(range_vars.indexOf(arg) >=0){
+//because I'm having problems with gql, can only do one range variable right now...
           if(args[arg]){
-            console.log("args['bottom_range']" + args['bottom_range'])
-            //qdb[arg] = {$gte : args['bottom_range'],$lte : args['top_range']};
+            qdb[arg] = {$gte : args['bottom_range'],$lte : args['top_range']};
           // and some mechanism for obj with $gte, etc.
           }
         };

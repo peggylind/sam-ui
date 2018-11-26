@@ -82,7 +82,8 @@ export default class ModelDivs extends React.PureComponent {
         null
         }
         <button key="step_button"
-          onClick={(e) => this.props.changeSamProps({step_index:this.state.step_index+1,categories:this.state.steps[this.state.step_index].category})}
+          onClick={(e) => this.props.changeSamProps({step_index:this.state.step_index+1,categIndex:this.state.samprops.categIndex,
+                  categories:this.state.steps[this.state.step_index].category})}
           style={{backgroundColor:'#08ff40',borderRadius:'25px',
             borderColor:'#08ff40',position:'relative',width:'100%',
             borderWidth: "3px", borderStyle:"solid"}}>{this.state.steps[this.state.step_index].button_text}
@@ -105,7 +106,7 @@ export default class ModelDivs extends React.PureComponent {
       {this.state.isModelOpen ? '<' : '>'}
     </button>
 
-    <div style={{position:"absolute",top:"0px",textAlign:"center",width:"100%"}}> {this.state.toolTipInfo.text} </div>
+    <div style={{position:"absolute",top:"0px",textAlign:"center",width:"100%",zIndex:"4"}}> {this.state.toolTipInfo.text} </div>
     {this.state.toolTipInfo.info ?
       <div style={{position:"relative",backgroundColor:"#f8f8ff",width:"90%",left:"5%",borderRadius:"15px",borderStyle:"solid",borderWidth:".2em"}}>
         {this.state.toolTipInfo.info.age != "NA" & this.state.toolTipInfo.info.age != ""   &&
@@ -134,7 +135,7 @@ export default class ModelDivs extends React.PureComponent {
   </span>
 
 {(this.state.isModelOpen &&
-  <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"4",borderRadius:"25px"}}>
+  <span style={{position:"relative",backgroundColor:"#f8f8ff",zIndex:"3",borderRadius:"25px"}}>
   <div><br/><hr/></div>
     <h2 style={{textAlign:"center"}}>{model_explanations(this.state.explainIndex).h2_title}</h2>
 
@@ -142,15 +143,15 @@ export default class ModelDivs extends React.PureComponent {
 <hr/>
     {this.state.modeltext ?
       <button key="end_tour_button"
-        onClick={(e) => {this.setState({modeltext:''});this.props.changeSamProps({step_index:0})}}
-        style={{backgroundColor:'#08ff40',borderRadius:'25px',
+        onClick={(e) => {this.setState({modeltext:''});this.props.changeSamProps({step_index:0,categIndex:0})}}
+        style={{backgroundColor:'#08ff40',borderRadius:'25px',cursor:"pointer",
           borderColor:'#ff3300',position:'relative',width:'100%',
           borderWidth: "3px", borderStyle:"solid"}}>end tour
       </button>
     :
       <button key="tour_button"
         onClick={(e) => this.setState({modeltext:this.state.steps[this.state.step_index].steptext})}
-        style={{backgroundColor:'#08ff40',borderRadius:'25px',
+        style={{backgroundColor:'#08ff40',borderRadius:'25px',cursor:"pointer",
           borderColor:'#08ff40',position:'relative',width:'100%',
           borderWidth: "3px", borderStyle:"solid"}}>{this.state.steps[this.state.step_index].side_button_text}
       </button>}

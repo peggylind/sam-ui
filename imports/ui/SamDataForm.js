@@ -170,19 +170,24 @@ class SamDataForm extends React.PureComponent {
      props.error ? console.log(props.error) : null
      // if(props.samcity){
      // console.log('inside getDerivedStateFromProps in SamDataForm'+props.samcity.length)}
-     if(props.samprops.openHousehold){
-       return{
-         openHousehold:props.samprops.openHousehold,
-         household_id:props.samprops.household_id,
-         account:props.samprops.account
-       }
-     }else{
-       if(props.highlight_data != state.highlight_data){
-         return {highlight_data:props.highlight_data}
+       if(props.samprops.openHousehold){
+         return{
+           openHousehold:props.samprops.openHousehold,
+           household_id:props.samprops.household_id,
+           account:props.samprops.account
+         }
        }else{
-       return null
-     }}
-   }
+         if(props.samprops != state.samprops){
+           //console.log(props.samprops)
+           return {samprops:props.samprops}
+         }else{
+           if(props.highlight_data != state.highlight_data){
+             return {highlight_data:props.highlight_data}
+           }
+        }
+        return null
+      }
+    }
    //data={this.props.samprops.zoom <14 ? this.state.jsonsam : this.props.samcity}
    //how can we get them both as part of the same data stream, and not reloading when you do search on new data characteristics?
     render(){

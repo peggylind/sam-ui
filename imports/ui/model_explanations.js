@@ -23,17 +23,19 @@ export function model_explanations(index) {
   tooltip_terms: {terms:[0,2,5]}, //matches the indices for the categories in toShow
   //need all the button_text, etc., so it knows how to back out
 //categories need to be read in for the step after - so they will show up for all the changes after this.
-  steps: [
-   {category:[{age:{low:20,high:50},race:{factor:'asian'}}], //can only do one range variable at a time now // reset all somewhere???
+  steps: [ //n.b. range factor is bottom_range
+   {category:[{age:{factor:14,fnd:0},bottom_range:14,top_range:50,race:{factor:'asian',fnd:"asian"},employment:{factor:"Employed",fnd:"Employed"}}], //can only do one range variable at a time now // reset all somewhere???
+      categIndex: 0, //should be the same categIndex for the whole thing - the first one is the one that will write...
       steptext:'This is what needs to be said',
       condition:1,
       side_button_text:'Start Tour',
       button_text:'Tour Sam'},
-   {category:[{age:{low:20,high:50},race:{factor:'hispanic'}}],
+   {category:[{age:{factor:'range',fnd:0},bottom_range:14,top_range:50,race:{factor:'asian',fnd:"asian"},employment:{factor:"Employed",fnd:"Employed"}}],
+      categIndex: 0,
       steptext:'This is what wants to be said',
       condition:0,
       side_button_text:'Start Tour',
-      button_text:'Filter for hispanic adults'}
+      button_text:'Filter for asians between 14 and 50'}
          ] //can't pass nested selection object to resolver
 },
 {

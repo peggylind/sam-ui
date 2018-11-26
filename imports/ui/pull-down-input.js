@@ -42,6 +42,11 @@ export default class PullDown extends React.PureComponent {
   };
   static getDerivedStateFromProps(props, state) {
     if(props.samprops != state.samprops){  //this is just for initial load to find something; it updates
+      // console.log(props.samprops.toShow)
+      // props.samprops.toShow.forEach(function(cat,k){
+      //   console.log('in')
+      //   console.log(cat)
+      // })
       var samprops = {...props.samprops}
       if(!samprops.datacount[samprops.toShow[samprops.categIndex].category]){
       //if (props.waiting){
@@ -125,7 +130,8 @@ export default class PullDown extends React.PureComponent {
           <div style={{fontSize:"0.9em", backgroundColor:"#7f7f7f33",paddingLeft:"1em",textIndent:"-1em"}} key={ind}>
             {category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20).toLowerCase()}
             <br></br>
-              {this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
+            {this.state.samprops.datacount[category.category] &&
+              this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
           </div>
       )}
       <div style={{fontSize:"1.5em"}}>

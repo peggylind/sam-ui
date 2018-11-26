@@ -196,7 +196,7 @@ export default class App extends React.PureComponent {
                 longitude: samprops.longitude, //-95.315,
                 latitude: samprops.latitude, //29.75,
                 zoom: samprops.zoom,//16.051394480575627, //which is zoom for 1 meter for testing
-                pitch: 10,
+                pitch: 5,
                 bearing: 0
               }
             }
@@ -221,7 +221,7 @@ export default class App extends React.PureComponent {
     let category = samprops.toShow[samprops.categIndex].category
     samprops.datacount[category] = {all:0}
     for(let i=0; i<data.length; i++) {
-      samprops.datacount[category]['all'] += samprops.one_of  
+      samprops.datacount[category]['all'] += samprops.one_of
       let factor = data[i][category]
       if(samprops.datacount.initialcount){
         samprops.datacount['totalpop'] += samprops.one_of
@@ -233,7 +233,6 @@ export default class App extends React.PureComponent {
 
     }
     samprops.datacount['initialcount'] = 0;
-    console.log(samprops.datacount)
     this.setState({samprops});
   }
   onGridSizeChange = function(size) {
@@ -349,16 +348,28 @@ export default class App extends React.PureComponent {
     //could also set the toShow, etc. to go along with different models, if the pull-downs are too long
   };
   changeSamProps = function(obj){
-    //console.log(obj)
-    //clear old list
     var samprops = {...this.state.samprops}
-    categories = categories(-1)
-    categories.forEach(function(cat){ //leaving none in list
-      samprops[cat.category] = null
-    })
-
-
-    samprops.step_index = obj.step_index
+    samprops['categIndex'] = obj.categIndex;
+    samprops['step_index'] = obj.step_index;
+  //need something for no reload  - maybe separate call for ones that don't need a reload??
+    if(obj.categories){
+      obj = obj.categories
+      categories = categories(-1) //finds all of them, not just the subset for toShow, etc.
+      categories.forEach(function(cat,k){ //leaving none in list
+        obj.forEach(function(ocat,n){
+          samprops[cat.category] = ocat[cat.category] ? ocat[cat.category].factor : null
+          samprops['bottom_range'] = ocat['bottom_range'] ? ocat['bottom_range'] : null
+          samprops['top_range'] = ocat['top_range'] ? ocat['top_range'] : null
+        })
+      })
+  //need to get obj.fnd
+      samprops.toShow.forEach(function(categ,i){
+        obj.forEach(function(ocateg,m){
+        //have to walk all to clear earlier ones if they start tour inside...
+          samprops.toShow[i].fnd = ocateg[categ.category] ? ocateg[categ.category].fnd ? ocateg[categ.category].fnd : null : null
+        })
+      })
+    }
     this.setState({samprops})
   }
 
