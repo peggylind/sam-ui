@@ -201,7 +201,7 @@ export default class App extends React.PureComponent {
               }
             }
          };
-         this.onMapChange = debounce(this.onMapChange, 1000);
+         this.onMapChange = debounce(this.onMapChange, 2000);
          this.setWaiting = debounce(this.setWaiting, 1000);
          this.setToolInfo = debounce(this.setToolInfo, 200);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
