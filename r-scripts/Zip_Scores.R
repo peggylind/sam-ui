@@ -6,6 +6,8 @@
 library(dplyr)
 library(sf)
 library(readr)
+library(forcats)
+library(tidyr)
 #sf_sam <- st_as_sf(sample_sam, crs=3674) don't do this time
 
 
@@ -33,21 +35,24 @@ sam <- sam %>%
 #for each tract to have it's Entropy Index
 #Theil - 1967, originally, Yming Wang - Decomposing the entropy index of racial diversity: in search of two types of variance
 #Ann Reg Sci (2012) 48:897–915
-zip_summed_sam_race <- exp_sam %>%
+zip_summed_sam_race <- sam_10_13_insertable %>%
   group_by_at(vars(zip)) %>%
   mutate(ziptotal = n(),zip_racial_entropy_index = mean(zip_racial_entropy_index)) %>%
   group_by_at(vars(zip,race)) %>%
   summarize(zip_racetotal = n(),zip_percent_race = mean(zip_percent_race),zip_racial_entropy_index = mean(zip_racial_entropy_index),
-            zip_racial_entropy_index = mean(zip_racial_entropy_index), ziptotal = mean(ziptotal))
+            zip_racial_entropy_index = mean(zip_racial_entropy_index), ziptotal = mean(ziptotal)) %>%
+  complete(race, fill = list(zip_racetotal = 0, zip_percent_race = 0, zip_racial_entropy_index = 0, zip_racial_entropy_index = 0, ziptotal = 0))
 write_rds(zip_summed_sam_race,"zip_summed_race_entropy.RDS")
 #added filter to only include over 20.
-zip_summed_sam_education <- exp_sam %>%
+zip_summed_sam_education <- sam_10_13_insertable %>%
   filter(age>21)%>%
   group_by_at(vars(zip)) %>%
   mutate(ziptotal = n(),zip_economic_entropy_index = mean(zip_education_entropy_index)) %>%
   group_by_at(vars(zip,educational.attainment)) %>%
   summarize(zip_education_total = n(),zip_percent_education = mean(zip_percent_education),zip_education_entropy_index = mean(zip_education_entropy_index),
-            zip_economic_entropy_index = mean(zip_economic_entropy_index), ziptotal = mean(ziptotal))
+            zip_economic_entropy_index = mean(zip_economic_entropy_index), ziptotal = mean(ziptotal)) #%>%
+  #complete(educational.attainment, fill = list(zip_education_total = 0, zip_percent_education = 0, zip_education_entropy_index = 0, 
+   #                                            zip_economic_entropy_index = 0, ziptotal = 0))
 write_rds(zip_summed_sam_education,"zip_summed_education_entropy.RDS")
 #match the summed_sams to the geojson files for the tracts, etc. 
 
@@ -61,9 +66,12 @@ zip_summed_sam_insurance <- exp_sam %>%
   summarize(zip_ins_num = n())
 write_rds(zip_summed_sam_insurance, "zip_summed_insurance.RDS") 
 
-zip_summed_sam_citizen <- exp_sam %>%
+#fix the NAs in citizenship
+sam_10_13_insertable$citizenship <- forcats::fct_explicit_na(sam_10_13_insertable$citizenship, "NotAnswered")
+zip_summed_sam_citizen <- sam_10_13_insertable %>%
   group_by_at(vars(zip,citizenship)) %>%
-  summarize(zip_citizen_num = n())
+  summarize(zip_citizen_num = n()) %>%
+  complete(citizenship, fill = list(zip_citizen_num = 0))
 write_rds(zip_summed_sam_citizen, "zip_summed_citizens.RDS") 
 
 zip_summed_sam_language <- exp_sam %>%

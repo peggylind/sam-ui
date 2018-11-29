@@ -1,18 +1,45 @@
-Do with homebrew, or other package manager, or just from main
+# SAM UI 
 
-In general - need a mongodb
-https://docs.mongodb.com/manual/installation/
+The following instructions are for developers who want to setup their own version. This is a [meteor](https://www.meteor.com/) based framework.
 
-need to install using npm in an appropriate place
-https://www.npmjs.com/get-npm
+## Prerequisites
 
-install meteor
-https://www.meteor.com/install
+* We are running with a local [MongoDB](https://docs.mongodb.org/manual/installation/)
 
-npm install in the folder where you put this
-(you may have to follow individual instructions for patches)
+to install e.g on Mac OS install via [homebrew](http://brew.sh/):
 
-need to use apollographql / apolloclient
+`brew install mongodb`
 
-I call my collection samcity and start meteor with:
-MONGO_URL=mongodb://localhost:27017/SamCity meteor
+* [meteor](https://www.meteor.com/install)
+
+to install e.g. on Mac OS or Linux:
+
+`curl https://install.meteor.com/ | sh`
+
+* [npm](https://www.npmjs.com/get-npm)
+
+
+## Getting started
+
+A) Clone or fork and run: `meteor npm install` This will install all necessary npm packages.
+B) Start up your MongoDB instance by running: `mongod`. 
+
+Create a database called "Samcity" and import data (e.g. `sam_export`) into your newly created Samcity database. When using the database export files as provided by DASH you won't have to manually configure anything.
+
+
+## Testing in local development environment
+
+`MONGO_URL=mongodb://localhost:27017/Samcity meteor`
+
+This will install more metor packages, connect the meteor app to your local MongoDB instance and deploy the app.
+
+Then you can open a browser and access the app at: http://localhost:3000
+
+## Deployment with PM2
+
+* change into the working directory and run `meteor build ..` - this will generate a *.tar .gz file
+* move the file to the install location and extract it (you will end up with a `bundle` directory
+* `cd bundle/programs/server/` and `npm install`
+* generate a configuration file for PM2 (see example [gist](https://gist.github.com/fcbee3b520b4fdf97552.git)) outside of bundle
+* run `pm2 start [your_pm2_conf_file] --node-args="--max_old_space_size=6144"`
+
