@@ -1,14 +1,26 @@
 import React, { Component } from "react";
+import { Meteor } from 'meteor/meteor';
+
+import { withTracker } from 'meteor/react-meteor-data';
+import SamCitizens from '/imports/api/sam_citizens/sam_citizens';
+
+// Meteor.subscribe('samcity',{'one_of':{$gte:1000}})
+
+
 import gql from "graphql-tag";
 import { graphql, Query } from "react-apollo";
 import MapBox from "./map-box-app";
-import D3Scatter from "./d3-scatter";
-import samQuery from "./samquery.graphql.js";
-import houseQuery from "./housequery.graphql.js";
+// import D3Scatter from "./d3-scatter";
+// import samQuery from "./samquery.graphql.js";
+// import houseQuery from "./housequery.graphql.js";
 //import asyncComponent from "./asyncComponent";
 
 //adding $age to query makes it fail with unexpected EOF??????
 //if thesee don't match type coming from mongo, it just dies without an error!
+
+const setSubscribe = function(pipe){
+  Meteor.subscribe('samcity',pipe)
+}
 
 const formatDollars = function(number){
   if (number!=undefined){
@@ -138,6 +150,7 @@ class SamDataForm extends React.PureComponent {
          //highlight_data: [],
          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
        };
+       // setSubscribe({'one_of':{$gte:1000}})
    }
 
    async componentDidMount() {
@@ -149,6 +162,16 @@ class SamDataForm extends React.PureComponent {
      //this.setState({jsonsam})
    }
    componentDidUpdate(newProps, prevState) {
+
+     // var qdb = {
+     //   coords: {
+     //     $geoWithin: {
+     //       $box: [newProps.samprops.bbox_bl,newProps.samprops.bbox_ur] //needs [[bottom-left],[upper-right]]
+     //     }
+     //   },
+     //   one_of:{$gte : newProps.samprops.one_of}
+     // };
+     // setSubscribe(qdb)
      // if(newProps.samcity){
      // console.log('component did update in SamDataForm'+JSON.stringify(newProps.samcity.length))}
      // console.log('prevState.household_id: '+prevState.household_id)
@@ -168,6 +191,20 @@ class SamDataForm extends React.PureComponent {
    }
    static getDerivedStateFromProps(props, state) {
      props.error ? console.log(props.error) : null
+     console.log(props.samprops.one_of)
+     //if(props.samprops != state.samprops){
+        var qdb = {
+         coords: {
+           $geoWithin: {
+             $box: [props.samprops.bbox_bl,props.samprops.bbox_ur] //needs [[bottom-left],[upper-right]]
+           }
+         },
+         one_of:{$gte : props.samprops.one_of}
+       };
+       setSubscribe(qdb)
+       var pipeline = {};
+       return {samcity_data: SamCitizens.find(pipeline).fetch()}
+     //};
      // if(props.samcity){
      // console.log('inside getDerivedStateFromProps in SamDataForm'+props.samcity.length)}
        if(props.samprops.openHousehold){
@@ -192,6 +229,20 @@ class SamDataForm extends React.PureComponent {
    //how can we get them both as part of the same data stream, and not reloading when you do search on new data characteristics?
     render(){
 
+//use resolver logic to set samprops for bbox and one_of for subscribe; others for find, below
+      // var qdb = {
+      //   coords: {
+      //     $geoWithin: {
+      //       $box: [this.props.samprops.bbox_bl,this.props.samprops.bbox_ur] //needs [[bottom-left],[upper-right]]
+      //     }
+      //   },
+      //   one_of:{$gte : this.props.samprops.one_of}
+      // };
+      // setSubscribe(qdb)
+      //console.log('in SamDataForm: '+ this.props.samprops.one_of)
+      // var ugh = Meteor.call('AggregateSam','')
+      // console.log(ugh)
+      //console.log(Meteor)
       // const plotStyle = {
       //   position: 'absolute',
       //   left: '20%',
@@ -242,7 +293,7 @@ class SamDataForm extends React.PureComponent {
             setWaiting={this.props.setWaiting}
             countData={this.props.countData}
             waiting={this.props.waiting}
-            data={this.props.samcity}
+            data={this.props.samcity_data}
             highlight_data={this.props.highlight_data}
             returnColors = {this.returnColors}
             //data={this.props.samprops.zoom <10 ? this.state.jsonsam : this.props.samcity}
@@ -253,46 +304,12 @@ class SamDataForm extends React.PureComponent {
           </div>
 
         </div>
-
-      //  <div>
-
-
-      // {this.state.plotOpen && (
-      // <div style={plotButtonStyle}>
-      //         <button onClick={() => this.setState({ plotOpen: true, plotHeight: '75%', plotWidth: '75%' })}>
-      //           Show Plots
-      //         </button>
-      // </div>)}
-      // {this.state.plotOpen && (
-      //   <div style={plotButtonStyle}>
-      //           <button onClick={() => this.setState({ plotOpen: false, plotHeight: '4%', plotWidth: '8%' })}>
-      //             Hide Plots
-      //           </button>
-      //   </div>
-      // )}
-      // <div style={plotStyle} ref={this.plotcontain}>
-      // {this.state.plotOpen && (
-      //     <div id="plotcontainer">
-      //     <D3Scatter
-      //         setToolInfo={this.props.setToolInfo}
-      //         handlePopulationChange={this.props.handlePopulationChange}
-      //         setClick={this.props.setClick}
-      //         setWaiting={this.props.setWaiting}
-      //         data={this.props.samcity}
-      //         plotFactorColors={this.props.samprops.plotFactorColors}
-      //         containerwidth={1200}
-      //         containerheight={600}
-      //     /></div>
-      //   )}
-      //  </div>
-    //  </div>
-    //</div>
   )
 };
 };
 
 //can't seem to create this variable list dynamically
-export default graphql(samQuery,
+/*export default graphql(samQuery,
   {
     options: props => ({
       variables: {
@@ -344,6 +361,12 @@ export default graphql(samQuery,
       }
     }),
     props: ({ loading, error, data }) => ({ loading, error, ...data })
+  })(SamDataForm)*/
+  export default withTracker(() => {
+
+    //return {samcity_data: AggregateSam.call()}
+    var pipeline = {};
+    return {samcity_data: SamCitizens.find(pipeline).fetch()}
   })(SamDataForm)
 
 //export default graphql(sam20kQuery, queryOptsWrap())(SamDataForm);

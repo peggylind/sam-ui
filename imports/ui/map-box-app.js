@@ -128,7 +128,7 @@ export default class MapBox extends Component {
             bbox: this.props.mapprops.bbox,
             time: 0,
             samdata: this.props.samdata || [],
-            waiting: this.props.waiting,
+            waiting: 1,// this.props.waiting,
             categIndex: this.props.samprops.categIndex,
             //gl_wait: 1, //perhaps from app.js??
             cellSize: this.props.samprops.cellSize,
@@ -175,16 +175,23 @@ export default class MapBox extends Component {
       //   props.setWaiting(0)
       //   return {samdata:props.data,waiting:0}
       // }
-      if (props.data){
-        if(props.data.length > 0 && props.data != state.samdata){
-          //console.log(props)
-          props.setWaiting(0)
-          props.countData(props.data)
-          return {samdata:props.data,waiting:0}
-        }
-      }
+
+      // if (props.data){
+      //   //props.setWaiting(0)
+      //   console.log('how often called')
+      //   return {samdata:props.data,waiting:0}
+      // }
+      // if (props.data){
+      //   if(props.data.length > 0 && props.data != state.samdata){
+      //     //console.log(props)
+      //     props.setWaiting(0)
+      //     props.countData(props.data)
+      //     return {samdata:props.data,waiting:0}
+      //   }
+      // }
+
       if (props.waiting){  //check if can do on props.loading - not clear it won't fire too many times
-        //console.log('props.waiting in map-box: '+Date.now())
+        console.log('props.waiting in map-box: '+Date.now())
         var tmpViewPort = new WebMercatorViewport(state.viewport) //the state.viewport can't be accessed after first time so have to make a new one
         var scale = getDistanceScales(state.viewport).metersPerPixel[0];
         var width = window.innerWidth;
@@ -203,7 +210,8 @@ export default class MapBox extends Component {
         //var bbox = [bl,tr] //https://docs.mongodb.com/manual/reference/operator/query/box/
         //console.log(bl)
         props.onMapChange(state.viewport,dist4search,worldHeight,tr,bl);
-        return {tr,bl}
+        //return {tr,bl}
+        return {samdata:props.data}
       }
 
       if (state.cellSize != props.samprops.cellSize){

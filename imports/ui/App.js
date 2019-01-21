@@ -312,8 +312,8 @@ export default class App extends React.PureComponent {
   };
 
   onMapChange = function(mapstuff,dist,height,bl,ur){ //height is used for normalizing for plot -- and can be used to make height of legendbox, too
-    // console.log("mapstuff dist ")
-    // console.log(mapstuff)
+    console.log("mapstuff dist ")
+    console.log(mapstuff)
     var samprops = {...this.state.samprops}
     //var mapprops = {...this.state.mapprops}
     samprops.latitude = mapstuff.latitude;
