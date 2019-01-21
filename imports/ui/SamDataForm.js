@@ -19,6 +19,7 @@ import MapBox from "./map-box-app";
 //if thesee don't match type coming from mongo, it just dies without an error!
 
 const setSubscribe = function(pipe){
+  console.log('called setSub')
   Meteor.subscribe('samcity',pipe)
 }
 
@@ -163,31 +164,58 @@ class SamDataForm extends React.PureComponent {
    }
    componentDidUpdate(newProps, prevState) {
 
-     // var qdb = {
-     //   coords: {
-     //     $geoWithin: {
-     //       $box: [newProps.samprops.bbox_bl,newProps.samprops.bbox_ur] //needs [[bottom-left],[upper-right]]
-     //     }
-     //   },
-     //   one_of:{$gte : newProps.samprops.one_of}
-     // };
-     // setSubscribe(qdb)
-     // if(newProps.samcity){
-     // console.log('component did update in SamDataForm'+JSON.stringify(newProps.samcity.length))}
-     // console.log('prevState.household_id: '+prevState.household_id)
-     // console.log(newProps.samprops.household_id)
-     // if(prevState.plotOpen && !prevState.plotOpen2){ //trying to get window to open first - might be able to keep it from reloading
-     //   this.setState({plotOpen2:true})
-     // };
-     // if(!prevState.plotOpen && prevState.plotOpen2){
-     //   this.setState({plotOpen2:false})
-     // };
-     //this was not setting in time for the plot
-     // if (prevState.containerwidth != this.plotcontain.current.offsetWidth ||
-     //     prevState.containerheight != this.plotcontain.current.offsetHeight ){
-     //         this.setState({containerwidth:this.plotcontain.current.offsetWidth,
-     //         containerheight:this.plotcontain.current.offsetHeight});
-     // };
+     const factor_vars = [//add use_code from HCAD - B1 gives all renters //love to get this working with an automated pipeline for all the gql
+       'asthma',
+       'autism_by_CRH',
+       'autism_by_maternal_age',
+       'citizenship',
+       'disability',
+       'educational_attainment',
+       'employment',
+       'english_speaking_skills',
+       'health_insurance',
+       'household_type',
+       'loc_num',
+       'loc_name',
+       'lowbirthweightbyrace',
+       'maternal_CRH',
+       'means_of_transportation_to_work',
+       'member',
+       'nativity',
+       'one_of',
+       'pregnant',
+       'prenatal_first_tri',
+       'quality_description',
+       'race',
+       'travel_time_to_work',
+       'veteran_status',
+       'zip'
+     ];
+     const range_vars = [
+       'age',
+       'education_entropy_index',
+       'household_income',
+       'racial_entropy_index',
+       'stresslevelincome',
+       'stresslevelrace',
+       'zip_education_entropy_index',
+       'zip_racial_entropy_index'
+       ]; //finish later
+     const pipeline = {};
+     for (var arg in newProps.samprops){
+       if(factor_vars.indexOf(arg) >=0){
+         if(newProps.samprops[arg]){
+           pipeline[arg] = newProps.samprops[arg];
+         }
+       };
+       if(range_vars.indexOf(arg) >=0){
+     //because I'm having problems with gql, can only do one range variable right now...
+         if(newProps.samprops[arg]){
+           pipeline[arg] = {$gte : newProps.samprops['bottom_range'],$lte : newProps.samprops['top_range']};
+         // and some mechanism for obj with $gte, etc.
+         }
+       };
+     };
    }
    static getDerivedStateFromProps(props, state) {
      props.error ? console.log(props.error) : null
@@ -363,8 +391,6 @@ class SamDataForm extends React.PureComponent {
     props: ({ loading, error, data }) => ({ loading, error, ...data })
   })(SamDataForm)*/
   export default withTracker(() => {
-
-    //return {samcity_data: AggregateSam.call()}
     var pipeline = {};
     return {samcity_data: SamCitizens.find(pipeline).fetch()}
   })(SamDataForm)
