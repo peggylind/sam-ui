@@ -19,8 +19,12 @@ import MapBox from "./map-box-app";
 //if thesee don't match type coming from mongo, it just dies without an error!
 
 const setSubscribe = function(pipe){
-  console.log('called setSub')
+  console.log('called setSubscribe')
   Meteor.subscribe('samcity',pipe)
+}
+
+const setFind = function(pipe){
+
 }
 
 const formatDollars = function(number){
@@ -116,22 +120,6 @@ const GetHousehold = ({ account, household_id, showapts }) => (
   </Query>
 )
 
-//for later, in debugging
-// const ShowingSomeErrors = () => (
-//   <Query query={samQuery} errorPolicy="all">
-//     {({ error, data, loading }) => {
-//       if (loading) return <span>loading...</span>
-//       return (
-//         <div>
-//           <pre>Bad: {error.graphQLErrors.map(({ message }, i) => (
-//             <span key={i}>{message}</span>
-//           ))}
-//           </pre>
-//         </div>
-//       )
-//     }}
-//   </Query>
-// );
 
 
 class SamDataForm extends React.PureComponent {
@@ -144,14 +132,8 @@ class SamDataForm extends React.PureComponent {
          account: this.props.samprops.account,
          openHousehold: this.props.samprops.openHousehold,
          showapts: 0,
-         // plotWidth: '8%',
-         // plotHeight: '4%',
-         // containerwidth: '8',
-         // containerheight: '4',
-         //highlight_data: [],
          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
        };
-       // setSubscribe({'one_of':{$gte:1000}})
    }
 
    async componentDidMount() {
@@ -161,66 +143,82 @@ class SamDataForm extends React.PureComponent {
      // const res = await fetch('/json/sam_of_100.json') //only if loading json for faster process
      // const jsonsam = await res.json()
      //this.setState({jsonsam})
+     // setSubscribe(qdb)
+     // var pipeline = {};
+     // this.setState({samcity_data: SamCitizens.find(pipeline).fetch()})
    }
    componentDidUpdate(newProps, prevState) {
-
-     const factor_vars = [//add use_code from HCAD - B1 gives all renters //love to get this working with an automated pipeline for all the gql
-       'asthma',
-       'autism_by_CRH',
-       'autism_by_maternal_age',
-       'citizenship',
-       'disability',
-       'educational_attainment',
-       'employment',
-       'english_speaking_skills',
-       'health_insurance',
-       'household_type',
-       'loc_num',
-       'loc_name',
-       'lowbirthweightbyrace',
-       'maternal_CRH',
-       'means_of_transportation_to_work',
-       'member',
-       'nativity',
-       'one_of',
-       'pregnant',
-       'prenatal_first_tri',
-       'quality_description',
-       'race',
-       'travel_time_to_work',
-       'veteran_status',
-       'zip'
-     ];
-     const range_vars = [
-       'age',
-       'education_entropy_index',
-       'household_income',
-       'racial_entropy_index',
-       'stresslevelincome',
-       'stresslevelrace',
-       'zip_education_entropy_index',
-       'zip_racial_entropy_index'
-       ]; //finish later
-     const pipeline = {};
-     for (var arg in newProps.samprops){
-       if(factor_vars.indexOf(arg) >=0){
-         if(newProps.samprops[arg]){
-           pipeline[arg] = newProps.samprops[arg];
-         }
-       };
-       if(range_vars.indexOf(arg) >=0){
-     //because I'm having problems with gql, can only do one range variable right now...
-         if(newProps.samprops[arg]){
-           pipeline[arg] = {$gte : newProps.samprops['bottom_range'],$lte : newProps.samprops['top_range']};
-         // and some mechanism for obj with $gte, etc.
-         }
-       };
-     };
+     // if(newProps.samprops !== prevState.samprops){ //should only go through once!!!
+     //    var qdb = {
+     //     coords: {
+     //       $geoWithin: {
+     //         $box: [newProps.samprops.bbox_bl,newProps.samprops.bbox_ur] //needs [[bottom-left],[upper-right]]
+     //       }
+     //     },
+     //     one_of:{$gte : newProps.samprops.one_of}
+     //   };
+     //   setSubscribe(qdb) //put some conditions on this so it doesn't resubsrcibe
+     //   var pipeline = {};
+     //   this.setState({samprops:newProps.samprops,samcity_data: SamCitizens.find(pipeline).fetch()})
+     // }
+     // const factor_vars = [//add use_code from HCAD - B1 gives all renters //love to get this working with an automated pipeline for all the gql
+     //   'asthma',
+     //   'autism_by_CRH',
+     //   'autism_by_maternal_age',
+     //   'citizenship',
+     //   'disability',
+     //   'educational_attainment',
+     //   'employment',
+     //   'english_speaking_skills',
+     //   'health_insurance',
+     //   'household_type',
+     //   'loc_num',
+     //   'loc_name',
+     //   'lowbirthweightbyrace',
+     //   'maternal_CRH',
+     //   'means_of_transportation_to_work',
+     //   'member',
+     //   'nativity',
+     //   'one_of',
+     //   'pregnant',
+     //   'prenatal_first_tri',
+     //   'quality_description',
+     //   'race',
+     //   'travel_time_to_work',
+     //   'veteran_status',
+     //   'zip'
+     // ];
+     // const range_vars = [
+     //   'age',
+     //   'education_entropy_index',
+     //   'household_income',
+     //   'racial_entropy_index',
+     //   'stresslevelincome',
+     //   'stresslevelrace',
+     //   'zip_education_entropy_index',
+     //   'zip_racial_entropy_index'
+     //   ]; //finish later
+     // const pipeline = {};
+     // for (var arg in newProps.samprops){
+     //   if(factor_vars.indexOf(arg) >=0){
+     //     if(newProps.samprops[arg]){
+     //       pipeline[arg] = newProps.samprops[arg];
+     //     }
+     //   };
+     //   if(range_vars.indexOf(arg) >=0){
+     // //because I'm having problems with gql, can only do one range variable right now...
+     //     if(newProps.samprops[arg]){
+     //       pipeline[arg] = {$gte : newProps.samprops['bottom_range'],$lte : newProps.samprops['top_range']};
+     //     // and some mechanism for obj with $gte, etc.
+     //     }
+     //   };
+     // };
    }
    static getDerivedStateFromProps(props, state) {
      props.error ? console.log(props.error) : null
      console.log(props.samprops.one_of)
-     //if(props.samprops != state.samprops){
+     console.log(state.samprops)
+     if(props.samprops !== state.samprops){ //should only go through once!!!
         var qdb = {
          coords: {
            $geoWithin: {
@@ -229,29 +227,31 @@ class SamDataForm extends React.PureComponent {
          },
          one_of:{$gte : props.samprops.one_of}
        };
-       setSubscribe(qdb)
+       setSubscribe(qdb) //put some conditions on this so it doesn't resubsrcibe
        var pipeline = {};
-       return {samcity_data: SamCitizens.find(pipeline).fetch()}
-     //};
+       return {samprops:props.samprops,samcity_data: SamCitizens.find(pipeline).fetch()}
+     }else{
+       return null
+     };
      // if(props.samcity){
      // console.log('inside getDerivedStateFromProps in SamDataForm'+props.samcity.length)}
-       if(props.samprops.openHousehold){
-         return{
-           openHousehold:props.samprops.openHousehold,
-           household_id:props.samprops.household_id,
-           account:props.samprops.account
-         }
-       }else{
-         if(props.samprops != state.samprops){
-           //console.log(props.samprops)
-           return {samprops:props.samprops}
-         }else{
-           if(props.highlight_data != state.highlight_data){
-             return {highlight_data:props.highlight_data}
-           }
-        }
-        return null
-      }
+      //  if(props.samprops.openHousehold){
+      //    return{
+      //      openHousehold:props.samprops.openHousehold,
+      //      household_id:props.samprops.household_id,
+      //      account:props.samprops.account
+      //    }
+      //  }else{
+      //    if(props.samprops != state.samprops){
+      //      //console.log(props.samprops)
+      //      return {samprops:props.samprops}
+      //    }else{
+      //      if(props.highlight_data != state.highlight_data){
+      //        return {highlight_data:props.highlight_data}
+      //      }
+      //   }
+      //   return null
+      // }
     }
    //data={this.props.samprops.zoom <14 ? this.state.jsonsam : this.props.samcity}
    //how can we get them both as part of the same data stream, and not reloading when you do search on new data characteristics?

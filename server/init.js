@@ -24,7 +24,7 @@ const SamCitizens = new Mongo.Collection("samcity");
 
 
 Meteor.publish('samcity',function(pipeline){
-  console.log(pipeline)
+  //console.log(pipeline)
   var pipe = pipeline
   return SamCitizens.find(pipeline);
 })
