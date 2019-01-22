@@ -126,8 +126,10 @@ class SamDataForm extends React.PureComponent {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
        super(props);
        this.setWaiting = this.props.setWaiting;
+       this.setUpdate = this.props.setUpdate;
        this.countData = this.props.countData;
        this.state = {
+         samcity_data: [],
          household_id: this.props.samprops.household_id,
          account: this.props.samprops.account,
          openHousehold: this.props.samprops.openHousehold,
@@ -148,6 +150,9 @@ class SamDataForm extends React.PureComponent {
      // this.setState({samcity_data: SamCitizens.find(pipeline).fetch()})
    }
    componentDidUpdate(newProps, prevState) {
+     //if(newProps.update && !prevState.update){
+    //  newProps.setUpdate(0)
+     //}
      // if(newProps.samprops !== prevState.samprops){ //should only go through once!!!
      //    var qdb = {
      //     coords: {
@@ -216,9 +221,11 @@ class SamDataForm extends React.PureComponent {
    }
    static getDerivedStateFromProps(props, state) {
      props.error ? console.log(props.error) : null
-     console.log(props.samprops.one_of)
-     console.log(state.samprops)
-     if(props.samprops !== state.samprops){ //should only go through once!!!
+     if(state.samcity_data.length>17000){
+       //console.log(state.samcity_data.length) //could put a limit on all of them??
+       return {samcity_data:[]}}
+     if(props.update==1 || state.samcity_data==0){
+       props.setUpdate(0)
         var qdb = {
          coords: {
            $geoWithin: {
@@ -227,9 +234,12 @@ class SamDataForm extends React.PureComponent {
          },
          one_of:{$gte : props.samprops.one_of}
        };
+       if(state.samprops){
+       if(props.samprops.one_of != state.samprops.one_of || props.samprops.bbox_bl != state.samprops.bbox_bl || props.samprops.bbox_ur != state.samprops.bbox_ur)
+       {console.log('just these')}}
        setSubscribe(qdb) //put some conditions on this so it doesn't resubsrcibe
        var pipeline = {};
-       return {samprops:props.samprops,samcity_data: SamCitizens.find(pipeline).fetch()}
+       return {update:0,samprops:props.samprops,samcity_data: SamCitizens.find(pipeline,{limit:16000}).fetch()}
      }else{
        return null
      };
@@ -319,6 +329,7 @@ class SamDataForm extends React.PureComponent {
             setHighlight={this.props.setHighlight}
             setText={this.props.setText}
             setWaiting={this.props.setWaiting}
+            setUpdate={this.props.setUpdate}
             countData={this.props.countData}
             waiting={this.props.waiting}
             data={this.props.samcity_data}

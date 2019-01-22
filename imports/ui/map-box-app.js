@@ -120,6 +120,7 @@ export default class MapBox extends Component {
       this.setHighlight = this.props.setHighlight;
       this.setText = this.props.setText;
       this.setWaiting = this.props.setWaiting;
+      this.setUpdate = this.props.setUpdate;
       this.handlePopulationChange = this.props.handlePopulationChange;
       //this.factorcounts = 0,
       this.state = {
@@ -191,7 +192,6 @@ export default class MapBox extends Component {
       // }
 
       if (props.waiting){  //check if can do on props.loading - not clear it won't fire too many times
-        console.log('props.waiting in map-box: '+Date.now())
         var tmpViewPort = new WebMercatorViewport(state.viewport) //the state.viewport can't be accessed after first time so have to make a new one
         var scale = getDistanceScales(state.viewport).metersPerPixel[0];
         var width = window.innerWidth;
@@ -227,7 +227,6 @@ export default class MapBox extends Component {
             coords:props.samprops.textposition}]}
       }else{
         if(props.highlight_data != state.highlight_data){
-          console.log('in mapbox '+props.highlight_data)
           return {highlight_data:props.highlight_data}
         }else{
         return null
@@ -241,6 +240,7 @@ export default class MapBox extends Component {
       };
       if (this.state.viewport != prevState.viewport){
         newProps.setWaiting(1)
+        newProps.setUpdate(1)
        };
     };
 

@@ -175,6 +175,7 @@ export default class App extends React.PureComponent {
        this.setText = this.setText.bind(this);
        this.setExplanation = this.setExplanation.bind(this);
        this.setWaiting = this.setWaiting.bind(this); //still need for resetting boundaries
+       this.setUpdate = this.setUpdate.bind(this);
        this.setOpenHousehold = this.setOpenHousehold.bind(this);
        this.countData = this.countData.bind(this);
        this.changeSamProps = this.changeSamProps.bind(this);
@@ -182,6 +183,7 @@ export default class App extends React.PureComponent {
 
        this.state = {
          waiting: 1,
+         update: 1,
          toolTipInfo : {text:'Hover or click for info.'},
          //explanation : model_explanations()[samprops.explainIndex],//{text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
          highlight_data : [],
@@ -210,6 +212,9 @@ export default class App extends React.PureComponent {
   setWaiting = function(wait){
     this.setState({waiting:wait})
   };
+  setUpdate = function(up){
+    this.setState({update:up})
+  }
   setOpenHousehold = function(open){
     console.log(open)
     var samprops = {...this.state.samprops}
@@ -312,8 +317,8 @@ export default class App extends React.PureComponent {
   };
 
   onMapChange = function(mapstuff,dist,height,bl,ur){ //height is used for normalizing for plot -- and can be used to make height of legendbox, too
-    console.log("mapstuff dist ")
-    console.log(mapstuff)
+    // console.log("mapstuff dist ")
+    // console.log(mapstuff)
     var samprops = {...this.state.samprops}
     //var mapprops = {...this.state.mapprops}
     samprops.latitude = mapstuff.latitude;
@@ -468,6 +473,8 @@ export default class App extends React.PureComponent {
               setClick={this.setClick}
               setHighlight={this.setHighlight}
               setWaiting={this.setWaiting}
+              setUpdate={this.setUpdate}
+              update={this.state.update}
               countData={this.countData}
               waiting={this.state.waiting}
               setOpenHousehold={this.setOpenHousehold}
