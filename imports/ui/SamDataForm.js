@@ -18,10 +18,7 @@ import MapBox from "./map-box-app";
 //adding $age to query makes it fail with unexpected EOF??????
 //if thesee don't match type coming from mongo, it just dies without an error!
 
-const setSubscribe = function(pipe){
-  console.log('called setSubscribe')
-  Meteor.subscribe('samcity',pipe)
-}
+
 
 const setFind = function(pipe){
 
@@ -220,10 +217,11 @@ class SamDataForm extends React.PureComponent {
      // };
    }
    static getDerivedStateFromProps(props, state) {
+     //there is a .stop on a subscription that could help clear cache??https://docs.meteor.com/api/pubsub.html#Meteor-subscribe
      props.error ? console.log(props.error) : null
-     if(state.samcity_data.length>17000){
-       //console.log(state.samcity_data.length) //could put a limit on all of them??
-       return {samcity_data:[]}}
+     if(state.samcity_data.length>7000){
+        console.log(state.samcity_data.length) //could put a limit on all of them??
+     return {samcity_data:[]}}
      if(props.update==1 || state.samcity_data==0){
        props.setUpdate(0)
         var qdb = {
@@ -237,9 +235,19 @@ class SamDataForm extends React.PureComponent {
        if(state.samprops){
        if(props.samprops.one_of != state.samprops.one_of || props.samprops.bbox_bl != state.samprops.bbox_bl || props.samprops.bbox_ur != state.samprops.bbox_ur)
        {console.log('just these')}}
-       setSubscribe(qdb) //put some conditions on this so it doesn't resubsrcibe
+       Meteor.subscribe('samcity',qdb,{
+         onReady: function() {
+           console.log('subscription ready')
+           props.setWaiting(0)
+         },
+         onError: function(error) {
+           console.log("error on dataload: "+error)
+         }
+         }
+       )
+       //this.setSubscribe(qdb) //put some conditions on this so it doesn't resubsrcibe
        var pipeline = {};
-       return {update:0,samprops:props.samprops,samcity_data: SamCitizens.find(pipeline,{limit:16000}).fetch()}
+       return {update:0,samprops:props.samprops,samcity_data: SamCitizens.find(pipeline,{limit:600}).fetch()}
      }else{
        return null
      };
@@ -297,7 +305,7 @@ class SamDataForm extends React.PureComponent {
       //   bottom: '0'
       // };
       let patience = <div></div>
-      if (this.props.loading){ patience =
+      if (this.props.waiting){ patience =
           <div style={{position:"absolute",zIndex:'10',width:"100%",height:"100%",backgroundColor:"#7f7f7f33"}}>
           <div style={{marginTop:"30%", marginLeft:"3%", color:"green", fontSize:"2em",textAlign:"center"}}>
           <div>Loading Data ... </div><div>thank you for your patience</div></div></div>
