@@ -88,6 +88,7 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   geojson_title: 'Super_Neighborhoods.geojson',// 'Harvey_Houston.geojson',
   limit: 14000,
   one_of: calcOneOf(firstzoom),
+  //factors: {}, //will replace individual categories, but need to test.
   // member: "",
   _id: null,
   account: null,
@@ -205,7 +206,7 @@ export default class App extends React.PureComponent {
          };
          this.onMapChange = debounce(this.onMapChange, 2000);
          this.setUpdate = debounce(this.setUpdate, 2000);
-         this.setWaiting = debounce(this.setWaiting, 100);
+         this.setWaiting = debounce(this.setWaiting, 200);
          this.setToolInfo = debounce(this.setToolInfo, 200);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
@@ -289,11 +290,13 @@ export default class App extends React.PureComponent {
     var newr = 0;
     samprops.toShow.forEach(function(row,r){
       if(samprops.categIndex == r){ //if "all" is the factorName = '', then all will be returned
-        samprops[samprops.toShow[r].category] = e.factorName; //this writes it out to the args in resolver.js
+        samprops[samprops.toShow[r].category] = e.factorName; //this writes it out to the args in resolver.js //old way
+        //samprops['factors'][samprops.toShow[r].category] = e.factorName; //new way - testing.
         samprops.toShow[r].fnd = e.factorName;
       }
     })
-    this.setWaiting(1);
+    //this.setWaiting(1);
+    this.setUpdate(1);
     this.setState({samprops});
   }
 
@@ -335,6 +338,7 @@ export default class App extends React.PureComponent {
     samprops.bbox_ur = ur;
     //console.log(bbox_bl,bbox_ur)
     if(this.state.samprops.one_of != samprops.one_of){this.setWaiting(1)}
+    this.setUpdate(1);
     this.setState({samprops});
   };
 //not using onSamDataChange??
