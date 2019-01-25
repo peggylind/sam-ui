@@ -50,67 +50,6 @@ const formatCommas = function(number){
   }
 };
 
-// class MapCompositeLayer extends CompositeLayer {
-//   renderLayers() {
-//     return [
-//       this._renderGroupOfSubLayers()//, // returns an array of layers
-//       //this.props.showScatterplot && new ScatterplotLayer(...)
-//     ];
-//   }
-//
-//   shouldUpdateState({props, oldProps, context, oldContext, changeFlags}){
-//     // console.log(props[0].props.waiting)
-//     // console.log(this.state)
-//     //if(this.state.gl_local_wait){this.setState({gl_local_wait:0})}
-//
-//     // if(!props[0].props.waiting && changeFlags.propsChanged){
-//     //   this.setState({gl_local_wait:1})
-//     //   //props[0].props.setWaiting(0)
-//     // }
-//     if(oldProps[2].props.cellSize){
-//         if(oldProps[2].props.cellSize != props[2].props.cellSize){
-//         //  props[2].draw();
-//         //  this.draw(props[2])
-//         //  this.setState({cellSize:props[2].props.cellSize})
-//           console.log(props[2].props.cellSize)
-//           console.log(oldProps[2].props)//.cellSize)
-//       }
-//     }
-//   //}
-//
-//
-//     //if(changeFlags.propsOrDataChanged){console.log('changeFlags.propsOrDataChanged: ' +changeFlags.propsOrDataChanged)}
-//     //if(changeFlags.dataChanged){console.log('changeFlags.dataChanged: ' +changeFlags.dataChanged)}
-//      //if(changeFlags.propsChanged){console.log('changeFlags.propsChanged: ' +changeFlags.propsChanged)}
-//     // if(changeFlags.stateChanged){console.log('changeFlags.stateChanged: ' +changeFlags.stateChanged)}
-//     // if(changeFlags.updateTriggersChanged){console.log('changeFlags.updateTriggersChanged: ' +changeFlags.updateTriggersChanged)}
-//     // console.log(changeFlags)
-//     // console.log(oldContext)
-//     //if(this.props[2].lifecycle == "Matched. State transferred from previous layer"){console.log("Matched. State transferred from previous layer")}
-//     // console.log(changeFlags)
-//     //return this.state.gl_local_wait ? super.shouldUpdateState : false
-//     return super.shouldUpdateState
-//   }
-//
-//
-//
-//   // finalizeState() {
-//   //   console.log('final')
-//   // }
-//
-//   renderLayers() {
-//     //console.log(this.props[2]) // need to move logic into this component
-//     return [
-//       this.props[0],
-//       this.props[1],
-//       this.props[2]
-//       //this.props[2]
-//       //this._renderGroupOfSubLayers()//, // returns an array of layers
-//   //    this.props.showScatterplot && new ScatterplotLayer(...)
-//     ];
-//   }
-// }
-
 export default class MapBox extends Component {
   constructor(props) {
       super(props);
@@ -120,17 +59,16 @@ export default class MapBox extends Component {
       this.setHighlight = this.props.setHighlight;
       this.setText = this.props.setText;
       this.setWaiting = this.props.setWaiting;
+      this.setUpdate = this.props.setUpdate;
       this.handlePopulationChange = this.props.handlePopulationChange;
-      //this.factorcounts = 0,
       this.state = {
             mapboxApiAccessToken: 'pk.eyJ1IjoibWRjaW90dGkiLCJhIjoiY2l1cWdyamw5MDAxcTJ2bGFmdzJxdGFyNyJ9.2b6aTKZNlT1_DEJiJ9l3hw',
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
             bbox: this.props.mapprops.bbox,
             time: 0,
             samdata: this.props.samdata || [],
-            waiting: this.props.waiting,
+            waiting: 1,// this.props.waiting,
             categIndex: this.props.samprops.categIndex,
-            //gl_wait: 1, //perhaps from app.js??
             cellSize: this.props.samprops.cellSize,
             highlight_data: this.props.highlight_data || [],
             textdata: [{text:this.props.samprops.textname,coords:this.props.samprops.textposition}],
@@ -154,37 +92,20 @@ export default class MapBox extends Component {
         console.log('returnText '+txt)
         return txt //toString(parseInt(txt)*parseInt(this.props.samprops.one_of))
       }
-      // setClick (info) {
-      //   console.log()
-      // }
 
     static getDerivedStateFromProps(props, state) {
-      // console.log('mapbox getDerivedStateFromProps ')
-      // console.log(props.samprops)
-      // console.log(state.categIndex)
       if(props.samprops){
         if(props.samprops.categIndex != state.categIndex){
           props.countData(props.data)
           return {categIndex:props.samprops.categIndex}
         }
       }
-      // if(props.data){
-      // console.log('props.data.length'+props.data.length)}
-      // console.log(props.waiting)
-      // if(props.data && state.waiting){
-      //   props.setWaiting(0)
-      //   return {samdata:props.data,waiting:0}
+      // if (props.update){
+      //   props.setUpdate(0);
+      //   return {samdata:props.data}
       // }
-      if (props.data){
-        if(props.data.length > 0 && props.data != state.samdata){
-          //console.log(props)
-          props.setWaiting(0)
-          props.countData(props.data)
-          return {samdata:props.data,waiting:0}
-        }
-      }
-      if (props.waiting){  //check if can do on props.loading - not clear it won't fire too many times
-        //console.log('props.waiting in map-box: '+Date.now())
+
+      if (props.waiting){
         var tmpViewPort = new WebMercatorViewport(state.viewport) //the state.viewport can't be accessed after first time so have to make a new one
         var scale = getDistanceScales(state.viewport).metersPerPixel[0];
         var width = window.innerWidth;
@@ -199,11 +120,10 @@ export default class MapBox extends Component {
         //var tl = tmpViewPort.unproject([0,0])
         var tr = tmpViewPort.unproject([0,height])
         var bl = tmpViewPort.unproject([width,0])
-        //var br = tmpViewPort.unproject([height,width])
-        //var bbox = [bl,tr] //https://docs.mongodb.com/manual/reference/operator/query/box/
-        //console.log(bl)
         props.onMapChange(state.viewport,dist4search,worldHeight,tr,bl);
-        return {tr,bl}
+        return {samdata:props.data}
+      }else{
+        return {samdata:props.data}
       }
 
       if (state.cellSize != props.samprops.cellSize){
@@ -219,7 +139,6 @@ export default class MapBox extends Component {
             coords:props.samprops.textposition}]}
       }else{
         if(props.highlight_data != state.highlight_data){
-          console.log('in mapbox '+props.highlight_data)
           return {highlight_data:props.highlight_data}
         }else{
         return null
@@ -233,6 +152,7 @@ export default class MapBox extends Component {
       };
       if (this.state.viewport != prevState.viewport){
         newProps.setWaiting(1)
+        newProps.setUpdate(1)
        };
     };
 
@@ -424,3 +344,65 @@ export default class MapBox extends Component {
     );
   }
 }
+
+//if need control over changeFlags on maps:
+// class MapCompositeLayer extends CompositeLayer {
+//   renderLayers() {
+//     return [
+//       this._renderGroupOfSubLayers()//, // returns an array of layers
+//       //this.props.showScatterplot && new ScatterplotLayer(...)
+//     ];
+//   }
+//
+//   shouldUpdateState({props, oldProps, context, oldContext, changeFlags}){
+//     // console.log(props[0].props.waiting)
+//     // console.log(this.state)
+//     //if(this.state.gl_local_wait){this.setState({gl_local_wait:0})}
+//
+//     // if(!props[0].props.waiting && changeFlags.propsChanged){
+//     //   this.setState({gl_local_wait:1})
+//     //   //props[0].props.setWaiting(0)
+//     // }
+//     if(oldProps[2].props.cellSize){
+//         if(oldProps[2].props.cellSize != props[2].props.cellSize){
+//         //  props[2].draw();
+//         //  this.draw(props[2])
+//         //  this.setState({cellSize:props[2].props.cellSize})
+//           console.log(props[2].props.cellSize)
+//           console.log(oldProps[2].props)//.cellSize)
+//       }
+//     }
+//   //}
+//
+//
+//     //if(changeFlags.propsOrDataChanged){console.log('changeFlags.propsOrDataChanged: ' +changeFlags.propsOrDataChanged)}
+//     //if(changeFlags.dataChanged){console.log('changeFlags.dataChanged: ' +changeFlags.dataChanged)}
+//      //if(changeFlags.propsChanged){console.log('changeFlags.propsChanged: ' +changeFlags.propsChanged)}
+//     // if(changeFlags.stateChanged){console.log('changeFlags.stateChanged: ' +changeFlags.stateChanged)}
+//     // if(changeFlags.updateTriggersChanged){console.log('changeFlags.updateTriggersChanged: ' +changeFlags.updateTriggersChanged)}
+//     // console.log(changeFlags)
+//     // console.log(oldContext)
+//     //if(this.props[2].lifecycle == "Matched. State transferred from previous layer"){console.log("Matched. State transferred from previous layer")}
+//     // console.log(changeFlags)
+//     //return this.state.gl_local_wait ? super.shouldUpdateState : false
+//     return super.shouldUpdateState
+//   }
+//
+//
+//
+//   // finalizeState() {
+//   //   console.log('final')
+//   // }
+//
+//   renderLayers() {
+//     //console.log(this.props[2]) // need to move logic into this component
+//     return [
+//       this.props[0],
+//       this.props[1],
+//       this.props[2]
+//       //this.props[2]
+//       //this._renderGroupOfSubLayers()//, // returns an array of layers
+//   //    this.props.showScatterplot && new ScatterplotLayer(...)
+//     ];
+//   }
+// }

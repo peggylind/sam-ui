@@ -14,7 +14,7 @@ export default class ModelDivs extends React.PureComponent {
       animate: 'six',
       modeltext : '',
       toolTipInfo : this.props.toolTipInfo,
-      isModelOpen: true
+      isModelOpen: false
     }
   };
   static getDerivedStateFromProps(props, state) {
@@ -101,9 +101,9 @@ export default class ModelDivs extends React.PureComponent {
   <span style={{position:"absolute",zIndex:"3",textAlign:"center",width:"100%",top:"0%"}}>
 
     <button title="Toggle Model Explanations"
-          style={{position:"absolute",cursor:"pointer",zIndex:"2",left:"90%",top:"4%",fontSize:".8em",transform:"rotate(90deg)"}}
+          style={{position:"absolute",cursor:"pointer",zIndex:"2",left:"90%",top:"4%",fontSize:".8em"}}
           onClick={ () => this.setState({ isModelOpen: !this.state.isModelOpen }) }>
-      {this.state.isModelOpen ? '<' : '>'}
+      {this.state.isModelOpen ? '^' : 'v'}
     </button>
 
     <div style={{position:"absolute",top:"0px",textAlign:"center",width:"100%",zIndex:"4"}}> {this.state.toolTipInfo.text} </div>

@@ -88,6 +88,7 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   geojson_title: 'Super_Neighborhoods.geojson',// 'Harvey_Houston.geojson',
   limit: 14000,
   one_of: calcOneOf(firstzoom),
+  //factors: {}, //will replace individual categories, but need to test.
   // member: "",
   _id: null,
   account: null,
@@ -135,7 +136,7 @@ const samprops = { //have all decided with same logic?? //a bunch of stuff shoul
   latitude: 29.8,
   zoom: firstzoom,
   cellSize: 5000,
-  opacity: calcOpacity(firstzoom),
+  opacity: 1,//calcOpacity(firstzoom),
   radiusMinPixels: 2.8,
   radiusMaxPixels: 100,
   strokeWidth: calcStrokeWidth(firstzoom),
@@ -175,6 +176,7 @@ export default class App extends React.PureComponent {
        this.setText = this.setText.bind(this);
        this.setExplanation = this.setExplanation.bind(this);
        this.setWaiting = this.setWaiting.bind(this); //still need for resetting boundaries
+       this.setUpdate = this.setUpdate.bind(this);
        this.setOpenHousehold = this.setOpenHousehold.bind(this);
        this.countData = this.countData.bind(this);
        this.changeSamProps = this.changeSamProps.bind(this);
@@ -182,6 +184,7 @@ export default class App extends React.PureComponent {
 
        this.state = {
          waiting: 1,
+         update: 1,
          toolTipInfo : {text:'Hover or click for info.'},
          //explanation : model_explanations()[samprops.explainIndex],//{text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
          highlight_data : [],
@@ -201,8 +204,9 @@ export default class App extends React.PureComponent {
               }
             }
          };
-         this.onMapChange = debounce(this.onMapChange, 1000);
-         this.setWaiting = debounce(this.setWaiting, 1000);
+         this.onMapChange = debounce(this.onMapChange, 2000);
+         this.setUpdate = debounce(this.setUpdate, 2000);
+         this.setWaiting = debounce(this.setWaiting, 200);
          this.setToolInfo = debounce(this.setToolInfo, 200);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
    };
@@ -210,6 +214,9 @@ export default class App extends React.PureComponent {
   setWaiting = function(wait){
     this.setState({waiting:wait})
   };
+  setUpdate = function(up){
+    this.setState({update:up})
+  }
   setOpenHousehold = function(open){
     console.log(open)
     var samprops = {...this.state.samprops}
@@ -283,11 +290,13 @@ export default class App extends React.PureComponent {
     var newr = 0;
     samprops.toShow.forEach(function(row,r){
       if(samprops.categIndex == r){ //if "all" is the factorName = '', then all will be returned
-        samprops[samprops.toShow[r].category] = e.factorName; //this writes it out to the args in resolver.js
+        samprops[samprops.toShow[r].category] = e.factorName; //this writes it out to the args in resolver.js //old way
+        //samprops['factors'][samprops.toShow[r].category] = e.factorName; //new way - testing.
         samprops.toShow[r].fnd = e.factorName;
       }
     })
-    this.setWaiting(1);
+    //this.setWaiting(1);
+    this.setUpdate(1);
     this.setState({samprops});
   }
 
@@ -329,6 +338,7 @@ export default class App extends React.PureComponent {
     samprops.bbox_ur = ur;
     //console.log(bbox_bl,bbox_ur)
     if(this.state.samprops.one_of != samprops.one_of){this.setWaiting(1)}
+    this.setUpdate(1);
     this.setState({samprops});
   };
 //not using onSamDataChange??
@@ -468,6 +478,8 @@ export default class App extends React.PureComponent {
               setClick={this.setClick}
               setHighlight={this.setHighlight}
               setWaiting={this.setWaiting}
+              setUpdate={this.setUpdate}
+              update={this.state.update}
               countData={this.countData}
               waiting={this.state.waiting}
               setOpenHousehold={this.setOpenHousehold}

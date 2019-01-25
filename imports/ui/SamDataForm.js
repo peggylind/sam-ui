@@ -1,14 +1,14 @@
 import React, { Component } from "react";
+import { Meteor } from 'meteor/meteor';
+
+import { withTracker } from 'meteor/react-meteor-data';
+import SamCitizens from '/imports/api/sam_citizens/sam_citizens';
+
+
 import gql from "graphql-tag";
 import { graphql, Query } from "react-apollo";
 import MapBox from "./map-box-app";
-import D3Scatter from "./d3-scatter";
-import samQuery from "./samquery.graphql.js";
-import houseQuery from "./housequery.graphql.js";
-//import asyncComponent from "./asyncComponent";
 
-//adding $age to query makes it fail with unexpected EOF??????
-//if thesee don't match type coming from mongo, it just dies without an error!
 
 const formatDollars = function(number){
   if (number!=undefined){
@@ -18,13 +18,7 @@ const formatDollars = function(number){
     return null
   }
 };
-
-//https://www.howtographql.com/ --lots more to use with new graphql 2.1 features.
-//could have ldg shared between 2
-//there's a setting in the apollo to share the data
-
-//try optimistic UI, and a feed for the loading??
-//https://blog.apollographql.com/tutorial-graphql-mutations-optimistic-ui-and-store-updates-f7b6b66bf0e2
+/* move into its own HOC??
 const GetHousehold = ({ account, household_id, showapts }) => (
   <Query
     query={houseQuery}
@@ -46,7 +40,6 @@ const GetHousehold = ({ account, household_id, showapts }) => (
               <div style={{position:"absolute",zIndex:'10',width:"100%",height:"100%",backgroundColor:"#7f7f7f33"}}>
               <div style={{marginTop:"30%", marginLeft:"3%", color:"green", fontSize:"2em",textAlign:"center"}}>
               <div>Loading Data ... </div><div>thank you for your patience</div></div></div>
-        //house = <span>Loading</span>
       }else{
         ldg = <span></span>
       };
@@ -101,41 +94,21 @@ const GetHousehold = ({ account, household_id, showapts }) => (
       );
     }}
   </Query>
-)
-
-//for later, in debugging
-// const ShowingSomeErrors = () => (
-//   <Query query={samQuery} errorPolicy="all">
-//     {({ error, data, loading }) => {
-//       if (loading) return <span>loading...</span>
-//       return (
-//         <div>
-//           <pre>Bad: {error.graphQLErrors.map(({ message }, i) => (
-//             <span key={i}>{message}</span>
-//           ))}
-//           </pre>
-//         </div>
-//       )
-//     }}
-//   </Query>
-// );
+) */
 
 
 class SamDataForm extends React.PureComponent {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
        super(props);
        this.setWaiting = this.props.setWaiting;
+       this.setUpdate = this.props.setUpdate;
        this.countData = this.props.countData;
        this.state = {
+         samcity_data: [],
          household_id: this.props.samprops.household_id,
          account: this.props.samprops.account,
          openHousehold: this.props.samprops.openHousehold,
          showapts: 0,
-         // plotWidth: '8%',
-         // plotHeight: '4%',
-         // containerwidth: '8',
-         // containerheight: '4',
-         //highlight_data: [],
          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
        };
    }
@@ -144,71 +117,44 @@ class SamDataForm extends React.PureComponent {
      const retrn = await fetch('/json/'+this.props.samprops.geojson_title)
      const geojsonsam = await retrn.json()
      this.setState({geojsonsam})
-     // const res = await fetch('/json/sam_of_100.json') //only if loading json for faster process
-     // const jsonsam = await res.json()
-     //this.setState({jsonsam})
    }
-   componentDidUpdate(newProps, prevState) {
-     // if(newProps.samcity){
-     // console.log('component did update in SamDataForm'+JSON.stringify(newProps.samcity.length))}
-     // console.log('prevState.household_id: '+prevState.household_id)
-     // console.log(newProps.samprops.household_id)
-     // if(prevState.plotOpen && !prevState.plotOpen2){ //trying to get window to open first - might be able to keep it from reloading
-     //   this.setState({plotOpen2:true})
-     // };
-     // if(!prevState.plotOpen && prevState.plotOpen2){
-     //   this.setState({plotOpen2:false})
-     // };
-     //this was not setting in time for the plot
-     // if (prevState.containerwidth != this.plotcontain.current.offsetWidth ||
-     //     prevState.containerheight != this.plotcontain.current.offsetHeight ){
-     //         this.setState({containerwidth:this.plotcontain.current.offsetWidth,
-     //         containerheight:this.plotcontain.current.offsetHeight});
-     // };
-   }
+
    static getDerivedStateFromProps(props, state) {
+     //there is a .stop on a subscription that could help clear cache??https://docs.meteor.com/api/pubsub.html#Meteor-subscribe
      props.error ? console.log(props.error) : null
-     // if(props.samcity){
-     // console.log('inside getDerivedStateFromProps in SamDataForm'+props.samcity.length)}
-       if(props.samprops.openHousehold){
-         return{
-           openHousehold:props.samprops.openHousehold,
-           household_id:props.samprops.household_id,
-           account:props.samprops.account
-         }
-       }else{
-         if(props.samprops != state.samprops){
-           //console.log(props.samprops)
-           return {samprops:props.samprops}
-         }else{
-           if(props.highlight_data != state.highlight_data){
-             return {highlight_data:props.highlight_data}
+
+     if(props.update==1){
+       props.setUpdate(0)
+        var qdb = {
+         coords: {
+           $geoWithin: {
+             $box: [props.samprops.bbox_bl,props.samprops.bbox_ur] //needs [[bottom-left],[upper-right]]
            }
-        }
-        return null
-      }
+         },
+         one_of:{$gte : props.samprops.one_of}
+       };
+       if(state.samprops){
+       if(props.samprops.one_of != state.samprops.one_of || props.samprops.bbox_bl != state.samprops.bbox_bl || props.samprops.bbox_ur != state.samprops.bbox_ur)
+       {console.log('just these')}}
+       Meteor.subscribe('samcity',qdb,{
+         onReady: function() {
+           props.setWaiting(0)
+         },
+         onError: function(error) {
+           console.log("error on dataload: "+error)
+         }
+         }
+       )
+       return {update:1,samprops:props.samprops}
+     }else{
+       return null
+     };
     }
-   //data={this.props.samprops.zoom <14 ? this.state.jsonsam : this.props.samcity}
-   //how can we get them both as part of the same data stream, and not reloading when you do search on new data characteristics?
+
     render(){
 
-      // const plotStyle = {
-      //   position: 'absolute',
-      //   left: '20%',
-      //   bottom: '0',
-      //   zindex: '3',
-      //   backgroundColor: 'white', //transparent
-      //   overflow: 'scroll'
-      // };
-      // const plotButtonStyle = {
-      //   position: 'absolute',
-      //   left: '50%',
-      //   zIndex: '10',
-      //   backgroundColor: 'white',
-      //   bottom: '0'
-      // };
       let patience = <div></div>
-      if (this.props.loading){ patience =
+      if (this.props.waiting){ patience =
           <div style={{position:"absolute",zIndex:'10',width:"100%",height:"100%",backgroundColor:"#7f7f7f33"}}>
           <div style={{marginTop:"30%", marginLeft:"3%", color:"green", fontSize:"2em",textAlign:"center"}}>
           <div>Loading Data ... </div><div>thank you for your patience</div></div></div>
@@ -240,12 +186,13 @@ class SamDataForm extends React.PureComponent {
             setHighlight={this.props.setHighlight}
             setText={this.props.setText}
             setWaiting={this.props.setWaiting}
+            setUpdate={this.props.setUpdate}
             countData={this.props.countData}
             waiting={this.props.waiting}
-            data={this.props.samcity}
+            update={this.props.update}
+            data={this.props.samcity_data}
             highlight_data={this.props.highlight_data}
             returnColors = {this.returnColors}
-            //data={this.props.samprops.zoom <10 ? this.state.jsonsam : this.props.samcity}
             geojsonsam={this.state.geojsonsam}
             mapprops={this.props.mapprops}
             samprops={this.props.samprops}
@@ -253,97 +200,20 @@ class SamDataForm extends React.PureComponent {
           </div>
 
         </div>
-
-      //  <div>
-
-
-      // {this.state.plotOpen && (
-      // <div style={plotButtonStyle}>
-      //         <button onClick={() => this.setState({ plotOpen: true, plotHeight: '75%', plotWidth: '75%' })}>
-      //           Show Plots
-      //         </button>
-      // </div>)}
-      // {this.state.plotOpen && (
-      //   <div style={plotButtonStyle}>
-      //           <button onClick={() => this.setState({ plotOpen: false, plotHeight: '4%', plotWidth: '8%' })}>
-      //             Hide Plots
-      //           </button>
-      //   </div>
-      // )}
-      // <div style={plotStyle} ref={this.plotcontain}>
-      // {this.state.plotOpen && (
-      //     <div id="plotcontainer">
-      //     <D3Scatter
-      //         setToolInfo={this.props.setToolInfo}
-      //         handlePopulationChange={this.props.handlePopulationChange}
-      //         setClick={this.props.setClick}
-      //         setWaiting={this.props.setWaiting}
-      //         data={this.props.samcity}
-      //         plotFactorColors={this.props.samprops.plotFactorColors}
-      //         containerwidth={1200}
-      //         containerheight={600}
-      //     /></div>
-      //   )}
-      //  </div>
-    //  </div>
-    //</div>
   )
 };
 };
-
-//can't seem to create this variable list dynamically
-export default graphql(samQuery,
-  {
-    options: props => ({
-      variables: {
-        account: props.samprops.account,
-        age: props.samprops.age,
-        asthma: props.samprops.asthma,
-        autism_by_CRH: props.samprops.autism_by_CRH,
-        autism_by_maternal_age: props.samprops.autism_by_maternal_age,
-        bbox_bl: props.samprops.bbox_bl,
-        bbox_ur: props.samprops.bbox_ur,
-        bottom_range: props.samprops.bottom_range,
-        bracket_age: props.samprops.bracket_age,
-        citizenship: props.samprops.citizenship,
-        coords: [props.samprops.longitude,props.samprops.latitude] || [-95.35,29.75],
-        date_erected: props.samprops.date_erected,
-        disability: props.samprops.disability,
-        dist: props.samprops.dist,
-        education_entropy_index: props.samprops.education_entropy_index,
-        educational_attainment: props.samprops.educational_attainment,
-        employment: props.samprops.employment,
-        english_speaking_skills: props.samprops.english_speaking_skills,
-        health_insurance: props.samprops.health_insurance,
-        household_id: props.samprops.household_id,
-        household_income: props.samprops.household_income,
-        household_type: props.samprops.household_type,
-        individual_id: props.samprops.individual_id,
-        language_at_home: props.samprops.language_at_home,
-        limit:  props.samprops.limit,
-        lowbirthweightbyrace: props.samprops.lowbirthweightbyrace,
-        maternal_CRH: props.samprops.maternal_CRH,
-        means_of_transportation_to_work: props.samprops.means_of_transportation_to_work,
-        member: props.samprops.member,
-        nativity: props.samprops.nativity,
-        one_of: props.samprops.one_of,
-        pregnant: props.samprops.pregnant,
-        prenatal_first_tri: props.samprops.prenatal_first_tri,
-        quality_description: props.samprops.quality_description,
-        race: props.samprops.race,
-        racial_entropy_index: props.samprops.racial_entropy_index,
-        sex: props.samprops.sex,
-        stresslevelincome: props.samprops.stresslevelincome,
-        stresslevelrace: props.samprops.stresslevelrace,
-        top_range: props.samprops.top_range,
-        travel_time_to_work: props.samprops.travel_time_to_work,
-        veteran_status: props.samprops.veteran_status,
-        zip: props.samprops.zip,
-        zip_education_entropy_index: props.samprops.zip_education_entropy_index,
-        zip_racial_entropy_index: props.samprops.zip_racial_entropy_index
+  export default withTracker((props) => {
+    var pipeline = {};
+    props.samprops.toShow.forEach(function(cat){
+      if(cat.fnd){
+        pipeline[cat.category] = cat.fnd;
       }
-    }),
-    props: ({ loading, error, data }) => ({ loading, error, ...data })
+      if(cat.fnd_top_num){
+        pipeline[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
+      }
+    })
+    return {samcity_data: SamCitizens.find(pipeline).fetch()}
   })(SamDataForm)
 
 //export default graphql(sam20kQuery, queryOptsWrap())(SamDataForm);
