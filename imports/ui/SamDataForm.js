@@ -124,7 +124,7 @@ class SamDataForm extends React.PureComponent {
      props.error ? console.log(props.error) : null
 
      if(props.update==1){
-       //props.setUpdate(0)
+       props.setUpdate(0)
         var qdb = {
          coords: {
            $geoWithin: {
