@@ -204,11 +204,11 @@ export default class App extends React.PureComponent {
               }
             }
          };
-         this.onMapChange = debounce(this.onMapChange, 2000);
-         this.setUpdate = debounce(this.setUpdate, 2000);
-         this.setWaiting = debounce(this.setWaiting, 200);
-         this.setToolInfo = debounce(this.setToolInfo, 200);
-         this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
+         this.onMapChange = debounce(this.onMapChange, 100);
+         this.setUpdate = debounce(this.setUpdate, 100);
+         this.setWaiting = debounce(this.setWaiting, 100);
+         this.setToolInfo = debounce(this.setToolInfo, 100);
+         this.handlePopulationChange = debounce(this.handlePopulationChange, 100);
    };
   //only still using to trigger measurement of display - could refactor around loading
   setWaiting = function(wait){

@@ -133,9 +133,13 @@ class SamDataForm extends React.PureComponent {
          },
          one_of:{$gte : props.samprops.one_of}
        };
-       if(state.samprops){
-       if(props.samprops.one_of != state.samprops.one_of || props.samprops.bbox_bl != state.samprops.bbox_bl || props.samprops.bbox_ur != state.samprops.bbox_ur)
-       {console.log('just these')}}
+       // if(state.samprops){
+       //   var long_change = (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0]) != 0 ?
+       //      (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0])/(state.samprops.bbox_bl[0]-state.samprops.bbox_ur[0]) : 0;
+       //   var lat_change = (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1]) != 0 ?
+       //     (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1])/(state.samprops.bbox_bl[1]-state.samprops.bbox_ur[1]) : 0;
+       // if(props.samprops.one_of != state.samprops.one_of || long_change > .08 || lat_change > .08)
+       // {console.log('just these')}
        Meteor.subscribe('samcity',qdb,{
          onReady: function() {
            props.setWaiting(0)
@@ -148,7 +152,7 @@ class SamDataForm extends React.PureComponent {
        return {update:1,samprops:props.samprops}
      }else{
        return null
-     };
+     }
     }
 
     render(){
@@ -213,7 +217,7 @@ class SamDataForm extends React.PureComponent {
         pipeline[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
       }
     })
-    return {samcity_data: SamCitizens.find(pipeline).fetch()}
+    return {samcity_data: SamCitizens.find(pipeline,{limit:10000}).fetch()}
   })(SamDataForm)
 
 //export default graphql(sam20kQuery, queryOptsWrap())(SamDataForm);

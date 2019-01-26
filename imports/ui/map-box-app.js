@@ -100,10 +100,10 @@ export default class MapBox extends Component {
           return {categIndex:props.samprops.categIndex}
         }
       }
-      // if (props.update){
-      //   props.setUpdate(0);
-      //   return {samdata:props.data}
-      // }
+      if (props.update){
+        props.setUpdate(0);
+        return {samdata:props.data}
+      }
 
       if (props.waiting){
         var tmpViewPort = new WebMercatorViewport(state.viewport) //the state.viewport can't be accessed after first time so have to make a new one
