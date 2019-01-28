@@ -66,8 +66,8 @@ export default class MapBox extends Component {
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
             bbox: this.props.mapprops.bbox,
             time: 0,
-            samdata: this.props.samdata || [],
-            waiting: 1,// this.props.waiting,
+            samdata: [], //this.props.data ||
+            waiting: this.props.waiting,
             categIndex: this.props.samprops.categIndex,
             cellSize: this.props.samprops.cellSize,
             highlight_data: this.props.highlight_data || [],
@@ -99,12 +99,8 @@ export default class MapBox extends Component {
           props.countData(props.data)
           return {categIndex:props.samprops.categIndex}
         }
-      }
-      if (props.update){
-        props.setUpdate(0);
-        return {samdata:props.data}
-      }
-
+      };
+      console.log(props.data.count())
       if (props.waiting){
         var tmpViewPort = new WebMercatorViewport(state.viewport) //the state.viewport can't be accessed after first time so have to make a new one
         var scale = getDistanceScales(state.viewport).metersPerPixel[0];
@@ -151,9 +147,11 @@ export default class MapBox extends Component {
          this.setState({geojsonsam:this.props.geojsonsam})
       };
       if (this.state.viewport != prevState.viewport){
-        newProps.setWaiting(1)
-        newProps.setUpdate(1)
-       };
+        if(this.state.viewport.zoom >= prevState.viewport.zoom){
+          newProps.setWaiting(1)
+          newProps.setUpdate(1)
+        };
+      };
     };
 
 //https://github.com/uber-common/viewport-mercator-project/blob/master/docs/api-reference/web-mercator-utils.md
@@ -206,6 +204,7 @@ export default class MapBox extends Component {
   const ScatterMap = new ScatterplotLayer({ //new RoundedRectangleLayer({ // doesn't pass the onHover and onClick properly; not sure why
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
+    minzoom: 9,
 		getPosition: d => [d.coords[0], d.coords[1]],
     getColor: d => this.returnColors(d[this.props.samprops.catShow]),
     opacity: this.props.samprops.opacity,

@@ -212,6 +212,7 @@ export default class App extends React.PureComponent {
    };
   //only still using to trigger measurement of display - could refactor around loading
   setWaiting = function(wait){
+    console.log('setWaiting fired '+wait)
     this.setState({waiting:wait})
   };
   setUpdate = function(up){

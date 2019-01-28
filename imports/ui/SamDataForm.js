@@ -18,6 +18,8 @@ const formatDollars = function(number){
     return null
   }
 };
+
+
 /* move into its own HOC??
 const GetHousehold = ({ account, household_id, showapts }) => (
   <Query
@@ -96,15 +98,17 @@ const GetHousehold = ({ account, household_id, showapts }) => (
   </Query>
 ) */
 
-
-class SamDataForm extends React.PureComponent {
+export default class SamDataForm extends React.PureComponent {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
        super(props);
        this.setWaiting = this.props.setWaiting;
        this.setUpdate = this.props.setUpdate;
        this.countData = this.props.countData;
        this.state = {
-         samcity_data: [],
+         firstload: 1,
+         waiting: this.props.waiting,
+         samcity_data: SamCitizens.find({}),
+         samprops: this.props.samprops,
          household_id: this.props.samprops.household_id,
          account: this.props.samprops.account,
          openHousehold: this.props.samprops.openHousehold,
@@ -112,6 +116,7 @@ class SamDataForm extends React.PureComponent {
          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
        };
    }
+
 
    async componentDidMount() {
      const retrn = await fetch('/json/'+this.props.samprops.geojson_title)
@@ -121,10 +126,33 @@ class SamDataForm extends React.PureComponent {
 
    static getDerivedStateFromProps(props, state) {
      //there is a .stop on a subscription that could help clear cache??https://docs.meteor.com/api/pubsub.html#Meteor-subscribe
-     props.error ? console.log(props.error) : null
-
-     if(props.update==1){
-       props.setUpdate(0)
+     //props.error ? console.log(props.error) : null
+     if(props.waiting!=state.waiting){
+       return {waiting:props.waiting}
+     }
+     if(props.update!=state.update){
+       return {update:props.update}
+     }
+     // if(props.samprops != state.samprops){
+     //   return {samprops:props.samprops}
+     // }
+     if(state.firstload){
+       console.log('first load')
+       Meteor.subscribe('samcity',{one_of:{$gte : 1000}},{
+         onReady: function() {
+           props.setWaiting(0)
+           //props.setUpdate(2) //do not know why it needs this to trigger!!
+           //return {waiting:0,samcity_data: SamCitizens.find({})}
+         },
+         onError: function(error) {
+           console.log("error on dataload: "+error)
+         }
+       });
+       return {firstload:0}
+     };
+     if(props.update==1 && state.samcity_data.count()>0){
+       console.log('props.update==1 '+state.waiting)
+        props.setUpdate(0) //should try to reimplement this logic - not clear if need to threads for update logic
         var qdb = {
          coords: {
            $geoWithin: {
@@ -133,32 +161,44 @@ class SamDataForm extends React.PureComponent {
          },
          one_of:{$gte : props.samprops.one_of}
        };
-       // if(state.samprops){
-       //   var long_change = (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0]) != 0 ?
-       //      (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0])/(state.samprops.bbox_bl[0]-state.samprops.bbox_ur[0]) : 0;
-       //   var lat_change = (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1]) != 0 ?
-       //     (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1])/(state.samprops.bbox_bl[1]-state.samprops.bbox_ur[1]) : 0;
-       // if(props.samprops.one_of != state.samprops.one_of || long_change > .08 || lat_change > .08)
-       // {console.log('just these')}
-       Meteor.subscribe('samcity',qdb,{
-         onReady: function() {
-           props.setWaiting(0)
-         },
-         onError: function(error) {
-           console.log("error on dataload: "+error)
-         }
-         }
-       )
-       return {update:1,samprops:props.samprops}
-     }else{
-       return null
-     }
-    }
+       //if(state.samprops){
+         var long_change = (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0]) != 0 ?
+            (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0])/(state.samprops.bbox_bl[0]-state.samprops.bbox_ur[0]) : 0;
+         var lat_change = (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1]) != 0 ?
+           (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1])/(state.samprops.bbox_bl[1]-state.samprops.bbox_ur[1]) : 0;
+         if(props.samprops.one_of != state.samprops.one_of && props.samprops.one_of < 1000){
+           if(long_change > .08 || lat_change > .08){
+           console.log('update subscribe')
+             Meteor.subscribe('samcity',qdb,{
+               onReady: function() {
+                 props.setWaiting(0)
+               },
+               onError: function(error) {
+                 console.log("error on dataload: "+error)
+               }
+             })}else{
+               props.setWaiting(0)
+             }};
+         var pipeline = {};
+         props.samprops.toShow.forEach(function(cat){
+           if(cat.fnd){
+             pipeline[cat.category] = cat.fnd;
+           }
+           if(cat.fnd_top_num){
+             pipeline[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
+           }
+         })
+         console.log(pipeline)
+         return {samprops:props.samprops, samcity_data: SamCitizens.find(pipeline)}
+   }else{
+     return null
+   }
+  }
 
-    render(){
+  render(){
 
       let patience = <div></div>
-      if (this.props.waiting){ patience =
+      if (this.state.waiting==1){ patience =
           <div style={{position:"absolute",zIndex:'10',width:"100%",height:"100%",backgroundColor:"#7f7f7f33"}}>
           <div style={{marginTop:"30%", marginLeft:"3%", color:"green", fontSize:"2em",textAlign:"center"}}>
           <div>Loading Data ... </div><div>thank you for your patience</div></div></div>
@@ -193,8 +233,7 @@ class SamDataForm extends React.PureComponent {
             setUpdate={this.props.setUpdate}
             countData={this.props.countData}
             waiting={this.props.waiting}
-            update={this.props.update}
-            data={this.props.samcity_data}
+            data={this.state.samcity_data}
             highlight_data={this.props.highlight_data}
             returnColors = {this.returnColors}
             geojsonsam={this.state.geojsonsam}
@@ -207,17 +246,17 @@ class SamDataForm extends React.PureComponent {
   )
 };
 };
-  export default withTracker((props) => {
-    var pipeline = {};
-    props.samprops.toShow.forEach(function(cat){
-      if(cat.fnd){
-        pipeline[cat.category] = cat.fnd;
-      }
-      if(cat.fnd_top_num){
-        pipeline[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
-      }
-    })
-    return {samcity_data: SamCitizens.find(pipeline,{limit:10000}).fetch()}
-  })(SamDataForm)
+  // export default withTracker((props) => {
+  //   var pipeline = {};
+  //   props.samprops.toShow.forEach(function(cat){
+  //     if(cat.fnd){
+  //       pipeline[cat.category] = cat.fnd;
+  //     }
+  //     if(cat.fnd_top_num){
+  //       pipeline[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
+  //     }
+  //   })
+  //   return {samcity_data: SamCitizens.find(pipeline).fetch()}
+  // })(SamDataForm)
 
 //export default graphql(sam20kQuery, queryOptsWrap())(SamDataForm);
