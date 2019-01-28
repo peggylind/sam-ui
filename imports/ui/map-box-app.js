@@ -100,8 +100,10 @@ export default class MapBox extends Component {
           return {categIndex:props.samprops.categIndex}
         }
       };
-      console.log(props.data.count())
-      if (props.waiting){
+      if(props.update!=state.update){
+        return {update:props.update}
+      };
+      if (state.update){
         var tmpViewPort = new WebMercatorViewport(state.viewport) //the state.viewport can't be accessed after first time so have to make a new one
         var scale = getDistanceScales(state.viewport).metersPerPixel[0];
         var width = window.innerWidth;
@@ -117,11 +119,10 @@ export default class MapBox extends Component {
         var tr = tmpViewPort.unproject([0,height])
         var bl = tmpViewPort.unproject([width,0])
         props.onMapChange(state.viewport,dist4search,worldHeight,tr,bl);
-        return {samdata:props.data}
+        return {update:0,samdata:props.data}
       }else{
         return {samdata:props.data}
       }
-
       if (state.cellSize != props.samprops.cellSize){
         return {cellSize: props.samprops.cellSize}
       }
@@ -148,6 +149,7 @@ export default class MapBox extends Component {
       };
       if (this.state.viewport != prevState.viewport){
         if(this.state.viewport.zoom >= prevState.viewport.zoom){
+          console.log(this.state.viewport.zoom >= prevState.viewport.zoom)
           newProps.setWaiting(1)
           newProps.setUpdate(1)
         };

@@ -216,6 +216,7 @@ export default class App extends React.PureComponent {
     this.setState({waiting:wait})
   };
   setUpdate = function(up){
+    console.log('setUpdate '+up)
     this.setState({update:up})
   }
   setOpenHousehold = function(open){
@@ -297,6 +298,7 @@ export default class App extends React.PureComponent {
       }
     })
     //this.setWaiting(1);
+    console.log('onFactortoShow')
     this.setUpdate(1);
     this.setState({samprops});
   }
@@ -339,6 +341,7 @@ export default class App extends React.PureComponent {
     samprops.bbox_ur = ur;
     //console.log(bbox_bl,bbox_ur)
     if(this.state.samprops.one_of != samprops.one_of){this.setWaiting(1)}
+    console.log('onMapChange')
     this.setUpdate(1);
     this.setState({samprops});
   };

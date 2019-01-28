@@ -150,9 +150,11 @@ export default class SamDataForm extends React.PureComponent {
        });
        return {firstload:0}
      };
-     if(props.update==1 && state.samcity_data.count()>0){
+     // if(props.update==1){
+     // console.log('props.update '+state.samcity_data.count())}
+     if(props.update==1){ // && state.samcity_data.count()>0){
        console.log('props.update==1 '+state.waiting)
-        props.setUpdate(0) //should try to reimplement this logic - not clear if need to threads for update logic
+        //props.setUpdate(0) //should try to reimplement this logic - not clear if need to threads for update logic
         var qdb = {
          coords: {
            $geoWithin: {
@@ -162,34 +164,37 @@ export default class SamDataForm extends React.PureComponent {
          one_of:{$gte : props.samprops.one_of}
        };
        //if(state.samprops){
-         var long_change = (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0]) != 0 ?
-            (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0])/(state.samprops.bbox_bl[0]-state.samprops.bbox_ur[0]) : 0;
-         var lat_change = (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1]) != 0 ?
-           (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1])/(state.samprops.bbox_bl[1]-state.samprops.bbox_ur[1]) : 0;
-         if(props.samprops.one_of != state.samprops.one_of && props.samprops.one_of < 1000){
-           if(long_change > .08 || lat_change > .08){
-           console.log('update subscribe')
-             Meteor.subscribe('samcity',qdb,{
-               onReady: function() {
-                 props.setWaiting(0)
-               },
-               onError: function(error) {
-                 console.log("error on dataload: "+error)
-               }
-             })}else{
+       var long_change = (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0]) != 0 ?
+          (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0])/(state.samprops.bbox_bl[0]-state.samprops.bbox_ur[0]) : 0;
+          console.log(long_change)
+       var lat_change = (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1]) != 0 ?
+         (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1])/(state.samprops.bbox_bl[1]-state.samprops.bbox_ur[1]) : 0;
+         console.log(lat_change)
+         console.log(props.samprops.one_of)
+       if(props.samprops.one_of != state.samprops.one_of && props.samprops.one_of < 1000){
+         if(long_change > .08 || lat_change > .08){
+         console.log('update subscribe')
+           Meteor.subscribe('samcity',qdb,{
+             onReady: function() {
                props.setWaiting(0)
-             }};
-         var pipeline = {};
-         props.samprops.toShow.forEach(function(cat){
-           if(cat.fnd){
-             pipeline[cat.category] = cat.fnd;
-           }
-           if(cat.fnd_top_num){
-             pipeline[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
-           }
-         })
-         console.log(pipeline)
-         return {samprops:props.samprops, samcity_data: SamCitizens.find(pipeline)}
+             },
+             onError: function(error) {
+               console.log("error on dataload: "+error)
+             }
+           })}else{
+             props.setWaiting(0)
+           }};
+       var pipeline = {};
+       props.samprops.toShow.forEach(function(cat){
+         if(cat.fnd){
+           pipeline[cat.category] = cat.fnd;
+         }
+         if(cat.fnd_top_num){
+           pipeline[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
+         }
+       })
+       console.log(pipeline)
+       return {samprops:props.samprops, samcity_data: SamCitizens.find(pipeline)}
    }else{
      return null
    }
@@ -233,6 +238,7 @@ export default class SamDataForm extends React.PureComponent {
             setUpdate={this.props.setUpdate}
             countData={this.props.countData}
             waiting={this.props.waiting}
+            update={this.props.update}
             data={this.state.samcity_data}
             highlight_data={this.props.highlight_data}
             returnColors = {this.returnColors}
