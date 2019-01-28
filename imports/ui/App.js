@@ -185,7 +185,7 @@ export default class App extends React.PureComponent {
        this.state = {
          waiting: 1,
          update: 1,
-         toolTipInfo : {text:'Hover or click for info.'},
+         toolTipInfo : {text:''}, //{text:'Hover or click for info.'},
          //explanation : model_explanations()[samprops.explainIndex],//{text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
          highlight_data : [],
          samprops : samprops,
