@@ -149,8 +149,7 @@ export default class MapBox extends Component {
       };
       if (this.state.viewport != prevState.viewport){
         if(this.state.viewport.zoom >= prevState.viewport.zoom){
-          console.log(this.state.viewport.zoom >= prevState.viewport.zoom)
-          newProps.setWaiting(1)
+          //newProps.setWaiting(1)
           newProps.setUpdate(1)
         };
       };

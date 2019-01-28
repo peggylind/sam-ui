@@ -141,7 +141,7 @@ export default class SamDataForm extends React.PureComponent {
        Meteor.subscribe('samcity',{one_of:{$gte : 1000}},{
          onReady: function() {
            props.setWaiting(0)
-           //props.setUpdate(2) //do not know why it needs this to trigger!!
+           //props.setUpdate(0)
            //return {waiting:0,samcity_data: SamCitizens.find({})}
          },
          onError: function(error) {
@@ -166,24 +166,27 @@ export default class SamDataForm extends React.PureComponent {
        //if(state.samprops){
        var long_change = (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0]) != 0 ?
           (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0])/(state.samprops.bbox_bl[0]-state.samprops.bbox_ur[0]) : 0;
-          console.log(long_change)
+          //console.log(long_change)
        var lat_change = (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1]) != 0 ?
          (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1])/(state.samprops.bbox_bl[1]-state.samprops.bbox_ur[1]) : 0;
-         console.log(lat_change)
-         console.log(props.samprops.one_of)
+         //console.log(lat_change)
+         //console.log(props.samprops.one_of)
        if(props.samprops.one_of != state.samprops.one_of && props.samprops.one_of < 1000){
          if(long_change > .08 || lat_change > .08){
          console.log('update subscribe')
            Meteor.subscribe('samcity',qdb,{
              onReady: function() {
                props.setWaiting(0)
+               props.setUpdate(0)
              },
              onError: function(error) {
                console.log("error on dataload: "+error)
              }
            })}else{
              props.setWaiting(0)
-           }};
+             props.setUpdate(0)
+           }
+         };
        var pipeline = {};
        props.samprops.toShow.forEach(function(cat){
          if(cat.fnd){

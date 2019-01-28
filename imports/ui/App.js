@@ -340,9 +340,10 @@ export default class App extends React.PureComponent {
     samprops.bbox_bl = bl;
     samprops.bbox_ur = ur;
     //console.log(bbox_bl,bbox_ur)
-    if(this.state.samprops.one_of != samprops.one_of){this.setWaiting(1)}
+    //if(this.state.samprops.one_of != samprops.one_of){this.setWaiting(1)}
     console.log('onMapChange')
     this.setUpdate(1);
+    // this.setWaiting(1);
     this.setState({samprops});
   };
 //not using onSamDataChange??
