@@ -330,7 +330,7 @@ export default class App extends React.PureComponent {
     //var mapprops = {...this.state.mapprops}
     samprops.latitude = mapstuff.latitude;
     samprops.longitude = mapstuff.longitude;
-    samprops.zoom = mapstuff.zoom;
+    samprops.zoom = mapstuff.zoom < 9 ? 9 : mapstuff.zoom;
     samprops.dist = dist;
     //samprops.cellSize = dist/50;
     samprops.height = height;

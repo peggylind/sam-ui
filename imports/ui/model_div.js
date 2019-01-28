@@ -96,7 +96,7 @@ export default class ModelDivs extends React.PureComponent {
 
 <div style={{position:"absolute",width:model_explanations(this.state.explainIndex).div_width,
               left:model_explanations(this.state.explainIndex).div_left,
-              overflow: "scroll",backgroundColor:"#f8f8ff",zIndex:"3"}}>
+              backgroundColor:"#f8f8ff",zIndex:"3"}}>
 <div><br/><hr/></div>
   <span style={{position:"absolute",zIndex:"3",textAlign:"center",width:"100%",top:"0%"}}>
 
@@ -106,7 +106,9 @@ export default class ModelDivs extends React.PureComponent {
       {this.state.isModelOpen ? '^' : 'v'}
     </button>
 
-    <div style={{position:"absolute",top:"0px",textAlign:"center",width:"100%",zIndex:"4"}}> {this.state.toolTipInfo.text} </div>
+    <div style={{position:"absolute",top:"0px",textAlign:"center",width:"100%",zIndex:"4"}}>
+      {this.state.toolTipInfo.text}
+    </div>
     {this.state.toolTipInfo.info ?
       <div style={{position:"relative",backgroundColor:"#f8f8ff",width:"90%",left:"5%",borderRadius:"15px",borderStyle:"solid",borderWidth:".2em"}}>
         {this.state.toolTipInfo.info.age != "NA" & this.state.toolTipInfo.info.age != ""   &&

@@ -94,9 +94,14 @@ export default class MapBox extends Component {
       }
 
     static getDerivedStateFromProps(props, state) {
+      if(state.viewport.zoom < 9){
+        var viewport = {...state.viewport}
+        viewport.zoom = 9
+        return {viewport}
+      }
       if(props.samprops){
         if(props.samprops.categIndex != state.categIndex){
-          props.countData(props.data)
+          props.countData(props.data.fetch())
           return {categIndex:props.samprops.categIndex}
         }
       };
@@ -205,7 +210,6 @@ export default class MapBox extends Component {
   const ScatterMap = new ScatterplotLayer({ //new RoundedRectangleLayer({ // doesn't pass the onHover and onClick properly; not sure why
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
-    minzoom: 9,
 		getPosition: d => [d.coords[0], d.coords[1]],
     getColor: d => this.returnColors(d[this.props.samprops.catShow]),
     opacity: this.props.samprops.opacity,
