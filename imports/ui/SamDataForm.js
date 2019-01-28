@@ -174,17 +174,18 @@ export default class SamDataForm extends React.PureComponent {
        if(props.samprops.one_of != state.samprops.one_of && props.samprops.one_of < 1000){
          if(long_change > .08 || lat_change > .08){
          console.log('update subscribe')
+         props.setWaiting(1);
            Meteor.subscribe('samcity',qdb,{
              onReady: function() {
-               props.setWaiting(0)
-               props.setUpdate(0)
+               props.setWaiting(0);
+               props.setUpdate(0);
              },
              onError: function(error) {
                console.log("error on dataload: "+error)
              }
            })}else{
-             props.setWaiting(0)
-             props.setUpdate(0)
+             props.setWaiting(0);
+             props.setUpdate(0);
            }
          };
        var pipeline = {};
