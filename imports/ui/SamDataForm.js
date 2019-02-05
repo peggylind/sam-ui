@@ -138,7 +138,9 @@ export default class SamDataForm extends React.PureComponent {
      // }
      if(state.firstload){
        console.log('first load')
-       Meteor.subscribe('samcity',{one_of:{$gte : 1000}},{
+       const pipeline = {}
+       pipeline['query'] = {one_of:{$gte : 1000}}
+       Meteor.subscribe('samcity',pipeline,{
          onReady: function() {
            props.setWaiting(0)
            //props.setUpdate(0)
@@ -154,6 +156,7 @@ export default class SamDataForm extends React.PureComponent {
      // console.log('props.update '+state.samcity_data.count())}
      if(props.update==1){ // && state.samcity_data.count()>0){
        console.log('props.update==1 '+state.waiting)
+       var pipe = {};
         //props.setUpdate(0) //should try to reimplement this logic - not clear if need to threads for update logic
         var qdb = {
          coords: {
@@ -174,8 +177,9 @@ export default class SamDataForm extends React.PureComponent {
        if(props.samprops.one_of != state.samprops.one_of && props.samprops.one_of < 1000){
          if(long_change > .08 || lat_change > .08){
          console.log('update subscribe')
+         pipe['query'] = qdb;
          props.setWaiting(1);
-           Meteor.subscribe('samcity',qdb,{
+           Meteor.subscribe('samcity',pipe,{
              onReady: function() {
                props.setWaiting(0);
                props.setUpdate(0);
@@ -188,17 +192,17 @@ export default class SamDataForm extends React.PureComponent {
              props.setUpdate(0);
            }
          };
-       var pipeline = {};
+      //
+       var query = {};
        props.samprops.toShow.forEach(function(cat){
          if(cat.fnd){
-           pipeline[cat.category] = cat.fnd;
+           query[cat.category] = cat.fnd;
          }
          if(cat.fnd_top_num){
-           pipeline[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
+           query[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
          }
        })
-       console.log(pipeline)
-       return {samprops:props.samprops, samcity_data: SamCitizens.find(pipeline)}
+       return {samprops:props.samprops, samcity_data: SamCitizens.find(query)}
    }else{
      return null
    }
