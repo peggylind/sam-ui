@@ -136,10 +136,16 @@ export default class SamDataForm extends React.PureComponent {
      // if(props.samprops != state.samprops){
      //   return {samprops:props.samprops}
      // }
+
      if(state.firstload){
        console.log('first load')
        const pipeline = {}
        pipeline['query'] = {one_of:{$gte : 1000}}
+       var fields = {one_of:1,coords:1};
+       props.samprops.toShow.forEach(function(cat){
+         fields[cat.category] = 1;
+       });
+       pipeline['fields']=fields;
        Meteor.subscribe('samcity',pipeline,{
          onReady: function() {
            props.setWaiting(0)
@@ -152,6 +158,7 @@ export default class SamDataForm extends React.PureComponent {
        });
        return {firstload:0}
      };
+
      // if(props.update==1){
      // console.log('props.update '+state.samcity_data.count())}
      if(props.update==1){ // && state.samcity_data.count()>0){
@@ -166,6 +173,17 @@ export default class SamDataForm extends React.PureComponent {
          },
          one_of:{$gte : props.samprops.one_of}
        };
+       var query = {};
+       var fields = {one_of:1,coords:1};
+       props.samprops.toShow.forEach(function(cat){
+         fields[cat.category] = 1;
+         if(cat.fnd){
+           query[cat.category] = cat.fnd;
+         }
+         if(cat.fnd_top_num){
+           query[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
+         }
+       })
        //if(state.samprops){
        var long_change = (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0]) != 0 ?
           (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0])/(state.samprops.bbox_bl[0]-state.samprops.bbox_ur[0]) : 0;
@@ -175,9 +193,10 @@ export default class SamDataForm extends React.PureComponent {
          //console.log(lat_change)
          //console.log(props.samprops.one_of)
        if(props.samprops.one_of != state.samprops.one_of && props.samprops.one_of < 1000){
-         if(long_change > .08 || lat_change > .08){
+         if(long_change > .08 || lat_change > .08){ //or if fields have changed!!
          console.log('update subscribe')
          pipe['query'] = qdb;
+         pipe['fields'] = fields;
          props.setWaiting(1);
            Meteor.subscribe('samcity',pipe,{
              onReady: function() {
@@ -193,16 +212,8 @@ export default class SamDataForm extends React.PureComponent {
            }
          };
       //
-       var query = {};
-       props.samprops.toShow.forEach(function(cat){
-         if(cat.fnd){
-           query[cat.category] = cat.fnd;
-         }
-         if(cat.fnd_top_num){
-           query[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
-         }
-       })
-       return {samprops:props.samprops, samcity_data: SamCitizens.find(query)}
+
+       return {samprops:props.samprops, samcity_data: SamCitizens.find(query,{fields:fields})}
    }else{
      return null
    }
