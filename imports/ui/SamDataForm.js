@@ -193,7 +193,7 @@ export default class SamDataForm extends React.PureComponent {
          //console.log(lat_change)
          //console.log(props.samprops.one_of)
        if(props.samprops.one_of != state.samprops.one_of && props.samprops.one_of < 1000){
-         if(long_change > .08 || lat_change > .08){ //or if fields have changed!!
+         if(long_change > .08 || lat_change > .08 || props.samprops.explainIndex != state.samprops.explainIndex ){ 
          console.log('update subscribe')
          pipe['query'] = qdb;
          pipe['fields'] = fields;

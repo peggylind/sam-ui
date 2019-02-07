@@ -358,6 +358,7 @@ export default class App extends React.PureComponent {
     //console.log(e.target.value) //should have a target - should set the explainIndex, and the explanation?? pull in model_explanation.js??
     var samprops = {...this.state.samprops}
     samprops.explainIndex = e.target.value;
+    this.setUpdate(1);
     //explanation = expl
     this.setState({samprops,exp_width: model_explanations(samprops.explainIndex).div_width})
     //could also set the toShow, etc. to go along with different models, if the pull-downs are too long
