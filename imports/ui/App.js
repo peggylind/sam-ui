@@ -211,6 +211,13 @@ export default class App extends React.PureComponent {
          this.handlePopulationChange = debounce(this.handlePopulationChange, 100);
    };
   //only still using to trigger measurement of display - could refactor around loading
+  numberWithCommas = function(x) {
+    if(x!=undefined){
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }else{
+      return null
+    }
+  }
   setWaiting = function(wait){
     console.log('setWaiting fired '+wait)
     this.setState({waiting:wait})
@@ -439,8 +446,21 @@ export default class App extends React.PureComponent {
       //if (loading) return null;
       return (
           <div>
-              <div style={{position:"absolute",width:"100%",fontSize:"4em",textAlign:"center", zIndex:"3"}}>
-                <span title="Houston on a first name basis" style={{backgroundColor:"#7f7f7f33",borderRadius:"25px"}}>Sam City</span>
+              <div style={{position:"absolute",width:"100%",textAlign:"center", zIndex:"3"}}>
+                <span title="Houston on a first name basis" style={{backgroundColor:"#7f7f7f33",borderRadius:"25px",fontSize:"4em"}}>Sam City</span>
+                <div><span title="Filtered sam data to show" style={{backgroundColor:"#7f7f7f33",fontSize:"1em"}}>Showing:</span></div>
+
+                <div><span title="Sampled number for display" style={{backgroundColor:"#7f7f7f33",fontSize:".8em"}}> One of: {this.state.samprops.one_of}</span></div>
+                <div><span style={{backgroundColor:"#7f7f7f33",fontSize:".8em"}}>of total:{this.numberWithCommas(this.state.samprops.datacount['totalpop'])}</span></div>
+                {this.state.samprops.toShow.map((category,ind) =>
+                  category.fnd &&
+                    <div key={'fnd'+ind}><span style={{backgroundColor:"#7f7f7f33",fontSize:"0.8em", textIndent:"-1em"}}>
+                      {category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20).toLowerCase()}
+                      <br></br>
+                      {this.state.samprops.datacount[category.category] &&
+                        this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
+                    </span></div>
+                )}
               </div>
               <div style={{position:"absolute",top:"75%",left:"85%",width:"10%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
                 <hr/>

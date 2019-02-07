@@ -77,6 +77,7 @@ export default class PullDown extends React.PureComponent {
       this.setState({samprops});
     };
   };
+  //also in App.js
   numberWithCommas = function(x) {
     if(x!=undefined){
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -125,16 +126,6 @@ export default class PullDown extends React.PureComponent {
       </div>
 
       <div title="Categories for display with colors" style={{fontSize:"1.5em"}}>Categories</div>
-      <span style={{fontSize:".7em"}}>first total:{this.numberWithCommas(this.state.samprops.datacount['totalpop'])}</span>
-      {this.state.samprops.toShow.map((category,ind) =>
-        category.fnd &&
-          <div style={{fontSize:"0.9em", backgroundColor:"#7f7f7f33",paddingLeft:"1em",textIndent:"-1em"}} key={ind}>
-            {category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20).toLowerCase()}
-            <br></br>
-            {this.state.samprops.datacount[category.category] &&
-              this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
-          </div>
-      )}
       {this.state.samprops.toShowScale.map((category,ind) =>
         category.fnd &&
           <div style={{fontSize:"0.9em", backgroundColor:"#7f7f7f33",paddingLeft:"1em",textIndent:"-1em"}} key={ind}>
