@@ -162,13 +162,13 @@ export default class SamDataForm extends React.PureComponent {
      // if(props.update==1){
      // console.log('props.update '+state.samcity_data.count())}
      if(props.update==1){ // && state.samcity_data.count()>0){
-       console.log('props.update==1 '+state.waiting)
+       //console.log('props.update==1 '+state.waiting)
        var pipe = {};
         //props.setUpdate(0) //should try to reimplement this logic - not clear if need to threads for update logic
         var qdb = {
          coords: {
            $geoWithin: {
-             $box: [props.samprops.bbox_bl,props.samprops.bbox_ur] //needs [[bottom-left],[upper-right]]
+             $box: [props.samprops.bbox_ur,props.samprops.bbox_bl] //needs [[bottom-left],[upper-right]]
            }
          },
          one_of:{$gte : props.samprops.one_of}
@@ -184,6 +184,7 @@ export default class SamDataForm extends React.PureComponent {
            query[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
          }
        })
+
        //if(state.samprops){
        var long_change = (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0]) != 0 ?
           (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0])/(state.samprops.bbox_bl[0]-state.samprops.bbox_ur[0]) : 0;
@@ -193,7 +194,7 @@ export default class SamDataForm extends React.PureComponent {
          //console.log(lat_change)
          //console.log(props.samprops.one_of)
        if(props.samprops.one_of != state.samprops.one_of && props.samprops.one_of < 1000){
-         if(long_change > .08 || lat_change > .08 || props.samprops.explainIndex != state.samprops.explainIndex ){ 
+         if(long_change > .08 || lat_change > .08 || props.samprops.explainIndex != state.samprops.explainIndex ){
          console.log('update subscribe')
          pipe['query'] = qdb;
          pipe['fields'] = fields;
@@ -213,7 +214,7 @@ export default class SamDataForm extends React.PureComponent {
          };
       //
 
-       return {samprops:props.samprops, samcity_data: SamCitizens.find(query,{fields:fields})}
+       return {samprops:props.samprops, samcity_data: SamCitizens.find(query,{fields:fields}), highlight_data: SamCitizens.find({race:'white'})}
    }else{
      return null
    }

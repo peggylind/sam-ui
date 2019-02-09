@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import DeckGL, { CompositeLayer, GeoJsonLayer, ScatterplotLayer, ArcLayer, TextLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, ContourLayer, MapController, Controller } from 'deck.gl';
+import DeckGL, { CompositeLayer, GeoJsonLayer, ScatterplotLayer, ArcLayer, TextLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, ContourLayer, PathLayer, MapController, Controller } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import WebMercatorViewport, {getDistanceScales} from 'viewport-mercator-project';
 //import debounce from 'lodash.debounce';
@@ -67,6 +67,7 @@ export default class MapBox extends Component {
             bbox: this.props.mapprops.bbox,
             time: 0,
             samdata: [], //this.props.data ||
+            pathdata: [],  //either push more paths or replace
             waiting: this.props.waiting,
             categIndex: this.props.samprops.categIndex,
             cellSize: this.props.samprops.cellSize,
@@ -120,11 +121,19 @@ export default class MapBox extends Component {
         }else{
           var dist4search = worldWidth
         };
-        //var tl = tmpViewPort.unproject([0,0])
-        var tr = tmpViewPort.unproject([0,height])
-        var bl = tmpViewPort.unproject([width,0])
+        //could put box on slider instead of writing 20
+        var linemargin = 50;
+        var tl = tmpViewPort.unproject([linemargin,linemargin])
+        var bl = tmpViewPort.unproject([linemargin,height-linemargin])
+        var tr = tmpViewPort.unproject([width-linemargin,linemargin])
+        var br = tmpViewPort.unproject([width-linemargin,height-linemargin])
+        var pathdata = [
+          { path:[tl,tr,br,bl,tl],
+            name: 'Testing what to show -- datacounts??'+tl,
+            color: [0,255,0,255] }
+        ];
         props.onMapChange(state.viewport,dist4search,worldHeight,tr,bl);
-        return {update:0,samdata:props.data}
+        return {update:0,samdata:props.data,pathdata:pathdata}
       }else{
         return {samdata:props.data}
       }
@@ -227,11 +236,11 @@ export default class MapBox extends Component {
   const HighlightMap = new ScatterplotLayer({
     id: 'highlight-layer',
     data: [...this.state.highlight_data],
-		getPosition: d => [d.coords[0], d.coords[1]],
+		getPosition: d => {console.log(d); return [d.coords[0], d.coords[1]]},
     getColor: [255,0,0,255],// d => this.returnColors(d[this.props.samprops.catShow]),
     opacity: 1, //this.props.samprops.opacity,
-    radiusMinPixels: this.props.samprops.radiusMinPixels,
-    radiusMaxPixels: this.props.samprops.radiusMaxPixels,
+    // radiusMinPixels: this.props.samprops.radiusMinPixels,
+    // radiusMaxPixels: this.props.samprops.radiusMaxPixels,
     strokeWidth: this.props.samprops.strokeWidth*20,
     //radiusScale: 2000,
     outline: this.props.samprops.outline,
@@ -295,7 +304,21 @@ export default class MapBox extends Component {
     getTextAnchor: 'middle',
     getAlignmentBaseline: 'center'//,
     //onHover: ({object}) => setTooltip(`${object.name}\n${object.address}`)
-  })
+  });
+  const PathMap = new PathLayer({
+    id: 'path-layer',
+    data: [...this.state.pathdata],
+    pickable: true,
+    widthScale: 2,
+    widthMinPixels: 2,
+    getPath: d => d.path,
+    getColor: d => d.color,
+    getWidth: d => 5,
+    onHover: ({object, x, y}) => {
+      console.log(object)
+      const tooltip = object ? object.name : null;
+    }
+  });
   // const ContourMap = new ContourLayer({ //not working
   //   id: 'contourLayer',
   //   data: [...this.state.samdata],
@@ -314,10 +337,10 @@ export default class MapBox extends Component {
      HexMap,
      PointCloudMap,
      GridMap,
-     GridCellMap//,
+     GridCellMap
   //   ContourMap
   ];
-  const main_layers = [main_layers_list[this.props.mapprops.mode]]
+  const main_layers = [main_layers_list[this.props.mapprops.mode],HighlightMap,PathMap]
   //const main_layers = [HighlightMap,TextMap,main_layers_list[this.props.mapprops.mode]]
   //const CompositeMap = new MapCompositeLayer(main_layers); onHover stopped working!
 

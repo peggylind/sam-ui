@@ -69,7 +69,7 @@ function list4plots (plots) {
   return makePlotColors(plotList) //which is a list of objects from toShow
 }
 
-const firstzoom = 9.6;
+const firstzoom = 9.3;
 const firstdist = 100000;
 const calcOpacity = (zoom) => { return 1 - (zoom/25)};
 const calcStrokeWidth = (zoom) =>
@@ -79,8 +79,8 @@ const calcStrokeWidth = (zoom) =>
 const calcOneOf = (zoom) =>
   zoom > 14.3 ? 1 : zoom > 13 ? 10 : zoom > 11.3 ? 100 : 1000;
   //zoom > 12.7 ? 1 : zoom < 11 ? 1000: zoom > 11 ? 100 : 10;
-const bbox_bl = [-97.1,28.16]; //first one should get everything
-const bbox_ur = [-94.1,30.94];
+const bbox_bl = []; // [-97.1,28.16]; //first one should get everything
+const bbox_ur = []; //[-94.1,30.94];
 
 const samprops = { //have all decided with same logic?? //a bunch of stuff should be fixed if we go apollo 3.1 - for now need it in both for search!!
   //racial_entropy_index: '',
@@ -180,7 +180,6 @@ export default class App extends React.PureComponent {
        this.setOpenHousehold = this.setOpenHousehold.bind(this);
        this.countData = this.countData.bind(this);
        this.changeSamProps = this.changeSamProps.bind(this);
-       //bbox is NW,NE,SE,SW
 
        this.state = {
          waiting: 1,
@@ -406,7 +405,6 @@ export default class App extends React.PureComponent {
   }
 
   setHighlight = function(array){
-    console.log(array)
     this.setState({highlight_data:array})
   }
   setText = function(txt,position){ //not sure what's wrong with this on TextLayer - need to control deck.gl render!!! for now, ignoring position
