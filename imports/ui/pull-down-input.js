@@ -100,7 +100,7 @@ export default class PullDown extends React.PureComponent {
   render() {
     //this.model_explanations = model_explanations
     return (
-      <div style={{backgroundColor:"#7f7f7f33"}}>
+      <div style={{backgroundColor:"#4C7ED0"}}>
       <div title="Health Models and Interventions" style={{fontSize:"1.5em"}}>Models</div>
       <div style={{fontSize:"1.5em"}}>
       <select onChange={this.setExplanation} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
@@ -151,13 +151,14 @@ export default class PullDown extends React.PureComponent {
               <div style={{fontSize:"1em", overflow:"auto"}}>
 
                 {this.state.samprops.toShow[this.state.samprops.categIndex].factors.map((factor,ind) =>
-                  this.state.samprops.toShow[this.state.samprops.categIndex].fnd != factor.factorName &&
+
                   <button key={ind}
                     onClick={(e) => this.onFactortoShow(factor)}
                     style={{backgroundColor: this.state.samprops.allcolors[factor.factorColor].HEX,
-                      borderColor: this.state.samprops.allcolors[factor.factorColor].HEX,
                       position:'relative',width:'100%',cursor:'pointer',
-                      borderWidth: "3px", borderStyle:"dashed"}}>
+                      borderWidth: this.state.samprops.toShow[this.state.samprops.categIndex].fnd != factor.factorName ? '3px' : '4px',
+                      borderColor: this.state.samprops.toShow[this.state.samprops.categIndex].fnd != factor.factorName ? this.state.samprops.allcolors[factor.factorColor].HEX : '#040404',
+                      borderStyle:"inset"}}>
 
                     <span>
                      {factor.factorName.substring(0,24)}
@@ -180,7 +181,7 @@ export default class PullDown extends React.PureComponent {
                     onClick={(e) => this.onFactortoShow('')}
                     style={{backgroundColor:'#ffffff',cursor:'pointer',
                       borderColor:'#ffffff',position:'relative',width:'100%',
-                      borderWidth: "3px", borderStyle:"solid"}}>
+                      borderWidth: "3px", borderStyle:"inset"}}>
                       <span>
                       total {this.state.samprops.toShow[this.state.samprops.categIndex].pretty_name}
                       </span>

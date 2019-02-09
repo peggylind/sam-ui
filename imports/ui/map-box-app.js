@@ -340,7 +340,7 @@ export default class MapBox extends Component {
      GridCellMap
   //   ContourMap
   ];
-  const main_layers = [main_layers_list[this.props.mapprops.mode],HighlightMap,PathMap]
+  const main_layers = [main_layers_list[this.props.mapprops.mode],HighlightMap] //PathMap works, but need to rethink the modes...
   //const main_layers = [HighlightMap,TextMap,main_layers_list[this.props.mapprops.mode]]
   //const CompositeMap = new MapCompositeLayer(main_layers); onHover stopped working!
 

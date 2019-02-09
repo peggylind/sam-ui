@@ -198,6 +198,7 @@ export default class SamDataForm extends React.PureComponent {
          console.log('update subscribe')
          pipe['query'] = qdb;
          pipe['fields'] = fields;
+         pipe['update'] = 1
          props.setWaiting(1);
            Meteor.subscribe('samcity',pipe,{
              onReady: function() {
