@@ -209,14 +209,6 @@ export default class App extends React.PureComponent {
          this.setToolInfo = debounce(this.setToolInfo, 100);
          this.handlePopulationChange = debounce(this.handlePopulationChange, 100);
    };
-  //only still using to trigger measurement of display - could refactor around loading
-  numberWithCommas = function(x) {
-    if(x!=undefined){
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }else{
-      return null
-    }
-  }
   setWaiting = function(wait){
     console.log('setWaiting fired '+wait)
     this.setState({waiting:wait})
@@ -248,7 +240,6 @@ export default class App extends React.PureComponent {
 
     }
     samprops.datacount['initialcount'] = 0;
-    console.log('datacount '+samprops.datacount)
     this.setState({samprops});
   }
   onGridSizeChange = function(size) {
@@ -446,16 +437,7 @@ export default class App extends React.PureComponent {
       return (
           <div>
               <div style={{position:"absolute",width:"100%",textAlign:"center", zIndex:"3"}}>
-                <span title="Houston on a first name basis" style={{backgroundColor:"#DAF7A6",borderRadius:"12px",fontSize:"4em"}}>Sam City</span>
-                {this.state.samprops.toShow.map((category,ind) =>
-                  category.fnd &&
-                    <div key={'fnd'+ind}><span style={{backgroundColor:"#4C7ED0",fontSize:"0.8em", textIndent:"-1em"}}>
-                      {category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20).toLowerCase()}
-                      <br></br>
-                      {this.state.samprops.datacount[category.category] &&
-                        this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
-                    </span></div>
-                )}
+                <span title="Houston on a first name basis" style={{backgroundColor:"#F6BE00",borderRadius:"12px",fontSize:"4em",borderStyle:"inset",borderColor:"#888B8D"}}>Sam City</span>
               </div>
               <div style={{position:"absolute",top:"75%",left:"85%",width:"10%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
                 <hr/>

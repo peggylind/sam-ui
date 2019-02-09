@@ -38,7 +38,7 @@ export default class LegendBox extends React.PureComponent {
         width: '25%',
         height: '92%',
         borderRadius:'25px',
-        backgroundColor: 'white',
+        backgroundColor: '#F6BE00',
         overflow: 'scroll'
       }
       const boxButtonStyle = {

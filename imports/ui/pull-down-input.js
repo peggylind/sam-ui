@@ -100,7 +100,7 @@ export default class PullDown extends React.PureComponent {
   render() {
     //this.model_explanations = model_explanations
     return (
-      <div style={{backgroundColor:"#4C7ED0"}}>
+      <div style={{backgroundColor:"#F6BE00",borderRadius:"12px",borderStyle:"inset",borderColor:"#888B8D"}}>
       <div title="Health Models and Interventions" style={{fontSize:"1.5em"}}>Models</div>
       <div style={{fontSize:"1.5em"}}>
       <select onChange={this.setExplanation} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
@@ -126,15 +126,7 @@ export default class PullDown extends React.PureComponent {
       </div>
 
       <div title="Categories for display with colors" style={{fontSize:"1.5em"}}>Categories</div>
-      {this.state.samprops.toShowScale.map((category,ind) =>
-        category.fnd &&
-          <div style={{fontSize:"0.9em", backgroundColor:"#7f7f7f33",paddingLeft:"1em",textIndent:"-1em"}} key={ind}>
-            {category.pretty_name.substring(0,20)} : {category.bottom_range} - {category.top_range}
-            <br></br>
-            {this.state.samprops.datacount[category.category] &&
-              this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
-          </div>
-      )}
+
       <div style={{fontSize:"1.5em"}}>
         <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
             defaultValue={this.state.samprops.toShow[this.state.samprops.categIndex].category}>
@@ -182,14 +174,36 @@ export default class PullDown extends React.PureComponent {
                     style={{backgroundColor:'#ffffff',cursor:'pointer',
                       borderColor:'#ffffff',position:'relative',width:'100%',
                       borderWidth: "3px", borderStyle:"inset"}}>
-                      <span>
+                      <div>
                       total showing
-                      </span>
-                      <br></br>
-                      <span title={'of total pop: '+this.numberWithCommas(this.state.samprops.datacount['totalpop'])}>
+                      </div>
+                      <div title={'of total pop: '+this.numberWithCommas(this.state.samprops.datacount['totalpop'])}>
                         {this.numberWithCommas(this.state.samprops.datacount[this.state.samprops.toShow[this.state.samprops.categIndex].category]['all'])}
-                      </span>
+                      </div>
                   </button>
+
+                  {this.state.samprops.toShow.map((category,ind) =>
+                    category.fnd &&
+                      <div key={'fnd'+ind}>
+                      <span style={{backgroundColor:"#F6BE00",fontSize:"1em",zIndex:6}}>
+                      <div>Filtered by</div>
+                        {category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20).toLowerCase()}
+                        <br></br>
+                        {this.state.samprops.datacount[category.category] &&
+                          this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
+                      </span>
+                      </div>
+                  )}
+
+                  {this.state.samprops.toShowScale.map((category,ind) =>
+                    category.fnd &&
+                      <div style={{backgroundColor:"#F6BE00",fontSize:"1em",zIndex:6}} key={ind}>
+                        {category.pretty_name.substring(0,20)} : {category.bottom_range} - {category.top_range}
+                        <br></br>
+                        {this.state.samprops.datacount[category.category] &&
+                          this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
+                      </div>
+                  )}
 
 
                   <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
