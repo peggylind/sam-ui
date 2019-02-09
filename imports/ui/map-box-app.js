@@ -102,9 +102,12 @@ export default class MapBox extends Component {
       }
       if(props.samprops){
         if(props.samprops.categIndex != state.categIndex){
-          props.countData(props.data.fetch())
+          props.countData(props.data.fetch());
           return {categIndex:props.samprops.categIndex}
         }
+      };
+      if(props.data != state.samdata && !props.waiting){ //adding the catch for props.waiting seems to make a huge difference in speed
+        return {samdata:props.data}
       };
       if(props.update!=state.update){
         return {update:props.update}
@@ -133,9 +136,12 @@ export default class MapBox extends Component {
             color: [0,255,0,255] }
         ];
         props.onMapChange(state.viewport,dist4search,worldHeight,tr,bl);
+        if(state.samdata.collection && !props.waiting){
+          props.countData(props.data.fetch());
+        }
         return {update:0,samdata:props.data,pathdata:pathdata}
       }else{
-        return {samdata:props.data}
+        return null
       }
       if (state.cellSize != props.samprops.cellSize){
         return {cellSize: props.samprops.cellSize}
@@ -161,6 +167,10 @@ export default class MapBox extends Component {
         //console.log(this.props.geojsonsam)
          this.setState({geojsonsam:this.props.geojsonsam})
       };
+      //
+      if (newProps.data != prevState.samdata && prevState.samdata.collection){ //only does first one
+        newProps.countData(newProps.data.fetch());
+      }
       if (this.state.viewport != prevState.viewport){
         if(this.state.viewport.zoom >= prevState.viewport.zoom){
           //newProps.setWaiting(1)
@@ -169,11 +179,7 @@ export default class MapBox extends Component {
       };
     };
 
-//https://github.com/uber-common/viewport-mercator-project/blob/master/docs/api-reference/web-mercator-utils.md
-
   render() {
-    //console.log('in mb render: '+this.state.highlight_data)
-    //const data = this.state.geojsonsam;
   const GeoMap = new GeoJsonLayer({
     id: 'geojson-layer',
     data: this.state.geojsonsam,
@@ -235,22 +241,19 @@ export default class MapBox extends Component {
   });
   const HighlightMap = new ScatterplotLayer({
     id: 'highlight-layer',
-    data: [...this.state.highlight_data],
-		getPosition: d => {console.log(d); return [d.coords[0], d.coords[1]]},
+    data: [...this.props.highlight_data],
+		getPosition: d => [d.coords[0], d.coords[1]],
     getColor: [255,0,0,255],// d => this.returnColors(d[this.props.samprops.catShow]),
     opacity: 1, //this.props.samprops.opacity,
-    // radiusMinPixels: this.props.samprops.radiusMinPixels,
-    // radiusMaxPixels: this.props.samprops.radiusMaxPixels,
+    radiusMinPixels: this.props.samprops.radiusMinPixels,
+    radiusMaxPixels: this.props.samprops.radiusMaxPixels,
     strokeWidth: this.props.samprops.strokeWidth*20,
     //radiusScale: 2000,
     outline: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
     autoHighlight: true,
     //onHover: ({object}) => this.setToolInfo(object),
-    onClick: ({object}) => this.setClick(object),
-    waiting: this.state.waiting,
-    //gl_wait: this.state.gl_wait,
-    setWaiting: this.props.setWaiting
+    onClick: ({object}) => this.setClick(object)
   });
   //You can subClassing HexagonLayer and override the _onGetSublayerElevation method with your own. This method takes each cell {centroid: [], points: []. index} as input , and returns the elevation. Note the points: [] is the array of data points that contained by each cell. You can use these array of points to calculate your own elevation.
   const HexMap = new HexagonLayer({
@@ -340,7 +343,7 @@ export default class MapBox extends Component {
      GridCellMap
   //   ContourMap
   ];
-  const main_layers = [main_layers_list[this.props.mapprops.mode],HighlightMap] //PathMap works, but need to rethink the modes...
+  const main_layers = [main_layers_list[this.props.mapprops.mode]] //PathMap works, but need to rethink the modes...
   //const main_layers = [HighlightMap,TextMap,main_layers_list[this.props.mapprops.mode]]
   //const CompositeMap = new MapCompositeLayer(main_layers); onHover stopped working!
 
@@ -348,7 +351,6 @@ export default class MapBox extends Component {
       <ReactMapGL
         {...this.state.viewport}
         mapboxApiAccessToken={this.state.mapboxApiAccessToken}
-        waiting={this.state.waiting}
         mapControls={this.SamControls}
         onViewportChange={(viewport) => this.setState({viewport})}
       >

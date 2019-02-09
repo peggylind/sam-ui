@@ -248,6 +248,7 @@ export default class App extends React.PureComponent {
 
     }
     samprops.datacount['initialcount'] = 0;
+    console.log('datacount '+samprops.datacount)
     this.setState({samprops});
   }
   onGridSizeChange = function(size) {
@@ -445,11 +446,7 @@ export default class App extends React.PureComponent {
       return (
           <div>
               <div style={{position:"absolute",width:"100%",textAlign:"center", zIndex:"3"}}>
-                <span title="Houston on a first name basis" style={{backgroundColor:"#4C7ED0",borderRadius:"5px",fontSize:"4em"}}>Sam City</span>
-                <div><span title="Filtered sam data to show" style={{backgroundColor:"#4C7ED0",fontSize:"1em"}}>Showing:</span></div>
-
-                <div><span title="Sampled number for display" style={{backgroundColor:"#4C7ED0",fontSize:".8em"}}> One of: {this.state.samprops.one_of}</span></div>
-                <div><span style={{backgroundColor:"#4C7ED0",fontSize:".8em"}}>of total:{this.numberWithCommas(this.state.samprops.datacount['totalpop'])}</span></div>
+                <span title="Houston on a first name basis" style={{backgroundColor:"#DAF7A6",borderRadius:"12px",fontSize:"4em"}}>Sam City</span>
                 {this.state.samprops.toShow.map((category,ind) =>
                   category.fnd &&
                     <div key={'fnd'+ind}><span style={{backgroundColor:"#4C7ED0",fontSize:"0.8em", textIndent:"-1em"}}>

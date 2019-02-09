@@ -107,7 +107,8 @@ export default class SamDataForm extends React.PureComponent {
        this.state = {
          firstload: 1,
          waiting: this.props.waiting,
-         samcity_data: SamCitizens.find({}),
+         samcity_data: [],// SamCitizens.find({}),
+         highlight_data: [],
          samprops: this.props.samprops,
          household_id: this.props.samprops.household_id,
          account: this.props.samprops.account,
@@ -261,7 +262,7 @@ export default class SamDataForm extends React.PureComponent {
             waiting={this.props.waiting}
             update={this.props.update}
             data={this.state.samcity_data}
-            highlight_data={this.props.highlight_data}
+            highlight_data={this.state.highlight_data}
             returnColors = {this.returnColors}
             geojsonsam={this.state.geojsonsam}
             mapprops={this.props.mapprops}

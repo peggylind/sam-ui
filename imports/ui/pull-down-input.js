@@ -160,11 +160,11 @@ export default class PullDown extends React.PureComponent {
                       borderColor: this.state.samprops.toShow[this.state.samprops.categIndex].fnd != factor.factorName ? this.state.samprops.allcolors[factor.factorColor].HEX : '#040404',
                       borderStyle:"inset"}}>
 
-                    <span>
+                    <span style={{float:'left',width:'50%'}}>
                      {factor.factorName.substring(0,24)}
                     </span>
-                    <br></br>
-                    <span>
+
+                    <span style={{backgroundColor: this.state.samprops.allcolors[factor.factorColor].HEX,float:'right',width:'50%'}}>
                       {this.numberWithCommas(this.state.samprops.datacount[this.state.samprops.toShow[this.state.samprops.categIndex].category][factor.factorName])}
                     </span>
 
@@ -183,10 +183,10 @@ export default class PullDown extends React.PureComponent {
                       borderColor:'#ffffff',position:'relative',width:'100%',
                       borderWidth: "3px", borderStyle:"inset"}}>
                       <span>
-                      total {this.state.samprops.toShow[this.state.samprops.categIndex].pretty_name}
+                      total showing
                       </span>
                       <br></br>
-                      <span>
+                      <span title={'of total pop: '+this.numberWithCommas(this.state.samprops.datacount['totalpop'])}>
                         {this.numberWithCommas(this.state.samprops.datacount[this.state.samprops.toShow[this.state.samprops.categIndex].category]['all'])}
                       </span>
                   </button>
