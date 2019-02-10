@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import DeckGL, { CompositeLayer, GeoJsonLayer, ScatterplotLayer, ArcLayer, TextLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, ContourLayer, PathLayer, MapController, Controller } from 'deck.gl';
+import DeckGL, { GeoJsonLayer, ContourLayer, ScatterplotLayer, ArcLayer, TextLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, PathLayer, MapController, Controller } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import WebMercatorViewport, {getDistanceScales} from 'viewport-mercator-project';
 //import debounce from 'lodash.debounce';
@@ -227,13 +227,13 @@ export default class MapBox extends Component {
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
 		getPosition: d => [d.coords[0], d.coords[1]],
-    getColor: d => this.returnColors(d[this.props.samprops.catShow]),
+    getFillColor: d => this.returnColors(d[this.props.samprops.catShow]),
     opacity: this.props.samprops.opacity,
     radiusMinPixels: this.props.samprops.radiusMinPixels,
     radiusMaxPixels: this.props.samprops.radiusMaxPixels,
-    strokeWidth: this.props.samprops.strokeWidth,
+    getLineWidth: this.props.samprops.strokeWidth,
     //radiusScale: this.props.samprops.radiusScale,
-    outline: this.props.samprops.outline,
+    stroked: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
     cornerRadius: .2,
     //autoHighlight: true,
@@ -244,13 +244,13 @@ export default class MapBox extends Component {
     id: 'highlight-layer',
     data: [...this.props.highlight_data],
 		getPosition: d => [d.coords[0], d.coords[1]],
-    getColor: [255,0,0,255],// d => this.returnColors(d[this.props.samprops.catShow]),
+    getFillColor: [255,0,0,255],// d => this.returnColors(d[this.props.samprops.catShow]),
     opacity: 1, //this.props.samprops.opacity,
     radiusMinPixels: this.props.samprops.radiusMinPixels,
     radiusMaxPixels: this.props.samprops.radiusMaxPixels,
-    strokeWidth: this.props.samprops.strokeWidth*20,
+    getLineWidth: this.props.samprops.strokeWidth*20,
     //radiusScale: 2000,
-    outline: this.props.samprops.outline,
+    stroked: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
     autoHighlight: true,
     //onHover: ({object}) => this.setToolInfo(object),
@@ -313,8 +313,8 @@ export default class MapBox extends Component {
     id: 'path-layer',
     data: [...this.state.pathdata],
     pickable: true,
-    widthScale: 2,
-    widthMinPixels: 2,
+    widthScale: 1,
+    widthMinPixels: 1,
     getPath: d => d.path,
     getColor: d => d.color,
     getWidth: d => 5,
@@ -323,6 +323,7 @@ export default class MapBox extends Component {
       const tooltip = object ? object.name : null;
     }
   });
+  console.log(ContourLayer)
   // const ContourMap = new ContourLayer({ //not working
   //   id: 'contour-layer',
   //   data: [...this.state.samdata],
@@ -338,11 +339,11 @@ export default class MapBox extends Component {
   const main_layers_list = [
      GeoMap,
      ScatterMap,
-     PathMap,
      PointCloudMap,
      GridMap,
      HexMap,
-     GridCellMap//,
+     GridCellMap,
+     PathMap
   //   ContourMap
   ];
   const main_layers = [main_layers_list[this.props.mapprops.mode]] //PathMap works, but need to rethink the modes...

@@ -5,9 +5,9 @@
     "start": "meteor run"
   },
   "dependencies": {
-    "bcrypt": "^2.0.1",
+    "bcrypt": "^3.0.4",
     "body-parser": "^1.18.3",
-    "deck.gl": "^6.2.4",
+    "deck.gl": "^7.0.0-alpha.3",
     "express": "^4.16.3",
     "imports": "^1.0.0",
     "lodash": "^4.17.11",

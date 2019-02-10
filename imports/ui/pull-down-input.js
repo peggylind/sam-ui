@@ -97,17 +97,14 @@ export default class PullDown extends React.PureComponent {
     }
   }
   onScaleSelect(event){
-    console.log(event.target)
     this.onScaleChange(event.target.value,"ScaletoShow")
-    this.setState({ScaletoShow:event.target.value})
+    this.setState({ScaletoShow:event.target.value}) //may not have to setState - need to experiment...
   }
   onChangeHeight(event){
-    console.log(event)
     this.onScaleChange(event,"ScaleHeight")
     this.setState({ScaletoShow:event})
   }
   onUpper(event){
-    console.log(event)
     this.onScaleChange(event,"ScaleTop")
     this.setState({ScaletoShow:event})
   }
