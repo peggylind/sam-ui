@@ -1,10 +1,13 @@
 import React, { Component } from "react";
-import DeckGL, { GeoJsonLayer, ContourLayer, ScatterplotLayer, ArcLayer, TextLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, PathLayer, MapController, Controller } from 'deck.gl';
+import DeckGL, { GeoJsonLayer, ScatterplotLayer, ArcLayer, TextLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, PathLayer } from 'deck.gl';
+//import {ContourLayer} from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import WebMercatorViewport, {getDistanceScales} from 'viewport-mercator-project';
 //import debounce from 'lodash.debounce';
 import SamMapControls from './SamMapController';
-import RoundedRectangleLayer from './rounded_rectangle_layer';
+import RoundedRectangleLayer from './layers/rounded_rectangle_layer';
+import ContourLayer from './layers/contour-layer/contour-layer'; //still not sure why it wouldn't import from deck.gl, but always returned undefined...
+
 
 const west = -95.91;
 const east = -94.67;
@@ -323,19 +326,18 @@ export default class MapBox extends Component {
       const tooltip = object ? object.name : null;
     }
   });
-  console.log(ContourLayer)
-  // const ContourMap = new ContourLayer({ //not working
-  //   id: 'contour-layer',
-  //   data: [...this.state.samdata],
-  //   // Three contours are rendered.
-  //   contours: [
-  //     {threshold: 1, color: [255, 0, 0], strokeWidth: 1},
-  //     {threshold: 5, color: [0, 255, 0], strokeWidth: 2},
-  //     {threshold: 10, color: [0, 0, 255], strokeWidth: 5}
-  //   ],
-  //   cellSize: 200,
-  //   getPosition: d => [d.coords[0], d.coords[1]]
-  // });
+  const ContourMap = new ContourLayer({ //not working
+    id: 'contour-layer',
+    data: [...this.state.samdata],
+    // Three contours are rendered.
+    contours: [
+      {threshold: 1, color: [255, 0, 0], strokeWidth: 1},
+      {threshold: 5, color: [0, 255, 0], strokeWidth: 2},
+      {threshold: 10, color: [0, 0, 255], strokeWidth: 5}
+    ],
+    cellSize: 700,
+    getPosition: d => [d.coords[0], d.coords[1]]
+  });
   const main_layers_list = [
      GeoMap,
      ScatterMap,
@@ -343,8 +345,8 @@ export default class MapBox extends Component {
      GridMap,
      HexMap,
      GridCellMap,
-     PathMap
-  //   ContourMap
+     PathMap,
+     ContourMap
   ];
   const main_layers = [main_layers_list[this.props.mapprops.mode]] //PathMap works, but need to rethink the modes...
   //const main_layers = [HighlightMap,TextMap,main_layers_list[this.props.mapprops.mode]]

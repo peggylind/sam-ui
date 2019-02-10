@@ -271,7 +271,7 @@ export default class App extends React.PureComponent {
             samprops.toShowScale[r].fnd_top_num = e_obj.ScaleTop;
             samprops.toShowScale[r].ScaleHeight = e_obj.ScaleHeight;
             samprops.toShowScale[r].Mode = e_obj.Mode;
-            if(r==0){mapprops.mode=1}else{mapprops.mode=2}; //other scale possibilities later
+            if(r==0){mapprops.mode=1}else{mapprops.mode=7}; //other scale possibilities later
             //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
         }})
     this.setState({samprops,mapprops});
