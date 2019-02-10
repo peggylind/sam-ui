@@ -30,12 +30,20 @@ export default class PullDown extends React.PureComponent {
     this.setExplanation = this.props.setExplanation.bind(this);
     this.onFactortoShow = this.onFactortoShow.bind(this);
     this.onScaleChange = this.onScaleChange.bind(this);
+    this.onScaleSelect = this.onScaleSelect.bind(this);
+    this.onChangeHeight = this.onChangeHeight.bind(this);
+    this.onUpper = this.onUpper.bind(this);
+    this.onLower = this.onLower.bind(this);
     this.onCatChange = this.onCatChange.bind(this);
     this.onGridSizeChange = this.onGridSizeChange.bind(this);
     this.onChangetoShow = this.onChangetoShow.bind(this);
 
     this.state = {
-      gridmode: this.props.mapprops.mode,
+      ScaletoShow: '',
+      ScaleHeight: 1,
+      ScaleTop: 0,
+      ScaleBottom: 0,
+      Mode:this.props.mapprops.mode,
       //samprops : this.props.samprops,
       changeColors : this.props.samprops.changeColors
     }
@@ -57,8 +65,11 @@ export default class PullDown extends React.PureComponent {
   onFactortoShow(e){
     this.props.onFactortoShow(e)
   }
-  onScaleChange(event) { //if you take value of index, it does the map function differently - very odd
-    this.props.onScaleChange(event);
+  onScaleChange(value,type) { //if you take value of index, it does the map function differently - very odd
+    console.log(value)
+    var e_obj = {ScaletoShow:this.state.ScaletoShow,ScaleTop:this.state.ScaleTop,ScaleBottom:this.state.ScaleBottom,ScaleHeight:this.state.ScaleHeight,Mode:this.state.Mode}
+    e_obj[type] = value;
+    this.props.onScaleChange(e_obj);
   }
   onCatChange(event) { //if you take value of index, it does the map function differently - very odd
     this.props.onCatChange(event);
@@ -85,22 +96,30 @@ export default class PullDown extends React.PureComponent {
       return null
     }
   }
-  onChangeHeight = function(event){
-    //this won't require a reload, but may be hard to interpret
-    console.log(event)
+  onScaleSelect(event){
+    console.log(event.target)
+    this.onScaleChange(event.target.value,"ScaletoShow")
+    this.setState({ScaletoShow:event.target.value})
   }
-  onUpper = function(event){
-    //should be able to avoid reload with apollo at least some of the time!!!
+  onChangeHeight(event){
     console.log(event)
+    this.onScaleChange(event,"ScaleHeight")
+    this.setState({ScaletoShow:event})
   }
-  onLower = function(event){
+  onUpper(event){
     console.log(event)
+    this.onScaleChange(event,"ScaleTop")
+    this.setState({ScaletoShow:event})
+  }
+  onLower(event){
+    this.onScaleChange(event,"ScaleBottom")
+    this.setState({ScaletoShow:event})
   }
 
   render() {
     //this.model_explanations = model_explanations
     return (
-      <div style={{backgroundColor:"#F6BE00",borderRadius:"12px",borderStyle:"inset",borderColor:"#888B8D"}}>
+      <div style={{backgroundColor:"#F6BE00",borderRadius:"12px",borderStyle:"groove",borderColor:"#888B8D"}}>
       <div title="Health Models and Interventions" style={{fontSize:"1.5em"}}>Models</div>
       <div style={{fontSize:"1.5em"}}>
       <select onChange={this.setExplanation} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
@@ -114,7 +133,7 @@ export default class PullDown extends React.PureComponent {
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
 
-      <div title="Select Boundaries to Show" style={{fontSize:"1.5em"}} onClick={(e) => this.onScaleChange(0)}>Geography</div>
+      <div title="Select Boundaries to Show" style={{fontSize:"1.5em"}} onClick={(e) => this.onScaleChange(0,"Mode")}>Geography</div>
       <div style={{fontSize:"1.5em"}}>
         <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
             defaultValue={"Background Map"}>
@@ -150,7 +169,7 @@ export default class PullDown extends React.PureComponent {
                       position:'relative',width:'100%',cursor:'pointer',
                       borderWidth: this.state.samprops.toShow[this.state.samprops.categIndex].fnd != factor.factorName ? '3px' : '4px',
                       borderColor: this.state.samprops.toShow[this.state.samprops.categIndex].fnd != factor.factorName ? this.state.samprops.allcolors[factor.factorColor].HEX : '#040404',
-                      borderStyle:"inset"}}>
+                      borderStyle:"groove"}}>
 
                     <span style={{float:'left',width:'50%'}}>
                      {factor.factorName.substring(0,24)}
@@ -173,7 +192,7 @@ export default class PullDown extends React.PureComponent {
                     onClick={(e) => this.onFactortoShow('')}
                     style={{backgroundColor:'#ffffff',cursor:'pointer',
                       borderColor:'#ffffff',position:'relative',width:'100%',
-                      borderWidth: "3px", borderStyle:"inset"}}>
+                      borderWidth: "3px", borderStyle:"groove"}}>
                       <div>
                       total showing
                       </div>
@@ -182,38 +201,15 @@ export default class PullDown extends React.PureComponent {
                       </div>
                   </button>
 
-                  {this.state.samprops.toShow.map((category,ind) =>
-                    category.fnd &&
-                      <div key={'fnd'+ind}>
-                      <span style={{backgroundColor:"#F6BE00",fontSize:"1em",zIndex:6}}>
-                      <div>Filtered by</div>
-                        {category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20).toLowerCase()}
-                        <br></br>
-                        {this.state.samprops.datacount[category.category] &&
-                          this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
-                      </span>
-                      </div>
-                  )}
-
-                  {this.state.samprops.toShowScale.map((category,ind) =>
-                    category.fnd &&
-                      <div style={{backgroundColor:"#F6BE00",fontSize:"1em",zIndex:6}} key={ind}>
-                        {category.pretty_name.substring(0,20)} : {category.bottom_range} - {category.top_range}
-                        <br></br>
-                        {this.state.samprops.datacount[category.category] &&
-                          this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
-                      </div>
-                  )}
-
 
                   <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
               </div>
 
-      <div title="Categories for display with scale" onClick={(e) => this.onScaleChange(2)}
+      <div title="Categories for display with scale" onClick={(e) => this.onScaleChange(2,"Mode")}
           style={{fontSize:"1.5em"}}>Scales</div>
 
       <div style={{fontSize:"1.5em"}}>
-        <select onChange={this.onScaleChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
+        <select onChange={this.onScaleSelect} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
             defaultValue={this.state.samprops.toShowScale[this.state.samprops.scaleIndex].category}>
             {this.state.samprops.toShowScale.map((cat,k) => <option
               key={cat+k+'scale'} value={this.state.samprops.toShowScale[k].category}>
@@ -253,10 +249,10 @@ export default class PullDown extends React.PureComponent {
         </div>}
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
-      <div title="Showing count in area" onClick={(e) => this.onScaleChange(4)}
+      <div title="Showing count in area" onClick={(e) => this.onScaleChange(4,"Mode")}
           style={{fontSize:"1.5em"}}>Counts</div>
       <button key="102"
-        onClick={(e) => this.onScaleChange('4')}
+        onClick={(e) => this.onScaleChange(4,"Mode")}
         style={{backgroundColor:'#ffffff',cursor:'pointer',
           borderColor:'#ffffff',position:'relative',width:'100%',
           borderWidth: "3px", borderStyle:"solid", height:"2em"}}>

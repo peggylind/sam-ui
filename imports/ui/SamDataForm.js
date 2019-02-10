@@ -146,12 +146,13 @@ export default class SamDataForm extends React.PureComponent {
        props.samprops.toShow.forEach(function(cat){
          fields[cat.category] = 1;
        });
+       props.samprops.toShowScale.forEach(function(cat){
+         fields[cat.category] = 1;
+       });
        pipeline['fields']=fields;
        Meteor.subscribe('samcity',pipeline,{
          onReady: function() {
            props.setWaiting(0)
-           //props.setUpdate(0)
-           //return {waiting:0,samcity_data: SamCitizens.find({})}
          },
          onError: function(error) {
            console.log("error on dataload: "+error)
@@ -160,10 +161,7 @@ export default class SamDataForm extends React.PureComponent {
        return {firstload:0}
      };
 
-     // if(props.update==1){
-     // console.log('props.update '+state.samcity_data.count())}
-     if(props.update==1){ // && state.samcity_data.count()>0){
-       //console.log('props.update==1 '+state.waiting)
+     if(props.update==1){
        var pipe = {};
         //props.setUpdate(0) //should try to reimplement this logic - not clear if need to threads for update logic
         var qdb = {
@@ -181,11 +179,14 @@ export default class SamDataForm extends React.PureComponent {
          if(cat.fnd){
            query[cat.category] = cat.fnd;
          }
-         if(cat.fnd_top_num){
+       });
+
+       props.samprops.toShowScale.forEach(function(cat){
+         fields[cat.category] = 1;
+         if(cat.fnd){
            query[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
          }
-       })
-
+       });
        //if(state.samprops){
        var long_change = (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0]) != 0 ?
           (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0])/(state.samprops.bbox_bl[0]-state.samprops.bbox_ur[0]) : 0;

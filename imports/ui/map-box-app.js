@@ -80,10 +80,11 @@ export default class MapBox extends Component {
 
       returnheight (factor) {
         //should do some as log!!!
-        let min = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].low
-        let max = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].high
+        //think through!!!!
+        let min = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].fnd_bottom_num
+        let max = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].fnd_top_num
         //function(val, max, min) { return (val - min) / (max - min); }
-        return ((factor[this.props.samprops.scaleShow]-min) / (max - min)) * (this.props.samprops.height/2)
+        return ((factor[this.props.samprops.scaleShow]-min) / (max - min)) * (this.props.samprops.ScaleHeight/2)
       }
 
       returnColors (factor) {
@@ -323,7 +324,7 @@ export default class MapBox extends Component {
     }
   });
   // const ContourMap = new ContourLayer({ //not working
-  //   id: 'contourLayer',
+  //   id: 'contour-layer',
   //   data: [...this.state.samdata],
   //   // Three contours are rendered.
   //   contours: [
@@ -337,10 +338,11 @@ export default class MapBox extends Component {
   const main_layers_list = [
      GeoMap,
      ScatterMap,
-     HexMap,
+     PathMap,
      PointCloudMap,
      GridMap,
-     GridCellMap
+     HexMap,
+     GridCellMap//,
   //   ContourMap
   ];
   const main_layers = [main_layers_list[this.props.mapprops.mode]] //PathMap works, but need to rethink the modes...

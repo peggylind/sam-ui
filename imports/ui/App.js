@@ -258,20 +258,26 @@ export default class App extends React.PureComponent {
     samprops.geojson_title = geojson_title;
     this.setState({samprops});
   };
-  onScaleChange = function(event){
+  onScaleChange = function(e_obj){
     var samprops = {...this.state.samprops}
     var mapprops = {...this.state.mapprops}
-    if(isNaN(event)){
+    mapprops.mode = e_obj.Mode;
+    // console.log(e_obj)
+    // if(isNaN(event)){
         samprops.toShowScale.forEach(function(row,r){
-          if(row.category == event.target.value){
+          if(row.category == e_obj.ScaletoShow){
             samprops.scaleIndex = r;
             samprops.scaleShow = row.category; //only used in map-box right now --fix this and catShow!!
-            if(r==0){mapprops.mode=1}else{mapprops.mode=3}; //other scale possibilities later
+            //samprops.toShowScale[r].fnd = row.category;
+            samprops.toShowScale[r].fnd_bottom_num = e_obj.ScaleBottom;
+            samprops.toShowScale[r].fnd_top_num = e_obj.ScaleTop;
+            samprops.toShowScale[r].ScaleHeight = e_obj.ScaleHeight;
+            //if(r==0){mapprops.mode=1}else{mapprops.mode=3}; //other scale possibilities later
             //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
         }})
-    }else{
-      mapprops.mode=event
-    };
+    // }else{
+    //   mapprops.mode=event
+    // };
     this.setState({samprops,mapprops});
   }
   onCatChange = function(event){
@@ -295,8 +301,6 @@ export default class App extends React.PureComponent {
         samprops.toShow[r].fnd = e.factorName;
       }
     })
-    //this.setWaiting(1);
-    console.log('onFactortoShow')
     this.setUpdate(1);
     this.setState({samprops});
   }
@@ -384,6 +388,7 @@ export default class App extends React.PureComponent {
         })
       })
       samprops.toShowScale.forEach(function(categ,i){
+        console.log('toShowScale '+categ)
         //need to fix logic for range variables!!!
         samprops.toShowScale[i].bottom_range = obj[0].bottom_range
         samprops.toShowScale[i].top_range = obj[0].top_range
@@ -424,21 +429,52 @@ export default class App extends React.PureComponent {
     samprops.openHousehold = 1
     this.setState({samprops})
   };
-
+  numberWithCommas = function(x) {
+    if(x!=undefined){
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }else{
+      return null
+    }
+  }
   // componentWillUnmount(){
   //   client.resetStore();
   // }
 
   render(){
 
-
-
-      //if (loading) return null;
+//not sure about fonts ---
       return (
-          <div>
+          <div style={{fontFamily:"League Gothic"}}>
               <div style={{position:"absolute",width:"100%",textAlign:"center", zIndex:"3"}}>
-                <span title="Houston on a first name basis" style={{backgroundColor:"#F6BE00",borderRadius:"12px",fontSize:"4em",borderStyle:"inset",borderColor:"#888B8D"}}>Sam City</span>
+                <span title="Houston on a first name basis" style={{backgroundColor:"#F6BE00",borderRadius:"12px",fontSize:"4em",borderStyle:"groove",borderColor:"#888B8D"}}>Sam City</span>
+                <span style={{position:"absolute",left:"15%"}}>
+                {this.state.samprops.toShow.map((category,ind) =>
+                  category.fnd &&
+                    <div style={{backgroundColor:"#F6BE00",fontSize:"1em",zIndex:6}} key={'fnd'+ind}>
+                    <span>
+                    <div>Filtered by</div>
+                      {category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20).toLowerCase()}
+                      <br></br>
+                      {this.state.samprops.datacount[category.category] &&
+                        this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
+                    </span>
+                    </div>
+                )}
+
+                {this.state.samprops.toShowScale.map((category,ind) =>
+                  category.fnd &&
+                    <div style={{backgroundColor:"#F6BE00",fontSize:"1em",zIndex:6}}
+                    key={ind}>
+                      {category.pretty_name.substring(0,20)} : {category.bottom_range} - {category.top_range}
+                      <br></br>
+                      {this.state.samprops.datacount[category.category] &&
+                        this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
+                    </div>
+                )}
+                </span>
+
               </div>
+
               <div style={{position:"absolute",top:"75%",left:"85%",width:"10%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
                 <hr/>
                 <span title="Data Analytics in Student Hands">
@@ -459,7 +495,7 @@ export default class App extends React.PureComponent {
             <LegendBox
               mapprops={this.state.mapprops}
               samprops={this.state.samprops}
-              changeSamProps={this.changeSamProps}
+              //changeSamProps={this.changeSamProps}
               onPopChange={this.handlePopulationChange}
               onCatChange={this.onCatChange}
               onScaleChange={this.onScaleChange}
