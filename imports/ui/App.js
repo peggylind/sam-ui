@@ -358,7 +358,7 @@ export default class App extends React.PureComponent {
     this.setState({samprops,exp_width: model_explanations(samprops.explainIndex).div_width})
     //could also set the toShow, etc. to go along with different models, if the pull-downs are too long
   };
-  changeSamProps = function(obj){
+  changeSamProps = function(obj){ //model_div is using this one!!
     var samprops = {...this.state.samprops}
     samprops['categIndex'] = obj.categIndex;
     samprops['step_index'] = obj.step_index;
@@ -369,8 +369,8 @@ export default class App extends React.PureComponent {
       categories.forEach(function(cat,k){ //leaving none in list
         obj.forEach(function(ocat,n){
           samprops[cat.category] = ocat[cat.category] ? ocat[cat.category].factor : null
-          samprops['bottom_range'] = ocat['bottom_range'] ? ocat['bottom_range'] : null
-          samprops['top_range'] = ocat['top_range'] ? ocat['top_range'] : null
+          samprops['low'] = ocat['low'] ? ocat['low'] : null
+          samprops['high'] = ocat['high'] ? ocat['high'] : null
         })
       })
   //need to get obj.fnd
@@ -383,8 +383,8 @@ export default class App extends React.PureComponent {
       samprops.toShowScale.forEach(function(categ,i){
         console.log('toShowScale '+categ)
         //need to fix logic for range variables!!!
-        samprops.toShowScale[i].bottom_range = obj[0].bottom_range
-        samprops.toShowScale[i].top_range = obj[0].top_range
+        samprops.toShowScale[i].low = obj[0].low
+        samprops.toShowScale[i].high = obj[0].high
         obj.forEach(function(ocateg,m){
         //have to walk all to clear earlier ones if they start tour inside...
           samprops.toShowScale[i].fnd = ocateg[categ.category] ? ocateg[categ.category].fnd ? ocateg[categ.category].fnd : null : null
@@ -458,7 +458,7 @@ export default class App extends React.PureComponent {
                   category.fnd &&
                     <div style={{backgroundColor:UH_color1,fontSize:"1em",zIndex:6}}
                     key={ind}>
-                      {category.pretty_name.substring(0,20)} : {category.bottom_range} - {category.top_range}
+                      {category.pretty_name.substring(0,20)} : {category.low} - {category.high}
                       <br></br>
                       {this.state.samprops.datacount[category.category] &&
                         this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
