@@ -5,6 +5,7 @@
     "start": "meteor run"
   },
   "dependencies": {
+    "babel-runtime": "^6.26.0",
     "bcrypt": "^3.0.4",
     "body-parser": "^1.18.3",
     "deck.gl": "^7.0.0-alpha.3",
