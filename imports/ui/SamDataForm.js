@@ -1,12 +1,9 @@
 import React, { Component } from "react";
 import { Meteor } from 'meteor/meteor';
 
-import { withTracker } from 'meteor/react-meteor-data';
+//import { withTracker } from 'meteor/react-meteor-data';
 import SamCitizens from '/imports/api/sam_citizens/sam_citizens';
 
-
-import gql from "graphql-tag";
-import { graphql, Query } from "react-apollo";
 import MapBox from "./map-box-app";
 
 

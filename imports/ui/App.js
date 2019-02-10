@@ -1,6 +1,4 @@
 import React, {Component} from "react";
-import RegisterForm from "./RegisterForm";
-import LoginForm from "./LoginForm";
 //import SidePane from "./side-pane"; //would liftup twice for components under SidePane
 import debounce from 'lodash.debounce'
 //import asyncComponent from './asyncComponent'; //may not use - still testing
@@ -272,6 +270,7 @@ export default class App extends React.PureComponent {
             samprops.toShowScale[r].fnd_bottom_num = e_obj.ScaleBottom;
             samprops.toShowScale[r].fnd_top_num = e_obj.ScaleTop;
             samprops.toShowScale[r].ScaleHeight = e_obj.ScaleHeight;
+            samprops.toShowScale[r].Mode = e_obj.Mode;
             //if(r==0){mapprops.mode=1}else{mapprops.mode=3}; //other scale possibilities later
             //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
         }})

@@ -43,7 +43,7 @@ export default class PullDown extends React.PureComponent {
       ScaleHeight: 1,
       ScaleTop: 0,
       ScaleBottom: 0,
-      Mode:this.props.mapprops.mode,
+      Mode:this.props.samprops.Mode,
       //samprops : this.props.samprops,
       changeColors : this.props.samprops.changeColors
     }
