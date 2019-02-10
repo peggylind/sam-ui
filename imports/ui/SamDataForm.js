@@ -181,8 +181,9 @@ export default class SamDataForm extends React.PureComponent {
        props.samprops.toShowScale.forEach(function(cat){
          fields[cat.category] = 1;
          if(cat.fnd){
-           query[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
+           query[cat.category] = {$gte : parseFloat(cat.low),$lte : parseFloat(cat.high) };
          }
+         console.log('query in top update: '+JSON.stringify(query))
        });
        //if(state.samprops){
        var long_change = (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0]) != 0 ?
@@ -210,8 +211,10 @@ export default class SamDataForm extends React.PureComponent {
            })}else{
              props.setWaiting(0);
              props.setUpdate(0);
-           }
+           };
          };
+         console.log('query: '+JSON.stringify(query))
+         console.log('fields: '+JSON.stringify(fields))
       //
 
        return {samprops:props.samprops, samcity_data: SamCitizens.find(query,{fields:fields}), highlight_data: SamCitizens.find({race:'white'})}

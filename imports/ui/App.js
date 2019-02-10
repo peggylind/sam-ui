@@ -65,8 +65,8 @@ function list4plots (plots) {
     })
   })
   return makePlotColors(plotList) //which is a list of objects from toShow
-}
-
+};
+const UH_color1 = '#FFF9D9';//cream  '#F6BE00'; //gold    '#888B8D';//gray   '#00B388';//Teal   '#C8102E';//'red'
 const firstzoom = 9.3;
 const firstdist = 100000;
 const calcOpacity = (zoom) => { return 1 - (zoom/25)};
@@ -260,20 +260,17 @@ export default class App extends React.PureComponent {
     var samprops = {...this.state.samprops}
     var mapprops = {...this.state.mapprops}
     mapprops.mode = e_obj.Mode;
-    // console.log(e_obj)
-    // if(isNaN(event)){
-        samprops.toShowScale.forEach(function(row,r){
-          if(row.category == e_obj.ScaletoShow){
-            samprops.scaleIndex = r;
-            samprops.scaleShow = row.category; //only used in map-box right now --fix this and catShow!!
-            //samprops.toShowScale[r].fnd = row.category;
-            samprops.toShowScale[r].fnd_bottom_num = e_obj.ScaleBottom;
-            samprops.toShowScale[r].fnd_top_num = e_obj.ScaleTop;
-            samprops.toShowScale[r].ScaleHeight = e_obj.ScaleHeight;
-            samprops.toShowScale[r].Mode = e_obj.Mode;
-            if(r==0){mapprops.mode=1}else{mapprops.mode=7}; //other scale possibilities later
-            //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
-        }})
+    console.log('e_obj '+JSON.stringify(e_obj))
+    var r = e_obj.scaleIndex;
+    samprops.scaleIndex = r;
+    samprops.scaleShow = e_obj.category; //only used in map-box right now --fix this and catShow!!
+    samprops.toShowScale[r].fnd = e_obj.ScaletoShow;
+    samprops.toShowScale[r].low = e_obj.ScaleBottom;
+    samprops.toShowScale[r].high = e_obj.ScaleTop;
+    samprops.toShowScale[r].ScaleHeight = e_obj.ScaleHeight;
+    samprops.toShowScale[r].Mode = e_obj.Mode;
+    if(r==0){mapprops.mode=1}else{mapprops.mode=2};
+    this.setUpdate(1);
     this.setState({samprops,mapprops});
   }
   onCatChange = function(event){
@@ -442,11 +439,11 @@ export default class App extends React.PureComponent {
       return (
           <div style={{fontFamily:"League Gothic"}}>
               <div style={{position:"absolute",width:"100%",textAlign:"center", zIndex:"3"}}>
-                <span title="Houston on a first name basis" style={{backgroundColor:"#F6BE00",borderRadius:"12px",fontSize:"4em",borderStyle:"groove",borderColor:"#888B8D"}}>Sam City</span>
+                <span title="Houston on a first name basis" style={{backgroundColor:UH_color1,borderRadius:"12px",fontSize:"4em",borderStyle:"groove",borderColor:"#888B8D"}}>Sam City</span>
                 <span style={{position:"absolute",left:"15%"}}>
                 {this.state.samprops.toShow.map((category,ind) =>
                   category.fnd &&
-                    <div style={{backgroundColor:"#F6BE00",fontSize:"1em",zIndex:6}} key={'fnd'+ind}>
+                    <div style={{backgroundColor:UH_color1,fontSize:"1em",zIndex:6}} key={'fnd'+ind}>
                     <span>
                     <div>Filtered by</div>
                       {category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20).toLowerCase()}
@@ -459,7 +456,7 @@ export default class App extends React.PureComponent {
 
                 {this.state.samprops.toShowScale.map((category,ind) =>
                   category.fnd &&
-                    <div style={{backgroundColor:"#F6BE00",fontSize:"1em",zIndex:6}}
+                    <div style={{backgroundColor:UH_color1,fontSize:"1em",zIndex:6}}
                     key={ind}>
                       {category.pretty_name.substring(0,20)} : {category.bottom_range} - {category.top_range}
                       <br></br>

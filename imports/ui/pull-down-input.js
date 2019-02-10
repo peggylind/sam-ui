@@ -15,6 +15,7 @@ const SelectText = ({allcolors, onChange, factor}) => {
     </select>
   )
 }
+const UH_color1 = '#FFF9D9';//cream  '#F6BE00'; //gold    '#888B8D';//gray   '#00B388';//Teal   '#C8102E';//'red'
 // const Input = props => <input
 //    type="radio"
 //    value="xl"
@@ -37,15 +38,15 @@ export default class PullDown extends React.PureComponent {
     this.onCatChange = this.onCatChange.bind(this);
     this.onGridSizeChange = this.onGridSizeChange.bind(this);
     this.onChangetoShow = this.onChangetoShow.bind(this);
-
+    this.changeMode = this.changeMode.bind(this);
     this.state = {
       ScaletoShow: '',
       ScaleHeight: 1,
-      ScaleTop: 0,
-      ScaleBottom: 0,
-      Mode:this.props.samprops.Mode,
+      ScaleTop: props.samprops.toShowScale[this.props.samprops.scaleIndex].high,
+      ScaleBottom: props.samprops.toShowScale[this.props.samprops.scaleIndex].low,
+      Mode:props.mapprops.mode,
       //samprops : this.props.samprops,
-      changeColors : this.props.samprops.changeColors
+      changeColors : props.samprops.changeColors
     }
   };
   static getDerivedStateFromProps(props, state) {
@@ -56,6 +57,8 @@ export default class PullDown extends React.PureComponent {
       //if (props.waiting){
         samprops.datacount[samprops.toShow[samprops.categIndex].category] = {}
       }
+      console.log(samprops.toShowScale[samprops.scaleIndex].high)
+      console.log(samprops.toShowScale[samprops.scaleIndex])
       return {samprops:samprops}
     }
   }
@@ -65,10 +68,21 @@ export default class PullDown extends React.PureComponent {
   onFactortoShow(e){
     this.props.onFactortoShow(e)
   }
+  //0,"Mode",this.state.ScaletoShow,this.state.Mode,this.state.ScaleHeight,this.state.ScaleTop,this.state.ScaleBottom)
   onScaleChange(value,type) { //if you take value of index, it does the map function differently - very odd
-    console.log(value)
-    var e_obj = {ScaletoShow:this.state.ScaletoShow,ScaleTop:this.state.ScaleTop,ScaleBottom:this.state.ScaleBottom,ScaleHeight:this.state.ScaleHeight,Mode:this.state.Mode}
+    console.log(type)
+    var i = this.props.samprops.scaleIndex;
+    if (type=="scaleIndex") {
+      console.log('inthemtf')
+      i = value;
+    };
+    var cat = this.props.samprops.toShowScale[i]
+    console.log(cat)
+    var e_obj = { scaleIndex:i, ScaletoShow:cat.category,
+                  ScaleTop:cat.high, ScaleBottom:cat.low,
+                  ScaleHeight:cat.ScaleHeight, Mode:cat.Mode };
     e_obj[type] = value;
+    console.log('eobj in pull-down '+JSON.stringify(e_obj))
     this.props.onScaleChange(e_obj);
   }
   onCatChange(event) { //if you take value of index, it does the map function differently - very odd
@@ -96,27 +110,31 @@ export default class PullDown extends React.PureComponent {
       return null
     }
   }
-  onScaleSelect(event){
-    this.onScaleChange(event.target.value,"ScaletoShow")
+  onScaleSelect(event,type){
+    this.onScaleChange(event.target.value,"scaleIndex")
     this.setState({ScaletoShow:event.target.value}) //may not have to setState - need to experiment...
   }
-  onChangeHeight(event){
+  onChangeHeight(event,type){
     this.onScaleChange(event,"ScaleHeight")
-    this.setState({ScaletoShow:event})
+    this.setState({ScaleHeight:event})
   }
-  onUpper(event){
+  onUpper(event,type){
     this.onScaleChange(event,"ScaleTop")
-    this.setState({ScaletoShow:event})
+    this.setState({ScaleTop:event})
   }
-  onLower(event){
+  onLower(event,type){
     this.onScaleChange(event,"ScaleBottom")
-    this.setState({ScaletoShow:event})
+    this.setState({ScaleBottom:event})
+  }
+  changeMode(event,type){
+    this.onScaleChange(event.target.value,"Mode")
+    this.setState({Mode:event})
   }
 
   render() {
     //this.model_explanations = model_explanations
     return (
-      <div style={{backgroundColor:"#F6BE00",borderRadius:"12px",borderStyle:"groove",borderColor:"#888B8D"}}>
+      <div style={{backgroundColor:UH_color1,borderRadius:"12px",borderStyle:"groove",borderColor:"#888B8D"}}>
       <div title="Health Models and Interventions" style={{fontSize:"1.5em"}}>Models</div>
       <div style={{fontSize:"1.5em"}}>
       <select onChange={this.setExplanation} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
@@ -130,7 +148,8 @@ export default class PullDown extends React.PureComponent {
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
 
-      <div title="Select Boundaries to Show" style={{fontSize:"1.5em"}} onClick={(e) => this.onScaleChange(0,"Mode")}>Geography</div>
+      <div title="Select Boundaries to Show" style={{fontSize:"1.5em"}}
+          onClick={(e) => this.onScaleChange(0,"Mode")}>Geography</div>
       <div style={{fontSize:"1.5em"}}>
         <select onChange={this.onCatChange} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
             defaultValue={"Background Map"}>
@@ -206,10 +225,10 @@ export default class PullDown extends React.PureComponent {
           style={{fontSize:"1.5em"}}>Scales</div>
 
       <div style={{fontSize:"1.5em"}}>
-        <select onChange={this.onScaleSelect} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
+        <select onChange={(e) => this.onScaleSelect(e,"scaleIndex")} style={{backgroundColor:"white",marginLeft:"4%",fontSize:".5em",width:"90%"}}
             defaultValue={this.state.samprops.toShowScale[this.state.samprops.scaleIndex].category}>
             {this.state.samprops.toShowScale.map((cat,k) => <option
-              key={cat+k+'scale'} value={this.state.samprops.toShowScale[k].category}>
+              key={cat+k+'scale'} value={k}>
               {this.state.samprops.toShowScale[k].pretty_name.substring(0,15)}
               </option>)
             }
@@ -218,7 +237,7 @@ export default class PullDown extends React.PureComponent {
         <div style={{fontSize:".8em"}}>
           <br/>
           <Slide
-            onChange={this.onChangeHeight}
+            onChange={(e) => this.onChangeHeight(e,"ScaleHeight") }
             min={100}
             max={100000}
             step={100}
@@ -227,7 +246,7 @@ export default class PullDown extends React.PureComponent {
 
           <br/>
           <Slide
-            onChange={this.onUpper}
+            onChange={(e) => this.onUpper(e,"ScaleTop") }
             min={100}
             max={100000}
             step={100}
@@ -236,7 +255,7 @@ export default class PullDown extends React.PureComponent {
 
           <br/>
           <Slide
-            onChange={this.onLower}
+            onChange={(e) => this.onLower(e,"ScaleBottom") }
             min={100}
             max={100000}
             step={100}

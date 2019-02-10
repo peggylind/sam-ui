@@ -84,10 +84,10 @@ export default class MapBox extends Component {
       returnheight (factor) {
         //should do some as log!!!
         //think through!!!!
-        let min = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].fnd_bottom_num
-        let max = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].fnd_top_num
+        let min = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].low
+        let max = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].high
         //function(val, max, min) { return (val - min) / (max - min); }
-        return ((factor[this.props.samprops.scaleShow]-min) / (max - min)) * (this.props.samprops.ScaleHeight/2)
+        return ((factor[this.props.samprops.toShowScale[this.props.samprops.scaleIndex].category]-min) / (max - min)) * (this.props.samprops.toShowScale[this.props.samprops.scaleIndex].ScaleHeight/2)
       }
 
       returnColors (factor) {
@@ -326,7 +326,7 @@ export default class MapBox extends Component {
       const tooltip = object ? object.name : null;
     }
   });
-  const ContourMap = new ContourLayer({ //not working
+  const ContourMap = new ContourLayer({ //not working with [6-10] because PolygonLayer not loading in same way ContourLayer wouldn't load... maybe reinstalling???
     id: 'contour-layer',
     data: [...this.state.samdata],
     // Three contours are rendered.
