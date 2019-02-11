@@ -235,9 +235,17 @@ export default class App extends React.PureComponent {
         samprops.datacount[category][factor] = 0
       }
       samprops.datacount[category][factor] += samprops.one_of
-
     }
     samprops.datacount['initialcount'] = 0;
+    if(samprops.scaleIndex){
+      let scaleCat = samprops.toShowScale[samprops.scaleIndex]
+      samprops.datacount[scaleCat.category] = {};
+      samprops.datacount[scaleCat.category]['all'] = samprops.datacount[category]['all']
+      samprops.datacount[scaleCat.category]['bottom'] = scaleCat.low;
+      samprops.datacount[scaleCat.category]['top'] = scaleCat.high;
+    }
+    console.log('countData')
+    console.log(samprops.datacount)
     this.setState({samprops});
   }
   onGridSizeChange = function(size) {
@@ -495,6 +503,7 @@ export default class App extends React.PureComponent {
               onFactortoShow={this.onFactortoShow}
               onChangetoShow={this.onChangetoShow}
               onMapChange={this.onMapChange}
+              setUpdate={this.setUpdate}
               onGridSizeChange={this.onGridSizeChange}
               setExplanation={this.setExplanation}
               setToolInfo={this.setToolInfo}

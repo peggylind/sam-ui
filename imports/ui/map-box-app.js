@@ -108,7 +108,17 @@ export default class MapBox extends Component {
         if(props.samprops.categIndex != state.categIndex){
           props.countData(props.data.fetch());
           return {categIndex:props.samprops.categIndex}
-        }
+        };
+      };
+      if(props.samprops.scaleIndex){
+        if(props.samprops.scaleIndex != state.scaleIndex || props.samprops.toShowScale[props.samprops.scaleIndex].low != state.bottom ||
+              props.samprops.toShowScale[props.samprops.scaleIndex].high != state.top  ){
+          props.countData(props.data.fetch());
+          return {scaleIndex:props.samprops.scaleIndex,
+                  bottom:props.samprops.toShowScale[props.samprops.scaleIndex].low,
+                  top:props.samprops.toShowScale[props.samprops.scaleIndex].high
+                  }
+        };
       };
       if(props.data != state.samdata && !props.waiting){ //adding the catch for props.waiting seems to make a huge difference in speed
         return {samdata:props.data}
@@ -117,6 +127,7 @@ export default class MapBox extends Component {
         return {update:props.update}
       };
       if (state.update){
+        console.log(Date.now())
         var tmpViewPort = new WebMercatorViewport(state.viewport) //the state.viewport can't be accessed after first time so have to make a new one
         var scale = getDistanceScales(state.viewport).metersPerPixel[0];
         var width = window.innerWidth;
@@ -141,8 +152,10 @@ export default class MapBox extends Component {
         ];
         props.onMapChange(state.viewport,dist4search,worldHeight,tr,bl);
         if(state.samdata.collection && !props.waiting){
+          console.log('why is this not tripping?')
           props.countData(props.data.fetch());
         }
+        props.setUpdate(0);
         return {update:0,samdata:props.data,pathdata:pathdata}
       }else{
         return null

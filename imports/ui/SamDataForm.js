@@ -183,7 +183,7 @@ export default class SamDataForm extends React.PureComponent {
          if(cat.fnd){
            query[cat.category] = {$gte : parseFloat(cat.low),$lte : parseFloat(cat.high) };
          }
-         console.log('query in top update: '+JSON.stringify(query))
+         //console.log('query in top update: '+JSON.stringify(query))
        });
        //if(state.samprops){
        var long_change = (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0]) != 0 ?
@@ -213,11 +213,12 @@ export default class SamDataForm extends React.PureComponent {
              props.setUpdate(0);
            };
          };
-         console.log('query: '+JSON.stringify(query))
-         console.log('fields: '+JSON.stringify(fields))
+         // console.log('query: '+JSON.stringify(query))
+         // console.log('fields: '+JSON.stringify(fields))
       //
 
-       return {samprops:props.samprops, samcity_data: SamCitizens.find(query,{fields:fields}), highlight_data: SamCitizens.find({race:'white'})}
+       return {samprops:props.samprops,
+               samcity_data: SamCitizens.find(query,{fields:fields})} //, highlight_data: SamCitizens.find({race:'white'})}
    }else{
      return null
    }

@@ -62,6 +62,7 @@ export default class LegendBox extends React.PureComponent {
                 onGridSizeChange={this.props.onGridSizeChange}
                 onScaleChange={this.props.onScaleChange}
                 onFactortoShow={this.props.onFactortoShow}
+                setUpdate={this.props.setUpdate}
                 setExplanation={this.props.setExplanation}
                 samprops={this.props.samprops}
                 mapprops={this.props.mapprops}

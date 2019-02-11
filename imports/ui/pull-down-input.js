@@ -28,7 +28,9 @@ const UH_color1 = '#FFF9D9';//cream  '#F6BE00'; //gold    '#888B8D';//gray   '#0
 export default class PullDown extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.setExplanation = this.props.setExplanation.bind(this);
+    this.setUpdate = this.props.setUpdate;
+    this.setExplanation = this.props.setExplanation.bind(this); //I don't really understand the bind here.
+    //this.setUpdate = this.props.setUpdate.bind(this);
     this.onFactortoShow = this.onFactortoShow.bind(this);
     this.onScaleChange = this.onScaleChange.bind(this);
     this.onScaleSelect = this.onScaleSelect.bind(this);
@@ -50,15 +52,11 @@ export default class PullDown extends React.PureComponent {
     }
   };
   static getDerivedStateFromProps(props, state) {
-    if(props.samprops != state.samprops){  //this is just for initial load to find something; it updates
-      // console.log(props.samprops.toShow)
+    if(props.samprops != state.samprops){
       var samprops = {...props.samprops}
       if(!samprops.datacount[samprops.toShow[samprops.categIndex].category]){
-      //if (props.waiting){
         samprops.datacount[samprops.toShow[samprops.categIndex].category] = {}
       }
-      console.log(samprops.toShowScale[samprops.scaleIndex].high)
-      console.log(samprops.toShowScale[samprops.scaleIndex])
       return {samprops:samprops}
     }
   }
@@ -69,20 +67,17 @@ export default class PullDown extends React.PureComponent {
     this.props.onFactortoShow(e)
   }
   //0,"Mode",this.state.ScaletoShow,this.state.Mode,this.state.ScaleHeight,this.state.ScaleTop,this.state.ScaleBottom)
-  onScaleChange(value,type) { //if you take value of index, it does the map function differently - very odd
-    console.log(type)
+  onScaleChange(value,type) {
     var i = this.props.samprops.scaleIndex;
     if (type=="scaleIndex") {
-      console.log('inthemtf')
       i = value;
     };
     var cat = this.props.samprops.toShowScale[i]
-    console.log(cat)
     var e_obj = { scaleIndex:i, ScaletoShow:cat.category,
                   ScaleTop:cat.high, ScaleBottom:cat.low,
                   ScaleHeight:cat.ScaleHeight, Mode:cat.Mode };
     e_obj[type] = value;
-    console.log('eobj in pull-down '+JSON.stringify(e_obj))
+    this.props.setUpdate(1);
     this.props.onScaleChange(e_obj);
   }
   onCatChange(event) { //if you take value of index, it does the map function differently - very odd
