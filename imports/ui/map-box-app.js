@@ -127,7 +127,6 @@ export default class MapBox extends Component {
         return {update:props.update}
       };
       if (state.update){
-        console.log(Date.now())
         var tmpViewPort = new WebMercatorViewport(state.viewport) //the state.viewport can't be accessed after first time so have to make a new one
         var scale = getDistanceScales(state.viewport).metersPerPixel[0];
         var width = window.innerWidth;
@@ -152,7 +151,6 @@ export default class MapBox extends Component {
         ];
         props.onMapChange(state.viewport,dist4search,worldHeight,tr,bl);
         if(state.samdata.collection && !props.waiting){
-          console.log('why is this not tripping?')
           props.countData(props.data.fetch());
         }
         props.setUpdate(0);

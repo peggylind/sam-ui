@@ -420,15 +420,16 @@ export default class App extends React.PureComponent {
     this.setState({toolTipInfo})
   };
   setClick = function(info){
-    // var toolTipInfo = {...this.state.toolTipInfo}
-    // toolTipInfo.info = info
-    //toolTipInfo.text = ''
-    var samprops = {...this.state.samprops}
-    samprops.household_id = info.household_id
-  //  console.log(info)
-    samprops.account = info.account
-    samprops.openHousehold = 1
-    this.setState({samprops})
+    console.log('info that will matter with household '+info)
+  //   // var toolTipInfo = {...this.state.toolTipInfo}
+  //   // toolTipInfo.info = info
+  //   //toolTipInfo.text = ''
+  //   var samprops = {...this.state.samprops}
+  //   samprops.household_id = info.household_id
+  // //  console.log(info)
+  //   samprops.account = info.account
+  //   samprops.openHousehold = 1
+  //   this.setState({samprops})
   };
   numberWithCommas = function(x) {
     if(x!=undefined){
@@ -469,7 +470,8 @@ export default class App extends React.PureComponent {
                       {category.pretty_name.substring(0,20)} : {category.low} - {category.high}
                       <br></br>
                       {this.state.samprops.datacount[category.category] &&
-                        this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
+                        this.numberWithCommas(this.state.samprops.datacount[category.category]['all'])
+                      }
                     </div>
                 )}
                 </span>

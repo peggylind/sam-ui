@@ -231,6 +231,27 @@ export default class PullDown extends React.PureComponent {
         {(this.state.samprops.scaleIndex>0) &&
         <div style={{fontSize:".8em"}}>
           <br/>
+          <br/>
+          <Slide
+            onChange={(e) => this.onUpper(e,"ScaleTop") }
+            min={this.state.samprops.toShowScale[this.state.samprops.scaleIndex].low}
+            max={this.state.samprops.toShowScale[this.state.samprops.scaleIndex].high*1.2}
+            value={this.state.samprops.toShowScale[this.state.samprops.scaleIndex].high}
+            step={(this.state.samprops.toShowScale[this.state.samprops.scaleIndex].high-this.state.samprops.toShowScale[this.state.samprops.scaleIndex].low)/25}
+            eval_description={' upper'}
+          />
+
+          <br/>
+          <Slide
+            onChange={(e) => this.onLower(e,"ScaleBottom") }
+            min={this.state.samprops.toShowScale[this.state.samprops.scaleIndex].low*.8}
+            max={this.state.samprops.toShowScale[this.state.samprops.scaleIndex].high*1.2}
+            value={this.state.samprops.toShowScale[this.state.samprops.scaleIndex].low}
+            step={(this.state.samprops.toShowScale[this.state.samprops.scaleIndex].high-this.state.samprops.toShowScale[this.state.samprops.scaleIndex].low)/25}
+            eval_description={' lower'}
+          />
+
+          <br/>
           <Slide
             onChange={(e) => this.onChangeHeight(e,"ScaleHeight") }
             min={100}
@@ -239,24 +260,6 @@ export default class PullDown extends React.PureComponent {
             eval_description={' contrast'}
           />
 
-          <br/>
-          <Slide
-            onChange={(e) => this.onUpper(e,"ScaleTop") }
-            min={100}
-            max={100000}
-            step={100}
-            eval_description={' upper'}
-          />
-
-          <br/>
-          <Slide
-            onChange={(e) => this.onLower(e,"ScaleBottom") }
-            min={100}
-            max={100000}
-            step={100}
-            eval_description={' lower'}
-          />
-          <br/>
         </div>}
         <hr onClick={ () => this.setState({ changeColors: !this.state.changeColors }) }/>
       </div>
