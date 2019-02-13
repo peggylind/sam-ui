@@ -32,20 +32,21 @@ export default class LegendBox extends React.PureComponent {
     render() {
       const boxStyle = {
         top: '2%',
+        textAlign: 'center',
         position: 'absolute',
         zindex: '3',
         width: '25%',
         height: '92%',
         borderRadius:'25px',
-        backgroundColor: 'white',
+        backgroundColor: '#F6BE00',
         overflow: 'scroll'
       }
       const boxButtonStyle = {
-        position: 'relative',
+        position: 'absolute',
         cursor: 'pointer',
         left: '2%',
-        top: '2%',
-        zIndex: '3',
+        top: '1%',
+        zIndex: '4',
         width: '10%'
       };
         return (
@@ -53,7 +54,7 @@ export default class LegendBox extends React.PureComponent {
           <div style={boxStyle}>
 
           {this.state.isBoxOpen &&
-            <div style={{position:'absolute',marginLeft:'15%',zIndex:'3',width:'50%'}}>
+            <div style={{position:'absolute',marginLeft:'5%',zIndex:'3',width:'50%'}}>
 
               <PullDown
                 onChangetoShow={this.props.onChangetoShow}
@@ -61,6 +62,7 @@ export default class LegendBox extends React.PureComponent {
                 onGridSizeChange={this.props.onGridSizeChange}
                 onScaleChange={this.props.onScaleChange}
                 onFactortoShow={this.props.onFactortoShow}
+                setUpdate={this.props.setUpdate}
                 setExplanation={this.props.setExplanation}
                 samprops={this.props.samprops}
                 mapprops={this.props.mapprops}

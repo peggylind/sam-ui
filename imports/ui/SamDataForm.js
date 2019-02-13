@@ -1,12 +1,9 @@
 import React, { Component } from "react";
 import { Meteor } from 'meteor/meteor';
 
-import { withTracker } from 'meteor/react-meteor-data';
+//import { withTracker } from 'meteor/react-meteor-data';
 import SamCitizens from '/imports/api/sam_citizens/sam_citizens';
 
-
-import gql from "graphql-tag";
-import { graphql, Query } from "react-apollo";
 import MapBox from "./map-box-app";
 
 
@@ -18,6 +15,8 @@ const formatDollars = function(number){
     return null
   }
 };
+
+
 /* move into its own HOC??
 const GetHousehold = ({ account, household_id, showapts }) => (
   <Query
@@ -96,15 +95,18 @@ const GetHousehold = ({ account, household_id, showapts }) => (
   </Query>
 ) */
 
-
-class SamDataForm extends React.PureComponent {
+export default class SamDataForm extends React.PureComponent {
    constructor(props) { //this doesn't behave as I expect, and doesn't seem to matter
        super(props);
        this.setWaiting = this.props.setWaiting;
        this.setUpdate = this.props.setUpdate;
        this.countData = this.props.countData;
        this.state = {
-         samcity_data: [],
+         firstload: 1,
+         waiting: this.props.waiting,
+         samcity_data: [],// SamCitizens.find({}),
+         highlight_data: [],
+         samprops: this.props.samprops,
          household_id: this.props.samprops.household_id,
          account: this.props.samprops.account,
          openHousehold: this.props.samprops.openHousehold,
@@ -112,6 +114,7 @@ class SamDataForm extends React.PureComponent {
          geojsonsam : {"type":"FeatureCollection","features":"tbd"}
        };
    }
+
 
    async componentDidMount() {
      const retrn = await fetch('/json/'+this.props.samprops.geojson_title)
@@ -121,40 +124,110 @@ class SamDataForm extends React.PureComponent {
 
    static getDerivedStateFromProps(props, state) {
      //there is a .stop on a subscription that could help clear cache??https://docs.meteor.com/api/pubsub.html#Meteor-subscribe
-     props.error ? console.log(props.error) : null
+     //props.error ? console.log(props.error) : null
+     if(props.waiting!=state.waiting){
+       return {waiting:props.waiting}
+     }
+     if(props.update!=state.update){
+       return {update:props.update}
+     }
+     // if(props.samprops != state.samprops){
+     //   return {samprops:props.samprops}
+     // }
 
-     if(props.update==1){
-       props.setUpdate(0)
-        var qdb = {
-         coords: {
-           $geoWithin: {
-             $box: [props.samprops.bbox_bl,props.samprops.bbox_ur] //needs [[bottom-left],[upper-right]]
-           }
-         },
-         one_of:{$gte : props.samprops.one_of}
-       };
-       if(state.samprops){
-       if(props.samprops.one_of != state.samprops.one_of || props.samprops.bbox_bl != state.samprops.bbox_bl || props.samprops.bbox_ur != state.samprops.bbox_ur)
-       {console.log('just these')}}
-       Meteor.subscribe('samcity',qdb,{
+     if(state.firstload){
+       console.log('first load')
+       const pipeline = {}
+       pipeline['query'] = {one_of:{$gte : 1000}}
+       var fields = {one_of:1,coords:1};
+       props.samprops.toShow.forEach(function(cat){
+         fields[cat.category] = 1;
+       });
+       props.samprops.toShowScale.forEach(function(cat){
+         fields[cat.category] = 1;
+       });
+       pipeline['fields']=fields;
+       Meteor.subscribe('samcity',pipeline,{
          onReady: function() {
            props.setWaiting(0)
          },
          onError: function(error) {
            console.log("error on dataload: "+error)
          }
-         }
-       )
-       return {update:1,samprops:props.samprops}
-     }else{
-       return null
+       });
+       return {firstload:0}
      };
-    }
 
-    render(){
+     if(props.update==1){
+       var pipe = {};
+        //props.setUpdate(0) //should try to reimplement this logic - not clear if need to threads for update logic
+        var qdb = {
+         coords: {
+           $geoWithin: {
+             $box: [props.samprops.bbox_ur,props.samprops.bbox_bl] //needs [[bottom-left],[upper-right]]
+           }
+         },
+         one_of:{$gte : props.samprops.one_of}
+       };
+       var query = {};
+       var fields = {one_of:1,coords:1};
+       props.samprops.toShow.forEach(function(cat){
+         fields[cat.category] = 1;
+         if(cat.fnd){
+           query[cat.category] = cat.fnd;
+         }
+       });
+
+       props.samprops.toShowScale.forEach(function(cat){
+         fields[cat.category] = 1;
+         if(cat.fnd){
+           query[cat.category] = {$gte : parseFloat(cat.low),$lte : parseFloat(cat.high) };
+         }
+         //console.log('query in top update: '+JSON.stringify(query))
+       });
+       //if(state.samprops){
+       var long_change = (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0]) != 0 ?
+          (state.samprops.bbox_bl[0] - props.samprops.bbox_bl[0])/(state.samprops.bbox_bl[0]-state.samprops.bbox_ur[0]) : 0;
+          //console.log(long_change)
+       var lat_change = (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1]) != 0 ?
+         (state.samprops.bbox_bl[1] - props.samprops.bbox_bl[1])/(state.samprops.bbox_bl[1]-state.samprops.bbox_ur[1]) : 0;
+         //console.log(lat_change)
+         //console.log(props.samprops.one_of)
+       if(props.samprops.one_of != state.samprops.one_of || props.samprops.one_of < 1000){
+         if(long_change > .08 || lat_change > .08 || props.samprops.explainIndex != state.samprops.explainIndex ){
+         console.log('update subscribe')
+         pipe['query'] = qdb;
+         pipe['fields'] = fields;
+         pipe['update'] = 1
+         props.setWaiting(1);
+           Meteor.subscribe('samcity',pipe,{
+             onReady: function() {
+               props.setWaiting(0);
+               props.setUpdate(0);
+             },
+             onError: function(error) {
+               console.log("error on dataload: "+error)
+             }
+           })}else{
+             props.setWaiting(0);
+             props.setUpdate(0);
+           };
+         };
+         // console.log('query: '+JSON.stringify(query))
+         // console.log('fields: '+JSON.stringify(fields))
+      //
+
+       return {samprops:props.samprops,
+               samcity_data: SamCitizens.find(query,{fields:fields})} //, highlight_data: SamCitizens.find({race:'white'})}
+   }else{
+     return null
+   }
+  }
+
+  render(){
 
       let patience = <div></div>
-      if (this.props.waiting){ patience =
+      if (this.state.waiting==1){ patience =
           <div style={{position:"absolute",zIndex:'10',width:"100%",height:"100%",backgroundColor:"#7f7f7f33"}}>
           <div style={{marginTop:"30%", marginLeft:"3%", color:"green", fontSize:"2em",textAlign:"center"}}>
           <div>Loading Data ... </div><div>thank you for your patience</div></div></div>
@@ -190,8 +263,8 @@ class SamDataForm extends React.PureComponent {
             countData={this.props.countData}
             waiting={this.props.waiting}
             update={this.props.update}
-            data={this.props.samcity_data}
-            highlight_data={this.props.highlight_data}
+            data={this.state.samcity_data}
+            highlight_data={this.state.highlight_data}
             returnColors = {this.returnColors}
             geojsonsam={this.state.geojsonsam}
             mapprops={this.props.mapprops}
@@ -203,17 +276,17 @@ class SamDataForm extends React.PureComponent {
   )
 };
 };
-  export default withTracker((props) => {
-    var pipeline = {};
-    props.samprops.toShow.forEach(function(cat){
-      if(cat.fnd){
-        pipeline[cat.category] = cat.fnd;
-      }
-      if(cat.fnd_top_num){
-        pipeline[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
-      }
-    })
-    return {samcity_data: SamCitizens.find(pipeline).fetch()}
-  })(SamDataForm)
+  // export default withTracker((props) => {
+  //   var pipeline = {};
+  //   props.samprops.toShow.forEach(function(cat){
+  //     if(cat.fnd){
+  //       pipeline[cat.category] = cat.fnd;
+  //     }
+  //     if(cat.fnd_top_num){
+  //       pipeline[cat.category] = {$gte : cat.fnd_bottom_num,$lte : cat.fnd_top_num};
+  //     }
+  //   })
+  //   return {samcity_data: SamCitizens.find(pipeline).fetch()}
+  // })(SamDataForm)
 
 //export default graphql(sam20kQuery, queryOptsWrap())(SamDataForm);

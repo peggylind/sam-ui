@@ -1,10 +1,13 @@
 import React, { Component } from "react";
-import DeckGL, { CompositeLayer, GeoJsonLayer, ScatterplotLayer, ArcLayer, TextLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, ContourLayer, MapController, Controller } from 'deck.gl';
+import DeckGL, { GeoJsonLayer, ScatterplotLayer, ArcLayer, TextLayer, LineLayer, GridLayer, GridCellLayer, HexagonLayer, PointCloudLayer, PathLayer } from 'deck.gl';
+//import {ContourLayer} from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import WebMercatorViewport, {getDistanceScales} from 'viewport-mercator-project';
 //import debounce from 'lodash.debounce';
 import SamMapControls from './SamMapController';
-import RoundedRectangleLayer from './rounded_rectangle_layer';
+import RoundedRectangleLayer from './layers/rounded_rectangle_layer';
+import ContourLayer from './layers/contour-layer/contour-layer'; //still not sure why it wouldn't import from deck.gl, but always returned undefined...
+
 
 const west = -95.91;
 const east = -94.67;
@@ -66,8 +69,9 @@ export default class MapBox extends Component {
             viewport: new WebMercatorViewport(this.props.mapprops.viewport),
             bbox: this.props.mapprops.bbox,
             time: 0,
-            samdata: this.props.samdata || [],
-            waiting: 1,// this.props.waiting,
+            samdata: [], //this.props.data ||
+            pathdata: [],  //either push more paths or replace
+            waiting: this.props.waiting,
             categIndex: this.props.samprops.categIndex,
             cellSize: this.props.samprops.cellSize,
             highlight_data: this.props.highlight_data || [],
@@ -79,10 +83,11 @@ export default class MapBox extends Component {
 
       returnheight (factor) {
         //should do some as log!!!
+        //think through!!!!
         let min = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].low
         let max = this.props.samprops.toShowScale[this.props.samprops.scaleIndex].high
         //function(val, max, min) { return (val - min) / (max - min); }
-        return ((factor[this.props.samprops.scaleShow]-min) / (max - min)) * (this.props.samprops.height/2)
+        return ((factor[this.props.samprops.toShowScale[this.props.samprops.scaleIndex].category]-min) / (max - min)) * (this.props.samprops.toShowScale[this.props.samprops.scaleIndex].ScaleHeight/2)
       }
 
       returnColors (factor) {
@@ -94,18 +99,34 @@ export default class MapBox extends Component {
       }
 
     static getDerivedStateFromProps(props, state) {
+      if(state.viewport.zoom < 9){
+        var viewport = {...state.viewport}
+        viewport.zoom = 9
+        return {viewport}
+      }
       if(props.samprops){
         if(props.samprops.categIndex != state.categIndex){
-          props.countData(props.data)
+          props.countData(props.data.fetch());
           return {categIndex:props.samprops.categIndex}
-        }
-      }
-      // if (props.update){
-      //   props.setUpdate(0);
-      //   return {samdata:props.data}
-      // }
-
-      if (props.waiting){
+        };
+      };
+      if(props.samprops.scaleIndex){
+        if(props.samprops.scaleIndex != state.scaleIndex || props.samprops.toShowScale[props.samprops.scaleIndex].low != state.bottom ||
+              props.samprops.toShowScale[props.samprops.scaleIndex].high != state.top  ){
+          props.countData(props.data.fetch());
+          return {scaleIndex:props.samprops.scaleIndex,
+                  bottom:props.samprops.toShowScale[props.samprops.scaleIndex].low,
+                  top:props.samprops.toShowScale[props.samprops.scaleIndex].high
+                  }
+        };
+      };
+      if(props.data != state.samdata && !props.waiting){ //adding the catch for props.waiting seems to make a huge difference in speed
+        return {samdata:props.data}
+      };
+      if(props.update!=state.update){
+        return {update:props.update}
+      };
+      if (state.update){
         var tmpViewPort = new WebMercatorViewport(state.viewport) //the state.viewport can't be accessed after first time so have to make a new one
         var scale = getDistanceScales(state.viewport).metersPerPixel[0];
         var width = window.innerWidth;
@@ -117,15 +138,26 @@ export default class MapBox extends Component {
         }else{
           var dist4search = worldWidth
         };
-        //var tl = tmpViewPort.unproject([0,0])
-        var tr = tmpViewPort.unproject([0,height])
-        var bl = tmpViewPort.unproject([width,0])
+        //could put box on slider instead of writing 20
+        var linemargin = 50;
+        var tl = tmpViewPort.unproject([linemargin,linemargin])
+        var bl = tmpViewPort.unproject([linemargin,height-linemargin])
+        var tr = tmpViewPort.unproject([width-linemargin,linemargin])
+        var br = tmpViewPort.unproject([width-linemargin,height-linemargin])
+        var pathdata = [
+          { path:[tl,tr,br,bl,tl],
+            name: 'Testing what to show -- datacounts??'+tl,
+            color: [0,255,0,255] }
+        ];
         props.onMapChange(state.viewport,dist4search,worldHeight,tr,bl);
-        return {samdata:props.data}
+        if(state.samdata.collection && !props.waiting){
+          props.countData(props.data.fetch());
+        }
+        props.setUpdate(0);
+        return {update:0,samdata:props.data,pathdata:pathdata}
       }else{
-        return {samdata:props.data}
+        return null
       }
-
       if (state.cellSize != props.samprops.cellSize){
         return {cellSize: props.samprops.cellSize}
       }
@@ -150,17 +182,19 @@ export default class MapBox extends Component {
         //console.log(this.props.geojsonsam)
          this.setState({geojsonsam:this.props.geojsonsam})
       };
+      //
+      if (newProps.data != prevState.samdata && prevState.samdata.collection){ //only does first one
+        newProps.countData(newProps.data.fetch());
+      }
       if (this.state.viewport != prevState.viewport){
-        newProps.setWaiting(1)
-        newProps.setUpdate(1)
-       };
+        if(this.state.viewport.zoom >= prevState.viewport.zoom){
+          //newProps.setWaiting(1)
+          newProps.setUpdate(1)
+        };
+      };
     };
 
-//https://github.com/uber-common/viewport-mercator-project/blob/master/docs/api-reference/web-mercator-utils.md
-
   render() {
-    //console.log('in mb render: '+this.state.highlight_data)
-    //const data = this.state.geojsonsam;
   const GeoMap = new GeoJsonLayer({
     id: 'geojson-layer',
     data: this.state.geojsonsam,
@@ -207,13 +241,13 @@ export default class MapBox extends Component {
     id: 'scatterplot-layer',
     data: [...this.state.samdata],
 		getPosition: d => [d.coords[0], d.coords[1]],
-    getColor: d => this.returnColors(d[this.props.samprops.catShow]),
+    getFillColor: d => this.returnColors(d[this.props.samprops.catShow]),
     opacity: this.props.samprops.opacity,
     radiusMinPixels: this.props.samprops.radiusMinPixels,
     radiusMaxPixels: this.props.samprops.radiusMaxPixels,
-    strokeWidth: this.props.samprops.strokeWidth,
+    getLineWidth: this.props.samprops.strokeWidth,
     //radiusScale: this.props.samprops.radiusScale,
-    outline: this.props.samprops.outline,
+    stroked: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
     cornerRadius: .2,
     //autoHighlight: true,
@@ -222,22 +256,19 @@ export default class MapBox extends Component {
   });
   const HighlightMap = new ScatterplotLayer({
     id: 'highlight-layer',
-    data: [...this.state.highlight_data],
+    data: [...this.props.highlight_data],
 		getPosition: d => [d.coords[0], d.coords[1]],
-    getColor: [255,0,0,255],// d => this.returnColors(d[this.props.samprops.catShow]),
+    getFillColor: [255,0,0,255],// d => this.returnColors(d[this.props.samprops.catShow]),
     opacity: 1, //this.props.samprops.opacity,
     radiusMinPixels: this.props.samprops.radiusMinPixels,
     radiusMaxPixels: this.props.samprops.radiusMaxPixels,
-    strokeWidth: this.props.samprops.strokeWidth*20,
+    getLineWidth: this.props.samprops.strokeWidth*20,
     //radiusScale: 2000,
-    outline: this.props.samprops.outline,
+    stroked: this.props.samprops.outline,
     pickable: this.props.samprops.pickable,
     autoHighlight: true,
     //onHover: ({object}) => this.setToolInfo(object),
-    onClick: ({object}) => this.setClick(object),
-    waiting: this.state.waiting,
-    //gl_wait: this.state.gl_wait,
-    setWaiting: this.props.setWaiting
+    onClick: ({object}) => this.setClick(object)
   });
   //You can subClassing HexagonLayer and override the _onGetSublayerElevation method with your own. This method takes each cell {centroid: [], points: []. index} as input , and returns the elevation. Note the points: [] is the array of data points that contained by each cell. You can use these array of points to calculate your own elevation.
   const HexMap = new HexagonLayer({
@@ -291,29 +322,44 @@ export default class MapBox extends Component {
     getTextAnchor: 'middle',
     getAlignmentBaseline: 'center'//,
     //onHover: ({object}) => setTooltip(`${object.name}\n${object.address}`)
-  })
-  // const ContourMap = new ContourLayer({ //not working
-  //   id: 'contourLayer',
-  //   data: [...this.state.samdata],
-  //   // Three contours are rendered.
-  //   contours: [
-  //     {threshold: 1, color: [255, 0, 0], strokeWidth: 1},
-  //     {threshold: 5, color: [0, 255, 0], strokeWidth: 2},
-  //     {threshold: 10, color: [0, 0, 255], strokeWidth: 5}
-  //   ],
-  //   cellSize: 200,
-  //   getPosition: d => [d.coords[0], d.coords[1]]
-  // });
+  });
+  const PathMap = new PathLayer({
+    id: 'path-layer',
+    data: [...this.state.pathdata],
+    pickable: true,
+    widthScale: 1,
+    widthMinPixels: 1,
+    getPath: d => d.path,
+    getColor: d => d.color,
+    getWidth: d => 5,
+    onHover: ({object, x, y}) => {
+      console.log(object)
+      const tooltip = object ? object.name : null;
+    }
+  });
+  const ContourMap = new ContourLayer({ //not working with [6-10] because PolygonLayer not loading in same way ContourLayer wouldn't load... maybe reinstalling???
+    id: 'contour-layer',
+    data: [...this.state.samdata],
+    // Three contours are rendered.
+    contours: [
+      {threshold: 1, color: [255, 0, 0], strokeWidth: 1},
+      {threshold: 5, color: [0, 255, 0], strokeWidth: 2},
+      {threshold: 10, color: [0, 0, 255], strokeWidth: 5}
+    ],
+    cellSize: 700,
+    getPosition: d => [d.coords[0], d.coords[1]]
+  });
   const main_layers_list = [
      GeoMap,
      ScatterMap,
-     HexMap,
      PointCloudMap,
      GridMap,
-     GridCellMap//,
-  //   ContourMap
+     HexMap,
+     GridCellMap,
+     PathMap,
+     ContourMap
   ];
-  const main_layers = [main_layers_list[this.props.mapprops.mode]]
+  const main_layers = [main_layers_list[this.props.mapprops.mode]] //PathMap works, but need to rethink the modes...
   //const main_layers = [HighlightMap,TextMap,main_layers_list[this.props.mapprops.mode]]
   //const CompositeMap = new MapCompositeLayer(main_layers); onHover stopped working!
 
@@ -321,7 +367,6 @@ export default class MapBox extends Component {
       <ReactMapGL
         {...this.state.viewport}
         mapboxApiAccessToken={this.state.mapboxApiAccessToken}
-        waiting={this.state.waiting}
         mapControls={this.SamControls}
         onViewportChange={(viewport) => this.setState({viewport})}
       >

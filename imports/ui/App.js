@@ -1,6 +1,4 @@
 import React, {Component} from "react";
-import RegisterForm from "./RegisterForm";
-import LoginForm from "./LoginForm";
 //import SidePane from "./side-pane"; //would liftup twice for components under SidePane
 import debounce from 'lodash.debounce'
 //import asyncComponent from './asyncComponent'; //may not use - still testing
@@ -67,9 +65,9 @@ function list4plots (plots) {
     })
   })
   return makePlotColors(plotList) //which is a list of objects from toShow
-}
-
-const firstzoom = 9.6;
+};
+const UH_color1 = '#FFF9D9';//cream  '#F6BE00'; //gold    '#888B8D';//gray   '#00B388';//Teal   '#C8102E';//'red'
+const firstzoom = 9.3;
 const firstdist = 100000;
 const calcOpacity = (zoom) => { return 1 - (zoom/25)};
 const calcStrokeWidth = (zoom) =>
@@ -79,8 +77,8 @@ const calcStrokeWidth = (zoom) =>
 const calcOneOf = (zoom) =>
   zoom > 14.3 ? 1 : zoom > 13 ? 10 : zoom > 11.3 ? 100 : 1000;
   //zoom > 12.7 ? 1 : zoom < 11 ? 1000: zoom > 11 ? 100 : 10;
-const bbox_bl = [-97.1,28.16]; //first one should get everything
-const bbox_ur = [-94.1,30.94];
+const bbox_bl = []; // [-97.1,28.16]; //first one should get everything
+const bbox_ur = []; //[-94.1,30.94];
 
 const samprops = { //have all decided with same logic?? //a bunch of stuff should be fixed if we go apollo 3.1 - for now need it in both for search!!
   //racial_entropy_index: '',
@@ -180,12 +178,11 @@ export default class App extends React.PureComponent {
        this.setOpenHousehold = this.setOpenHousehold.bind(this);
        this.countData = this.countData.bind(this);
        this.changeSamProps = this.changeSamProps.bind(this);
-       //bbox is NW,NE,SE,SW
 
        this.state = {
          waiting: 1,
          update: 1,
-         toolTipInfo : {text:'Hover or click for info.'},
+         toolTipInfo : {text:''}, //{text:'Hover or click for info.'},
          //explanation : model_explanations()[samprops.explainIndex],//{text: <div><span>We can have any number of things here.</span><span>Start with why health disparities research requires understanding how individual people contribute to the whole (and are not just statistics).</span></div>},
          highlight_data : [],
          samprops : samprops,
@@ -204,17 +201,18 @@ export default class App extends React.PureComponent {
               }
             }
          };
-         this.onMapChange = debounce(this.onMapChange, 2000);
-         this.setUpdate = debounce(this.setUpdate, 2000);
-         this.setWaiting = debounce(this.setWaiting, 200);
-         this.setToolInfo = debounce(this.setToolInfo, 200);
-         this.handlePopulationChange = debounce(this.handlePopulationChange, 1000);
+         this.onMapChange = debounce(this.onMapChange, 100);
+         this.setUpdate = debounce(this.setUpdate, 100);
+         this.setWaiting = debounce(this.setWaiting, 100);
+         this.setToolInfo = debounce(this.setToolInfo, 100);
+         this.handlePopulationChange = debounce(this.handlePopulationChange, 100);
    };
-  //only still using to trigger measurement of display - could refactor around loading
   setWaiting = function(wait){
+    console.log('setWaiting fired '+wait)
     this.setState({waiting:wait})
   };
   setUpdate = function(up){
+    console.log('setUpdate '+up)
     this.setState({update:up})
   }
   setOpenHousehold = function(open){
@@ -237,9 +235,17 @@ export default class App extends React.PureComponent {
         samprops.datacount[category][factor] = 0
       }
       samprops.datacount[category][factor] += samprops.one_of
-
     }
     samprops.datacount['initialcount'] = 0;
+    if(samprops.scaleIndex){
+      let scaleCat = samprops.toShowScale[samprops.scaleIndex]
+      samprops.datacount[scaleCat.category] = {};
+      samprops.datacount[scaleCat.category]['all'] = samprops.datacount[category]['all']
+      samprops.datacount[scaleCat.category]['bottom'] = scaleCat.low;
+      samprops.datacount[scaleCat.category]['top'] = scaleCat.high;
+    }
+    console.log('countData')
+    console.log(samprops.datacount)
     this.setState({samprops});
   }
   onGridSizeChange = function(size) {
@@ -258,20 +264,21 @@ export default class App extends React.PureComponent {
     samprops.geojson_title = geojson_title;
     this.setState({samprops});
   };
-  onScaleChange = function(event){
+  onScaleChange = function(e_obj){
     var samprops = {...this.state.samprops}
     var mapprops = {...this.state.mapprops}
-    if(isNaN(event)){
-        samprops.toShowScale.forEach(function(row,r){
-          if(row.category == event.target.value){
-            samprops.scaleIndex = r;
-            samprops.scaleShow = row.category; //only used in map-box right now --fix this and catShow!!
-            if(r==0){mapprops.mode=1}else{mapprops.mode=3}; //other scale possibilities later
-            //samprops.forColors = assignColors(samprops.toShow[r]); -- need one for size settings?
-        }})
-    }else{
-      mapprops.mode=event
-    };
+    mapprops.mode = e_obj.Mode;
+    console.log('e_obj '+JSON.stringify(e_obj))
+    var r = e_obj.scaleIndex;
+    samprops.scaleIndex = r;
+    samprops.scaleShow = e_obj.category; //only used in map-box right now --fix this and catShow!!
+    samprops.toShowScale[r].fnd = e_obj.ScaletoShow;
+    samprops.toShowScale[r].low = e_obj.ScaleBottom;
+    samprops.toShowScale[r].high = e_obj.ScaleTop;
+    samprops.toShowScale[r].ScaleHeight = e_obj.ScaleHeight;
+    samprops.toShowScale[r].Mode = e_obj.Mode;
+    if(r==0){mapprops.mode=1}else{mapprops.mode=2};
+    this.setUpdate(1);
     this.setState({samprops,mapprops});
   }
   onCatChange = function(event){
@@ -295,7 +302,6 @@ export default class App extends React.PureComponent {
         samprops.toShow[r].fnd = e.factorName;
       }
     })
-    //this.setWaiting(1);
     this.setUpdate(1);
     this.setState({samprops});
   }
@@ -327,7 +333,7 @@ export default class App extends React.PureComponent {
     //var mapprops = {...this.state.mapprops}
     samprops.latitude = mapstuff.latitude;
     samprops.longitude = mapstuff.longitude;
-    samprops.zoom = mapstuff.zoom;
+    samprops.zoom = mapstuff.zoom < 9 ? 9 : mapstuff.zoom;
     samprops.dist = dist;
     //samprops.cellSize = dist/50;
     samprops.height = height;
@@ -337,8 +343,10 @@ export default class App extends React.PureComponent {
     samprops.bbox_bl = bl;
     samprops.bbox_ur = ur;
     //console.log(bbox_bl,bbox_ur)
-    if(this.state.samprops.one_of != samprops.one_of){this.setWaiting(1)}
+    //if(this.state.samprops.one_of != samprops.one_of){this.setWaiting(1)}
+    console.log('onMapChange')
     this.setUpdate(1);
+    // this.setWaiting(1);
     this.setState({samprops});
   };
 //not using onSamDataChange??
@@ -353,11 +361,12 @@ export default class App extends React.PureComponent {
     //console.log(e.target.value) //should have a target - should set the explainIndex, and the explanation?? pull in model_explanation.js??
     var samprops = {...this.state.samprops}
     samprops.explainIndex = e.target.value;
+    this.setUpdate(1);
     //explanation = expl
     this.setState({samprops,exp_width: model_explanations(samprops.explainIndex).div_width})
     //could also set the toShow, etc. to go along with different models, if the pull-downs are too long
   };
-  changeSamProps = function(obj){
+  changeSamProps = function(obj){ //model_div is using this one!!
     var samprops = {...this.state.samprops}
     samprops['categIndex'] = obj.categIndex;
     samprops['step_index'] = obj.step_index;
@@ -368,8 +377,8 @@ export default class App extends React.PureComponent {
       categories.forEach(function(cat,k){ //leaving none in list
         obj.forEach(function(ocat,n){
           samprops[cat.category] = ocat[cat.category] ? ocat[cat.category].factor : null
-          samprops['bottom_range'] = ocat['bottom_range'] ? ocat['bottom_range'] : null
-          samprops['top_range'] = ocat['top_range'] ? ocat['top_range'] : null
+          samprops['low'] = ocat['low'] ? ocat['low'] : null
+          samprops['high'] = ocat['high'] ? ocat['high'] : null
         })
       })
   //need to get obj.fnd
@@ -380,9 +389,10 @@ export default class App extends React.PureComponent {
         })
       })
       samprops.toShowScale.forEach(function(categ,i){
+        console.log('toShowScale '+categ)
         //need to fix logic for range variables!!!
-        samprops.toShowScale[i].bottom_range = obj[0].bottom_range
-        samprops.toShowScale[i].top_range = obj[0].top_range
+        samprops.toShowScale[i].low = obj[0].low
+        samprops.toShowScale[i].high = obj[0].high
         obj.forEach(function(ocateg,m){
         //have to walk all to clear earlier ones if they start tour inside...
           samprops.toShowScale[i].fnd = ocateg[categ.category] ? ocateg[categ.category].fnd ? ocateg[categ.category].fnd : null : null
@@ -393,7 +403,6 @@ export default class App extends React.PureComponent {
   }
 
   setHighlight = function(array){
-    console.log(array)
     this.setState({highlight_data:array})
   }
   setText = function(txt,position){ //not sure what's wrong with this on TextLayer - need to control deck.gl render!!! for now, ignoring position
@@ -411,31 +420,64 @@ export default class App extends React.PureComponent {
     this.setState({toolTipInfo})
   };
   setClick = function(info){
-    // var toolTipInfo = {...this.state.toolTipInfo}
-    // toolTipInfo.info = info
-    //toolTipInfo.text = ''
-    var samprops = {...this.state.samprops}
-    samprops.household_id = info.household_id
-  //  console.log(info)
-    samprops.account = info.account
-    samprops.openHousehold = 1
-    this.setState({samprops})
+    console.log('info that will matter with household '+info)
+  //   // var toolTipInfo = {...this.state.toolTipInfo}
+  //   // toolTipInfo.info = info
+  //   //toolTipInfo.text = ''
+  //   var samprops = {...this.state.samprops}
+  //   samprops.household_id = info.household_id
+  // //  console.log(info)
+  //   samprops.account = info.account
+  //   samprops.openHousehold = 1
+  //   this.setState({samprops})
   };
-
+  numberWithCommas = function(x) {
+    if(x!=undefined){
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }else{
+      return null
+    }
+  }
   // componentWillUnmount(){
   //   client.resetStore();
   // }
 
   render(){
 
-
-
-      //if (loading) return null;
+//not sure about fonts ---
       return (
-          <div>
-              <div style={{position:"absolute",width:"100%",fontSize:"4em",textAlign:"center", zIndex:"3"}}>
-                <span title="Houston on a first name basis" style={{backgroundColor:"#7f7f7f33",borderRadius:"25px"}}>Sam City</span>
+          <div style={{fontFamily:"League Gothic"}}>
+              <div style={{position:"absolute",width:"100%",textAlign:"center", zIndex:"3"}}>
+                <span title="Houston on a first name basis" style={{backgroundColor:UH_color1,borderRadius:"12px",fontSize:"4em",borderStyle:"groove",borderColor:"#888B8D"}}>Sam City</span>
+                <span style={{position:"absolute",left:"15%"}}>
+                {this.state.samprops.toShow.map((category,ind) =>
+                  category.fnd &&
+                    <div style={{backgroundColor:UH_color1,fontSize:"1em",zIndex:6}} key={'fnd'+ind}>
+                    <span>
+                    <div>Filtered by</div>
+                      {category.pretty_name.substring(0,20)} : {category.fnd.substring(0,20).toLowerCase()}
+                      <br></br>
+                      {this.state.samprops.datacount[category.category] &&
+                        this.numberWithCommas(this.state.samprops.datacount[category.category][category.fnd])}
+                    </span>
+                    </div>
+                )}
+
+                {this.state.samprops.toShowScale.map((category,ind) =>
+                  category.fnd &&
+                    <div style={{backgroundColor:UH_color1,fontSize:"1em",zIndex:6}}
+                    key={ind}>
+                      {category.pretty_name.substring(0,20)} : {category.low} - {category.high}
+                      <br></br>
+                      {this.state.samprops.datacount[category.category] &&
+                        this.numberWithCommas(this.state.samprops.datacount[category.category]['all'])
+                      }
+                    </div>
+                )}
+                </span>
+
               </div>
+
               <div style={{position:"absolute",top:"75%",left:"85%",width:"10%",backgroundColor:"#f8f8ff",zIndex:"3"}}>
                 <hr/>
                 <span title="Data Analytics in Student Hands">
@@ -456,13 +498,14 @@ export default class App extends React.PureComponent {
             <LegendBox
               mapprops={this.state.mapprops}
               samprops={this.state.samprops}
-              changeSamProps={this.changeSamProps}
+              //changeSamProps={this.changeSamProps}
               onPopChange={this.handlePopulationChange}
               onCatChange={this.onCatChange}
               onScaleChange={this.onScaleChange}
               onFactortoShow={this.onFactortoShow}
               onChangetoShow={this.onChangetoShow}
               onMapChange={this.onMapChange}
+              setUpdate={this.setUpdate}
               onGridSizeChange={this.onGridSizeChange}
               setExplanation={this.setExplanation}
               setToolInfo={this.setToolInfo}

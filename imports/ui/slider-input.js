@@ -8,13 +8,17 @@ export default class Slide extends Component {
     //console.log('slider'+JSON.stringify(this.props))
     this.handleChange = this.handleChange.bind(this);
     this.emitChangeDebounced = debounce(this.emitChange, 250);
-    this.evalue = 1000;
+    this.evalue = this.props.value;
   };
   componentWillUnmount() {
     this.emitChangeDebounced.cancel();
   };
   handleChange(e) {
-    this.evalue = e.target.value;
+    if(this.props.max - this.props.min > 5){
+      this.evalue = parseInt(e.target.value);
+    }else{
+      this.evalue = e.target.value.toFixed(3);
+    }
     this.emitChangeDebounced(e.target.value);
   };
   //register value on parent's function
@@ -61,11 +65,12 @@ export default class Slide extends Component {
     type="range"
     min={this.props.min}
     max={this.props.max}
+    value={this.props.value}
     step={this.props.step}
     onChange={this.handleChange}
     style={rangeStyle}/>
   <div style={readOut}>
-    {formatCommas(this.evalue)}{this.props.eval_description}
+    {this.props.eval_description}:{formatCommas(this.evalue)}
   </div>
 </div>
 
