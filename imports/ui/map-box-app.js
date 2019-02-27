@@ -151,6 +151,7 @@ export default class MapBox extends Component {
         ];
         props.onMapChange(state.viewport,dist4search,worldHeight,tr,bl);
         if(state.samdata.collection && !props.waiting){
+          console.log('mapbox calls count in props.waiting')
           props.countData(props.data.fetch());
         }
         props.setUpdate(0);
@@ -184,6 +185,7 @@ export default class MapBox extends Component {
       };
       //
       if (newProps.data != prevState.samdata && prevState.samdata.collection){ //only does first one
+        console.log('map-box call count in componentDidUpdate')
         newProps.countData(newProps.data.fetch());
       }
       if (this.state.viewport != prevState.viewport){
