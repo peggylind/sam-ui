@@ -159,6 +159,7 @@ export default class SamDataForm extends React.PureComponent {
      };
 
      if(props.update==1){
+       console.log('update SamDataForm')
        var pipe = {};
         //props.setUpdate(0) //should try to reimplement this logic - not clear if need to threads for update logic
         var qdb = {
@@ -220,6 +221,7 @@ export default class SamDataForm extends React.PureComponent {
        return {samprops:props.samprops,
                samcity_data: SamCitizens.find(query,{fields:fields})} //, highlight_data: SamCitizens.find({race:'white'})}
    }else{
+     console.log('null for else in update SamDataForm')
      return null
    }
   }
