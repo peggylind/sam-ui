@@ -2,8 +2,11 @@ library(mongolite)
 library(rjson)
 
 
+
+
+
 #mongod open on my local, but connect as needed
-sam <- readRDS("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData/complete_sample_set2018-09-22.RDS")
+sam <- readRDS("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData/complete_sample_set2019-03-10.RDS")
 library(dplyr)
 
 test_sam <- sample_n(sam,100000)
@@ -11,7 +14,7 @@ test_sam <- sample_n(sam,100000)
 library(janitor)
 sam <- clean_names(sam)
 
-#Error in toJSON(samc[row, ]) : 
+#Error in toJSON(samc[row, ]) :
 #unable to escape string. String is not utf8
 #seems to have been 4or5 places with weird characters in the notes columns - 1782584,1850900,1868732,1937535
 #find them or just delete whole notes column:
@@ -42,12 +45,18 @@ sam$coords <- coordinates(sam$coords)
 sam <- as.data.frame(sam)
 #test_sam <- split(test_sam,seq(nrow(test_sam)))
 
+#for adding _id
+#should have one_of first, and as.numeric - 11000, 10100, 100100, 100010, 100001 - adding first 1 to make it a number with leading
+#after that it should have household_id - again, as numeric - and then member type? and then a five digit random at end?? 
+
+
 SamCity <- mongo("samcity", url = "mongodb://localhost/SamCity");
 #remove first!!
 SamCity$drop()
 SamCity$find(limit = 2)
 #mongolite throws  Error: No method asJSON S3 class: sfg , so tried an extra toJSON
 sam2insert <- sam
+
 
 Sys.time()
 for (row in 1:nrow(sam2insert)){
@@ -83,7 +92,7 @@ Sys.time()
 SamCity$stats()
 SamCity$collStats()
 SamCity$totalIndexSize()
-SamCity$serverStatus() 
+SamCity$serverStatus()
 
 #if there's a problem, could be whatever caused jsonlite to say Error: Argument 'data' contains strings that are not JSON objects at elements: 1
 #SamCity$index(remove = 'one_of_1')
@@ -114,4 +123,3 @@ for (i in names(sam)){
   }
 }
 write(toJSON(unique_names),"unique_names.json")
-
