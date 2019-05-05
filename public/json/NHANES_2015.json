@@ -1,0 +1,229 @@
+{
+  "name": "nhanes2015_2016",
+  "description": "Fields for NHANES data gathered from https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?BeginYear=2015",
+  "resources": [
+    {
+      "path": "nhanes2015_2016.RDS",
+      "schema": {
+        "fields": [
+          {
+            "name": "SEQN",
+            "type": "double",
+            "description": "(SEQN) Respondent sequence number."
+          },
+          {
+            "name": "gender",
+            "type": "double",
+            "description": "(DMDHRGND) Household reference person's gender."
+          },
+          {
+            "name": "education",
+            "type": "double",
+            "description": "(DMDHREDU) Highest education level."
+          },
+          {
+            "name": "family_size",
+            "type": "double",
+            "description": "(DMDFMSIZ) Total number of people in the Family."
+          },
+          {
+            "name": "age",
+            "type": "double",
+            "description": "(DMDHRAGE) Household reference person's age in years."
+          },
+          {
+            "name": "marital_status",
+            "type": "double",
+            "description": "(DMDHRMAR) Household reference person's marital status."
+          },
+          {
+            "name": "yrs_US",
+            "type": "double",
+            "description": "(DMDYRSUS) Length of time in US. NA if whole life."
+          },
+          {
+            "name": "vet_foreign_war",
+            "type": "double",
+            "description": "(DMQADFC) Served in foreign country during armed conflict."
+          },
+          {
+            "name": "veteran",
+            "type": "double",
+            "description": "(DMQMILIZ) Served on active duty in the U.S. Armed Forces, military Reserves, or National Guard."
+          },
+          {
+            "name": "birth_country",
+            "type": "double",
+            "description": "(DMDHRBR4) Household reference person's country of birth"
+          },
+          {
+            "name": "no_interest_do_things",
+            "type": "double",
+            "description": "(DPQ010) Over the last 2 weeks, how often have you been bothered by the following problems: little interest or pleasure in doing things?",
+            "options": {"0":"Not at all","1":"Several Days","2":"More than half the days","3":"Nearly Every Day","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "depressed",
+            "type": "double",
+            "description": "(DPQ020) [Over the last 2 weeks, how often have you been bothered by the following problems:] feeling down, depressed, or hopeless?",
+            "options": {"0":"Not at all","1":"Several Days","2":"More than half the days","3":"Nearly Every Day","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "trouble_sleep",
+            "type": "double",
+            "description": "(DPQ030) [Over the last 2 weeks, how often have you been bothered by the following problems:] trouble falling or staying asleep, or sleeping too much?",
+            "options": {"0":"Not at all","1":"Several Days","2":"More than half the days","3":"Nearly Every Day","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "no_energy",
+            "type": "double",
+            "description": "(DPQ040) [Over the last 2 weeks, how often have you been bothered by the following problems:] feeling tired or having little energy?",
+            "options": {"0":"Not at all","1":"Several Days","2":"More than half the days","3":"Nearly Every Day","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "poor_eating",
+            "type": "double",
+            "description": "(DPQ050) [Over the last 2 weeks, how often have you been bothered by the following problems:] poor appetite or overeating?",
+            "options": {"0":"Not at all","1":"Several Days","2":"More than half the days","3":"Nearly Every Day","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "better_dead",
+            "type": "double",
+            "description": "(DPQ090) [Over the last 2 weeks, how often have you been bothered by the following problems:] Thoughts that you would be better off dead or of hurting yourself in some way?",
+            "options": {"0":"Not at all","1":"Several Days","2":"More than half the days","3":"Nearly Every Day","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "BP_dr_said",
+            "type": "double",
+            "description": "(BPQ020) {Have you/Has SP} ever been told by a doctor or other health professional that {you/s/he} had hypertension, also called high blood pressure?",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "age_hypertension",
+            "type": "double",
+            "description": "(BPD035) Age told had hypertension."
+          },
+          {
+            "name": "prescribed_BP",
+            "type": "double",
+            "description": "(BPQ040A) Because of {your/SP's} (high blood pressure/hypertension), {have you/has s/he} ever been told to . . . take prescribed medicine?",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "taking_prescribed_BP",
+            "type": "double",
+            "description": "(BPQ050A) (Are you/Is SP) now taking prescribed hypertension/ high blood pressure medicine",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "prescribed_cholest",
+            "type": "double",
+            "description": "(BPQ090D) [To lower (your/his/her) blood cholesterol, (have/has) (you/SP) ever been told by a doctor or other health professional]... to take prescribed medicine?",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "taking_prescribed_cholest",
+            "type": "double",
+            "description": "(BPQ100D) (Are you/Is SP) now taking prescribed cholesterol medicine",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "age_diabetes",
+            "type": "double",
+            "description": "(DID040) Age told had diabetes."
+          },
+          {
+            "name": "told_prediabetes",
+            "type": "double",
+            "description": "(DIQ160) {Have you/Has SP} ever been told by a doctor or other health professional that {you have/SP has} any of the following: prediabetes, impaired fasting glucose, impaired glucose tolerance, borderline diabetes or that {your/her/his} blood sugar is higher than normal but not high enough to be called diabetes or sugar diabetes?",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "feel_risk_diabetes",
+            "type": "double",
+            "description": "(DIQ172) {Do you/Does SP} feel {you/he/she} could be at risk for diabetes or prediabetes?",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "health_insurance",
+            "type": "double",
+            "description": "(HIQ011) {Are you/Is SP} covered by health insurance or some other kind of health care plan? [Include health insurance obtained through employment or purchased directly as well as government programs like Medicare and Medicaid that provide medical care or help pay medical bills.]",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "medicare",
+            "type": "double",
+            "description": "(HIQ031B) {Are you/Is SP} covered by Medicare?",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "medicaid",
+            "type": "double",
+            "description": "(HIQ031B) {Are you/Is SP} covered by Medicaid?",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "no_insurance_1yr",
+            "type": "double",
+            "description": "(HIQ210) In the past 12 months, was there any time when {you/SP} did not have any health insurance coverage?",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "gen_health",
+            "type": "double",
+            "description": "(HUQ010) Would you say {your/SP's} health in general is . . ",
+            "options": {"1":"Excellent","2":"Very good","3":"Good","4":"Fair","5":"Poor","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "gen_health_v1yr",
+            "type": "double",
+            "description": "(HUQ020) Compared with 12 months ago, would you say {your/SP's} health is now . . . ",
+            "options": {"1":"Better","2":"Worse","3":"About the same","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "where_healthcare",
+            "type": "double",
+            "description": "(HUQ041) What kind of place {do you/does SP} go to most often - a clinic, doctor's office, emergency room, or some other place?",
+            "options": {"1":"Clinic or health center","2":"Doctor's office or HMO","3":"Hospital emergency room","4":"Hospital outpatient department","5":"Some other place","6":"Doesn't go to one place most often","77":"Refused","99":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "how_many_healthcare",
+            "type": "double",
+            "description": "(HUQ051) {During the past 12 months, how/How} many times {have you/has SP} seen a doctor or other health care professional about {your/his/her} health at a doctor's office, a clinic or some other place? Do not include times {you were/s/he was} hospitalized overnight, visits to hospital emergency rooms, home visits or telephone calls.",
+            "options": {"0":"None","1":"1","2":"2-3","3":"4-5","4":"6-7","5":"8-9","6":"10-12","7":"13-15","8":"16 or more","77":"Refused","99":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "times_overnight_hosp",
+            "type": "double",
+            "description": "(HUQ080) How many different times did {you/SP} stay in any hospital overnight or longer {during the past 12 months}? (Do not count total number of nights, just total number of hospital admissions for stays which lasted 1 or more nights.)",
+            "options": {"1":"1","2":"2","3":"3","4":"4","5":"5","6":"6 or more","77777":"Refused","99999":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "mental_last_year",
+            "type": "double",
+            "description": "(HUQ090) During the past 12 months, that is since {DISPLAY CURRENT MONTH} of {DISPLAY LAST YEAR}, {have you/has SP} seen or talked to a mental health professional such as a psychologist, psychiatrist, psychiatric nurse or clinical social worker about {your/his/her} health?",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "money_supermarket",
+            "type": "double",
+            "description": "(CBD071) When you answer these questions, please do not include money spent on alcoholic beverages. During the past 30 days, how much money {did your family/did you} spend at supermarkets or grocery stores? Please include purchases made with food stamps.",
+            "options": {"8400":"more than 8400","777777":"Refused","999999":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "money_non_food",
+            "type": "double",
+            "description": "(CBD091) About how much money was spent on nonfood items?",
+            "options": {"8400":"more than 8400","777777":"Refused","999999":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "eating_out",
+            "type": "double",
+            "description": "(CBD121) During the past 30 days, how much money {did your family/did you} spend on eating out? Please include money spent in cafeterias at work or at school or on vending machines, for all family members.",
+            "options": {"8400":"more than 8400","777777":"Refused","999999":"Don't Know",".":"Missing"}
+          }
+        ]
+      }
+    }
+  ]
+}
