@@ -19,7 +19,7 @@ sam <- clean_names(sam)
 #seems to have been 4or5 places with weird characters in the notes columns - 1782584,1850900,1868732,1937535
 #find them or just delete whole notes column:
 library (dplyr)
-sam <- sam %>% select(-note,-building_style_code,-hcad_num,-condo_flag,
+sam <- sam %>% select(-note,-hcad_num,-condo_flag,
                                  -loc_addr,-shape_area,-shape_len,-valid,-ms_replacement_cost,
                                  -county_2,-tract_2,-class_structure,-class_struc_description,
                                  -cama_replacement_cost,-accrued_depr_pct,-appraised_by,-appraised_date,
