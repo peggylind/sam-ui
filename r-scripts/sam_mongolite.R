@@ -25,6 +25,8 @@ sam <- sam %>% select(-note,-hcad_num,-condo_flag,
                                  -cama_replacement_cost,-accrued_depr_pct,-appraised_by,-appraised_date,
                                  -perimeter,-percent_complete,-nbhd_factor,-rcnld,-size_index,-lump_sum_adj,
                                  -na_dcentroids,-ptcoords)
+#add NHANES here
+
 st_geometry(sam) <- NULL
 sam$long <- sam$coords[,1]
 sam$lat <- sam$coords[,2]

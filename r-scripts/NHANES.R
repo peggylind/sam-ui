@@ -214,23 +214,23 @@ res.pca1 <- PCA(NHANES_1[,c(4,5,91:97,11)],scale.unit=TRUE, ncp=5) #add back edu
 #get warning that says: Missing values are imputed by the mean of the variable: you should use the imputePCA function of the missMDA package
 
 #calculate approximate poverty_ratio for sam - https://aspe.hhs.gov/poverty-guidelines
-test_sam['poverty_ratio'] <- round(test_sam$household_income / (8000 + (test_sam$size*4500) ), digits = 3)
+sam['poverty_ratio'] <- round(sam$household_income / (8000 + (sam$size*4500) ), digits = 3)
 
-test_sam["male"] <- ifelse(test_sam$sex == "Male", 1, 0)
-test_sam["female"] <- ifelse(test_sam$sex == "Female", 1, 0)
-for(fact in unique(test_sam$race)){
-  test_sam[paste(fact)] <- ifelse(test_sam$race == fact, 1, 0)
+sam["male"] <- ifelse(sam$sex == "Male", 1, 0)
+sam["female"] <- ifelse(sam$sex == "Female", 1, 0)
+for(fact in unique(sam$race)){
+  sam[paste(fact)] <- ifelse(sam$race == fact, 1, 0)
 }
 
 #predict https://cran.r-project.org/web/packages/FactoMineR/FactoMineR.pdf p. 72
 #needs to be in same order, with same names, as res.pca1 
-pca_predict <- predict(res.pca1,test_sam[,c(4,8,69:78,68)])
+pca_predict <- predict(res.pca1,sam[,c(4,8,69:78,68)])
 
 #create blank columns for names in sam
 #rename and select for right things...
 NHnames <- colnames(NHANES_1)
 for(i in NHnames)
-  test_sam[,i] <- NA
+  sam[,i] <- NA
 
 
 #so, if you take each value, multiply it by res.pca$eig[,2][i] (the variance explained), and repeat for
@@ -242,16 +242,26 @@ k <- 3
 mod <- res.pca1$ind$coord[,1:5] #whole thing, but only first 5 eigen dimensions
 targ <- pca_predict$coord[,1:5] #
 var <- res.pca1$eig[,2] #multiply each dimension in mod and targ by the percent var explained
-match_individuals = function(mod,targ,k){
+
+#library(doParallel)
+#no_cores <- detectCores()
+#cl <- makeCluster(no_cores-2)
+#registerDoParallel(cl)
+#library(foreach)
+#Sys.time()
+#stopCluster(cl)
+match_individuals = function(mod,targ,k,sam,NHANES_1){
+  Sys.time()
   n = nrow(targ)
   extrap = rep(NA_character_, n)
-  for(i in 1:n){
+  for(i in 1:n){ 
     nn = order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k] #treats all eigendimensions the same,
-    test_sam[i,79:162] = NHANES_1[sample(nn, 1),1:84]
+    sam[i,79:162] = NHANES_1[sample(nn, 1),1:84]
     #extrap[i] = sample(nn,1)
-  }
+  
   #returns nn as mod ordered by closest for each row ##try on dfs with multiple columns
-  return(extrap)
+    Sys.time()}
+  return(sam)
 }
 
 
