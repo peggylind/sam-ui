@@ -221,6 +221,135 @@
             "type": "double",
             "description": "(CBD121) During the past 30 days, how much money {did your family/did you} spend on eating out? Please include money spent in cafeterias at work or at school or on vending machines, for all family members.",
             "options": {"8400":"more than 8400","777777":"Refused","999999":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "minutes_vigorous_work",
+            "type": "double",
+            "description": "(PAD615) How much time {do you/does SP} spend doing vigorous-intensity activities at work on a typical day? (Missing if less than 10)",
+            "options": {"10-840":"Minutes of activity","7777":"Refused","9999":"Don't Know",".":"Missing/no vigorous work"}
+          },
+          {
+            "name": "minutes_moderate_work",
+            "type": "double",
+            "description": "(PAD615) How much time {do you/does SP} spend doing moderate-intensity activities at work on a typical day? (Missing if less than 10)",
+            "options": {"10-990":"Minutes of activity","7777":"Refused","9999":"Don't Know",".":"Missing/no moderate work"}
+          },
+          {
+            "name": "walk_bike_work",
+            "type": "double",
+            "description": "(PAD645) How much time {do you/does SP} spend walking or bicycling for travel on a typical day? (Missing if less than 10)",
+            "options": {"10-1200":"Minutes of activity","7777":"Refused","9999":"Don't Know",".":"Missing/no bike_walk work"}
+          },
+          {
+            "name": "minutes_vigorous_rec",
+            "type": "double",
+            "description": "(PAD660) How much time {do you/does SP} spend doing vigorous-intensity sports, fitness or recreational activities on a typical day? (Missing if less than 10)",
+            "options": {"10-1200":"Minutes of activity","7777":"Refused","9999":"Don't Know",".":"Missing/no vigorous recreational activity"}
+          },
+          {
+            "name": "minutes_moderate_rec",
+            "type": "double",
+            "description": "(PAD675) How much time {do you/does SP} spend doing moderate-intensity sports, fitness or recreational activities on a typical day? (Missing if less than 10)",
+            "options": {"10-1200":"Minutes of activity","7777":"Refused","9999":"Don't Know",".":"Missing/no moderate recreational activity"}
+          },
+          {
+            "name": "minutes_sedentary",
+            "type": "double",
+            "description": "(PAD680) How much time {do you/does SP} usually spend sitting on a typical day?",
+            "options": {"0-1380":"Minutes sitting","7777":"Refused","9999":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "hours_TV",
+            "type": "double",
+            "description": "(PAQ710)  Over the past 30 days, on average how many hours per day did {you/SP} sit and watch TV or videos? (age 2-150)",
+            "options": {"0":"Less than 1 hour","1":"1 hours","2":"2 hours","3":"3 hours","4":"4 hours","5":"5 hours or more","8":"None","77":"Refused","99":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "hours_computer",
+            "type": "double",
+            "description": "(PAQ710)  Over the past 30 days, on average how many hours per day did {you/SP} sit and watch TV or videos? (age 2-150)",
+            "options": {"0":"Less than 1 hour","1":"1 hours","2":"2 hours","3":"3 hours","4":"4 hours","5":"5 hours or more","8":"None","77":"Refused","99":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "phys_limit_child",
+            "type": "double",
+            "description": "(PFQ020) {Do you/Does SP} have an impairment or health problem that limits {your/his/her} ability to {walk, run or play} {walk or run}? (3-19 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "phys_limit_child_1yr",
+            "type": "double",
+            "description": "(PFQ030) Is this an impairment or health problem that has lasted, or is expected to last 12 months or longer? (3-19 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "special_ed",
+            "type": "double",
+            "description": "(PFQ041) Does {SP} receive Special Education or Early Intervention Services? (3-17 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "health_prevent_work",
+            "type": "double",
+            "description": "(PFQ049) Does a physical, mental or emotional problem now keep {you/SP} from working at a job or business? (20-150 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "health_limit_work",
+            "type": "double",
+            "description": "(PFQ051) {Are you/Is SP} limited in the kind or amount of work {you/s/he} can do because of a physical, mental or emotional problem? (20-150 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "confusion",
+            "type": "double",
+            "description": "(PFQ057) {Are you/Is SP} limited in any way because of difficulty remembering or because {you/s/he} experience{s} periods of confusion? (20-150 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "health_chronic_1",
+            "type": "double",
+            "description": "(PFQ063A) What condition or health problem causes {you/SP} to have difficulty with or need help with {NAME OF UP TO 3 ACTIVITIES/these activities}? (20-150 years old)",
+            "options": {"10":"Arthritis/rheumatism","11":"Back or neck problem","12":"Birth Defect","13":"Cancer","14":"Depression/anxiety/emotional problem","15":"Other developmental problem (such as cerebral palsy)",
+              "16":"Diabetes","17":"Fractures, bone/joint injury","18":"Hearing Problem","19":"Heart Problem","20":"Hypertension/high blood pressure","21":"Lung/breathing problem",
+              "22":"Mental retardation","23":"other injury","24":"Senility","25":"Stroke problem","26":"Vision problem","27":"Weight problem","28":"Other problem",
+              "77":"Refused","99":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "health_chronic_2",
+            "type": "double",
+            "description": "(PFQ063B) What condition or health problem causes {you/SP} to have difficulty with or need help with {NAME OF UP TO 3 ACTIVITIES/these activities}? (20-150 years old)",
+            "options": {"10":"Arthritis/rheumatism","11":"Back or neck problem","12":"Birth Defect","13":"Cancer","14":"Depression/anxiety/emotional problem","15":"Other developmental problem (such as cerebral palsy)",
+              "16":"Diabetes","17":"Fractures, bone/joint injury","18":"Hearing Problem","19":"Heart Problem","20":"Hypertension/high blood pressure","21":"Lung/breathing problem",
+              "22":"Mental retardation","23":"other injury","24":"Senility","25":"Stroke problem","26":"Vision problem","27":"Weight problem","28":"Other problem",
+              "77":"Refused","99":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "health_chronic_3",
+            "type": "double",
+            "description": "(PFQ063C) What condition or health problem causes {you/SP} to have difficulty with or need help with {NAME OF UP TO 3 ACTIVITIES/these activities}? (20-150 years old)",
+            "options": {"10":"Arthritis/rheumatism","11":"Back or neck problem","12":"Birth Defect","13":"Cancer","14":"Depression/anxiety/emotional problem","15":"Other developmental problem (such as cerebral palsy)",
+              "16":"Diabetes","17":"Fractures, bone/joint injury","18":"Hearing Problem","19":"Heart Problem","20":"Hypertension/high blood pressure","21":"Lung/breathing problem",
+              "22":"Mental retardation","23":"other injury","24":"Senility","25":"Stroke problem","26":"Vision problem","27":"Weight problem","28":"Other problem",
+              "77":"Refused","99":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "health_chronic_4",
+            "type": "double",
+            "description": "(PFQ063D) What condition or health problem causes {you/SP} to have difficulty with or need help with {NAME OF UP TO 3 ACTIVITIES/these activities}? (20-150 years old)",
+            "options": {"10":"Arthritis/rheumatism","11":"Back or neck problem","12":"Birth Defect","13":"Cancer","14":"Depression/anxiety/emotional problem","15":"Other developmental problem (such as cerebral palsy)",
+              "16":"Diabetes","17":"Fractures, bone/joint injury","18":"Hearing Problem","19":"Heart Problem","20":"Hypertension/high blood pressure","21":"Lung/breathing problem",
+              "22":"Mental retardation","23":"other injury","24":"Senility","25":"Stroke problem","26":"Vision problem","27":"Weight problem","28":"Other problem",
+              "77":"Refused","99":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "health_chronic_5",
+            "type": "double",
+            "description": "(PFQ063E) What condition or health problem causes {you/SP} to have difficulty with or need help with {NAME OF UP TO 3 ACTIVITIES/these activities}? (20-150 years old)",
+            "options": {"10":"Arthritis/rheumatism","11":"Back or neck problem","12":"Birth Defect","13":"Cancer","14":"Depression/anxiety/emotional problem","15":"Other developmental problem (such as cerebral palsy)",
+              "16":"Diabetes","17":"Fractures, bone/joint injury","18":"Hearing Problem","19":"Heart Problem","20":"Hypertension/high blood pressure","21":"Lung/breathing problem",
+              "22":"Mental retardation","23":"other injury","24":"Senility","25":"Stroke problem","26":"Vision problem","27":"Weight problem","28":"Other problem",
+              "77":"Refused","99":"Don't Know",".":"Missing"}
           }
         ]
       }

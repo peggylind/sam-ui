@@ -2,14 +2,17 @@ library(mongolite)
 library(rjson)
 
 
-
+#this depends on your OneDrive setup - we could change to a Sharepoint
+file_folder <- "/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData"
 
 
 #mongod open on my local, but connect as needed
-sam <- readRDS("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData/complete_sample_set2019-03-10.RDS")
+sam <- readRDS(paste(file_folder,"/complete_sample_set2019-03-10.RDS",sep=""))
 library(dplyr)
 
-test_sam <- sample_n(sam,100000)
+test_sam <- sample_n(sam,1000)
+sam <- test_sam
+
 #mongo doesn't like . in keys, so have to clean them out - they're still in factors.
 library(janitor)
 sam <- clean_names(sam)
