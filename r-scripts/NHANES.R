@@ -252,18 +252,18 @@ library(FactoMineR)
 res.pca1 <- PCA(NHANES_1[,c(4,5,110:117,11)],scale.unit=TRUE, ncp=5) #add back education later - have to make them the same scales
 #get warning that says: Missing values are imputed by the mean of the variable: you should use the imputePCA function of the missMDA package
 
-#calculate approximate poverty_ratio for sam - https://aspe.hhs.gov/poverty-guidelines
-sam['poverty_ratio'] <- round(sam$household_income / (8000 + (sam$size*4500) ), digits = 3)
-
 sam["male"] <- ifelse(sam$sex == "Male", 1, 0)
 sam["female"] <- ifelse(sam$sex == "Female", 1, 0)
 for(fact in unique(sam$race)){
   sam[paste(fact)] <- ifelse(sam$race == fact, 1, 0)
 }
+#calculate approximate poverty_ratio for sam - https://aspe.hhs.gov/poverty-guidelines
+sam['poverty_ratio'] <- round(sam$household_income / (8000 + (sam$size*4500) ), digits = 3)
+
 
 #predict https://cran.r-project.org/web/packages/FactoMineR/FactoMineR.pdf p. 72
 #needs to be in same order, with same names, as res.pca1 
-pca_predict <- predict(res.pca1,sam[,c(4,8,69,70,72,73,71,75,77,68,79)])
+pca_predict <- predict(res.pca1,sam[,c(4,8,69,70,74,71,72,73,77,68,79)])
 
 #create blank columns for names in sam
 #rename and select for right things...
@@ -286,17 +286,15 @@ cl <- makeCluster(no_cores-2)
 registerDoParallel(cl)
 library(foreach)
 
-#match_individuals = function(mod,targ,k,sam,NHANES_1){
   Sys.time()
   n = nrow(targ)
   NHnames <- colnames(NHANES_1)
   #extrap = rep(NA_character_, n)
-  #foreach(i=1:n) %dopar% {
-  foreach(i=1:n){
+  foreach(i=1:n) %dopar% {
     nn = order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k] #treats all eigendimensions the same,
-    print(nn)
+    #print(nn)
     for(colname in NHnames){
-      print(colname)
+      #print(colname)
       if(colname %in% colnames(sam)){
         sam[i,colname] <- NHANES_1[sample(nn, 1),colname]
       }else{
@@ -304,13 +302,8 @@ library(foreach)
         sam[i,colname] <- NHANES_1[sample(nn, 1),colname]
       }
     }
-    #sam[i,80:182] = NHANES_1[sample(nn, 1),1:84]  #have to get order right!!
-    #extrap[i] = sample(nn,1)
   }
-  #returns nn as mod ordered by closest for each row ##try on dfs with multiple columns
-  #  Sys.time()
-#  return(sam)
-#}
+  Sys.time()
 stopCluster(cl)
 
-#testing
+
