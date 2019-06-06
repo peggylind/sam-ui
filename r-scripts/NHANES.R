@@ -281,29 +281,33 @@ targ <- pca_predict$coord[,1:5] #
 var <- res.pca1$eig[,2] #multiply each dimension in mod and targ by the percent var explained
 
 library(doParallel)
-no_cores <- detectCores()
-cl <- makeCluster(no_cores-2)
+no_cores <- detectCores() - 2
+cl <- makeCluster(no_cores, type="FORK")
 registerDoParallel(cl)
 library(foreach)
 
   Sys.time()
   n = nrow(targ)
-  NHnames <- colnames(NHANES_1)
-  #extrap = rep(NA_character_, n)
-  foreach(i=1:n) %dopar% {
-    nn = order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k] #treats all eigendimensions the same,
-    #print(nn)
-    for(colname in NHnames){
-      #print(colname)
-      if(colname %in% colnames(sam)){
-        sam[i,colname] <- NHANES_1[sample(nn, 1),colname]
-      }else{
-        sam[colname] <- NA
-        sam[i,colname] <- NHANES_1[sample(nn, 1),colname]
-      }
-    }
+  #sam_out <- data.frame()
+  NHnames <- paste0('NH_',colnames(NHANES_1))
+  for(colname in NHnames){
+    sam[colname] <- NA
   }
-  Sys.time()
+  #filesize <- n/(no_cores)
+  #foreach(m=1:no_cores) %dopar% {
+  #  end <- ifelse(m*filesize<n,round(m*filesize),n)
+  #  p_sam <- test_sam[round(((m-1)*filesize)+1):end,]
+  #extrap = rep(NA_character_, n)
+  #NHrows=list()
+    foreach(i=1000000:1100000) %do% {
+      NHrow <- sample(order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k],1)
+      sam[i,80:196] <- NHANES_1[NHrow,]
+    }
+#}
+  
+  Sys.time() #2019-05-28 04:13:54
 stopCluster(cl)
 
+saveRDS(sam,paste(file_folder,"/temp/sam_5_27.RDS",sep=""))
 
+options(max.print = 1) #else it prints a lot in R-Studio console.

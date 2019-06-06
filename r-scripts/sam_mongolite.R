@@ -7,10 +7,13 @@ file_folder <- "/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Ho
 
 
 #mongod open on my local, but connect as needed
-sam <- readRDS(paste(file_folder,"/complete_sample_set2019-03-10.RDS",sep=""))
+sam2 <- readRDS(paste(file_folder,"/complete_sample_set2019-03-10.RDS",sep=""))
 library(dplyr)
 
-test_sam <- sample_n(sam,1000)
+test_sam <- sample_n(sam,100)
+
+samz <- sam2[sam2$zip == "77026",] # c("77004","77026","77020","77003","77011","77023"),]
+
 sam <- test_sam
 
 #mongo doesn't like . in keys, so have to clean them out - they're still in factors.
