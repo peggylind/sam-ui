@@ -46,13 +46,6 @@ merged_NHANES_F <- merge(merged_NHANES_9,phys_func_NH,by="SEQN")
 #folate
 #vitamin A retinol
 
-
-library(plyr)
-#make sure to get HH reference person
-#plyr::rename(merged_NHANES_1, c(birth_country="DMDHRBR4"))#="birth_country","DMDHRGND"="gender",
-#                          "DMDHREDU"="education","DMDHRAGE"="age","INDFMPIR"="poverty_ratio",
-#                          "INDHHIN2"="household_income"))
-
 library(dplyr)
 #see NHANES_2015.json for brief descriptions - didn't finish putting those in, or getting all the codes / types
 NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND,
@@ -263,7 +256,8 @@ sam['poverty_ratio'] <- round(sam$household_income / (8000 + (sam$size*4500) ), 
 
 #predict https://cran.r-project.org/web/packages/FactoMineR/FactoMineR.pdf p. 72
 #needs to be in same order, with same names, as res.pca1 
-pca_predict <- predict(res.pca1,sam[,c(4,8,69,70,74,71,72,73,77,68,79)])
+pca_predict <- predict(res.pca1,sam[,c(4,8,69,70,74,71,72,73,77,80,79)])
+sam_eigens <- cbind(sam,pca_predict$coord[,1:5])
 
 #create blank columns for names in sam
 #rename and select for right things...
@@ -280,31 +274,49 @@ mod <- res.pca1$ind$coord[,1:5] #whole thing, but only first 5 eigen dimensions
 targ <- pca_predict$coord[,1:5] #
 var <- res.pca1$eig[,2] #multiply each dimension in mod and targ by the percent var explained
 
-library(doParallel)
-no_cores <- detectCores() - 2
-cl <- makeCluster(no_cores, type="FORK")
-registerDoParallel(cl)
-library(foreach)
 
-  Sys.time()
-  n = nrow(targ)
+#TRY: cbind targ onto end of SAM
+#then just do the calculation there
+
+
+#library(doParallel)
+#no_cores <- detectCores() - 2
+#cl <- makeCluster(no_cores, type="FORK")
+#registerDoParallel(cl)
+#library(foreach)
+library(devtools)
+devtools::install_github("hadley/multidplyr")
+library(multidplyr)
+cluster <- create_cluster(10)
+
+  #Sys.time()
+
+#  n = nrow(targ)
   #sam_out <- data.frame()
-  NHnames <- paste0('NH_',colnames(NHANES_1))
-  for(colname in NHnames){
-    sam[colname] <- NA
-  }
+  #NHnames <- paste0('NH_',colnames(NHANES_1))
+  #for(colname in NHnames){
+  #  sam[colname] <- NA
+  #}
   #filesize <- n/(no_cores)
   #foreach(m=1:no_cores) %dopar% {
   #  end <- ifelse(m*filesize<n,round(m*filesize),n)
   #  p_sam <- test_sam[round(((m-1)*filesize)+1):end,]
   #extrap = rep(NA_character_, n)
   #NHrows=list()
-    foreach(i=1000000:1100000) %do% {
-      NHrow <- sample(order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k],1)
-      sam[i,80:196] <- NHANES_1[NHrow,]
-    }
-#}
   
+  sam_tracts <- sam_eigens %>%
+    partition(tract, cluster = cluster)
+  
+system.time({
+#    foreach(i=1000000:1100000) %do% {
+ sam_tracts_matched <- sample(order(apply(sam_tracts, 1, function(x) sum((x[,81:85] - mod)^2)))[1:10],1)
+    
+ sam_matched <- collect(sam_tracts_matched)
+#      NHrow <- sample(order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k],1)
+#      sam[i,80:196] <- NHANES_1[NHrow,]
+#    }
+#}
+})
   Sys.time() #2019-05-28 04:13:54
 stopCluster(cl)
 
