@@ -9,22 +9,24 @@
 #insurance: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HIQ_I.htm
 #healthcare utilization: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HUQ_I.htm
 #body measures https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BMX_I.htm download on 4/30/19
+#could still use other categories
 
-setwd("~/OneDrive - University Of Houston/DASH Projects/sam_ui_data")
-library(rio)
-demo_NH <- import("NHANES/DEMO_I.XPT")
+NH_file_folder <- "/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NHANES"
+library(rio) 
+demo_NH <- import(paste(NH_file_folder,"/DEMO_I.XPT",sep=""))
 #https://wwwn.cdc.gov/nchs/nhanes/search/variablelist.aspx?Component=Demographics&CycleBeginYear=2015
-diet_nutrient1_NH <- import("NHANES/DR1TOT_I.XPT")
-#diet_nutrient2_NH <- import("NHANES/DR2TOT_I.XPT")
-med_condition_NH <- import("NHANES/MCQ_I.XPT")
-depression_NH <- import("NHANES/DPQ_I.XPT")
-blood_pressure_NH <- import("NHANES/BPQ_I.XPT")
-#cardio_NH <- import("NHANES/CDQ_I.XPT")
-diabetes_NH <- import("NHANES/DIQ_I.XPT")
-insurance_NH <- import("NHANES/HIQ_I.XPT")
-hospital_use_NH <- import("NHANES/HUQ_I.XPT")
-consumer_NH <- import("NHANES/CBQ_I.XPT")
-#phys_act_NH <- import("NHANES/PAQ_I.XPT")
+diet_nutrient1_NH <- import(paste(NH_file_folder,"/DR1TOT_I.XPT",sep=""))
+#diet_nutrient2_NH <- import("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NHANES/DR2TOT_I.XPT")
+med_condition_NH <- import(paste(NH_file_folder,"/MCQ_I.XPT",sep=""))
+depression_NH <- import(paste(NH_file_folder,"/DPQ_I.XPT",sep=""))
+blood_pressure_NH <- import(paste(NH_file_folder,"/BPQ_I.XPT",sep=""))
+#cardio_NH <- import("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NHANES/CDQ_I.XPT")
+diabetes_NH <- import(paste(NH_file_folder,"/DIQ_I.XPT",sep=""))
+insurance_NH <- import(paste(NH_file_folder,"/HIQ_I.XPT",sep=""))
+hospital_use_NH <- import(paste(NH_file_folder,"/HUQ_I.XPT",sep=""))
+consumer_NH <- import(paste(NH_file_folder,"/CBQ_I.XPT",sep=""))
+phys_act_NH <- import(paste(NH_file_folder,"/PAQ_I.XPT",sep=""))
+phys_func_NH <- import(paste(NH_file_folder,"/PFQ_I.XPT",sep=""))
 # etc.
 
 merged_NHANES_1 <- merge(demo_NH,diet_nutrient1_NH,by="SEQN")
@@ -35,6 +37,8 @@ merged_NHANES_5 <- merge(merged_NHANES_4,hospital_use_NH,by="SEQN")
 merged_NHANES_6 <- merge(merged_NHANES_5,consumer_NH,by="SEQN")
 merged_NHANES_7 <- merge(merged_NHANES_6,blood_pressure_NH,by="SEQN")
 merged_NHANES_8 <- merge(merged_NHANES_7,diabetes_NH,by="SEQN")
+merged_NHANES_9 <- merge(merged_NHANES_8,phys_act_NH,by="SEQN")
+merged_NHANES_F <- merge(merged_NHANES_9,phys_func_NH,by="SEQN")
 
 #Vitamin D for the NHANES data: it is called 1,25 (OH)3 D3
 
@@ -42,16 +46,9 @@ merged_NHANES_8 <- merge(merged_NHANES_7,diabetes_NH,by="SEQN")
 #folate
 #vitamin A retinol
 
-
-library(plyr)
-#make sure to get HH reference person
-#plyr::rename(merged_NHANES_1, c(birth_country="DMDHRBR4"))#="birth_country","DMDHRGND"="gender",
-#                          "DMDHREDU"="education","DMDHRAGE"="age","INDFMPIR"="poverty_ratio",
-#                          "INDHHIN2"="household_income"))
-
 library(dplyr)
 #see NHANES_2015.json for brief descriptions - didn't finish putting those in, or getting all the codes / types
-NHANES_8 <- merged_NHANES_8 %>% rename(gender=DMDHRGND,
+NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND,
                                        educational_attainment=DMDHREDU,
                                        size=DMDFMSIZ, #family size but to match for PCA with sam
                                        age=DMDHRAGE,
@@ -107,6 +104,29 @@ NHANES_8 <- merged_NHANES_8 %>% rename(gender=DMDHRGND,
                                        money_supermarket=CBD071,
                                        money_non_food=CBD091,
                                        eating_out=CBD121,
+                                       #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/PAQ_I.htm#PAD615
+                                       minutes_vigorous_work=PAD615,
+                                       minutes_moderate_work=PAD630,
+                                       walk_bike_work=PAD645,
+                                       minutes_vigorous_rec=PAD660,
+                                       minutes_moderate_rec=PAD675,
+                                       minutes_sedentary=PAD680,
+                                       hours_TV=PAQ710,
+                                       hours_computer=PAQ715,
+                                       #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/PFQ_I.htm
+                                       #the missing data corresponds to age groups skip patterns
+                                       phys_limit_child=PFQ020,
+                                       phys_limit_child_1yr=PFQ030,
+                                       special_ed=PFQ041,
+                                       health_prevent_work=PFQ049,
+                                       health_limit_work=PFQ051,
+                                       confusion=PFQ057,
+                                       health_chronic_1=PFQ063A,
+                                       health_chronic_2=PFQ063B,
+                                       health_chronic_3=PFQ063C,
+                                       health_chronic_4=PFQ063D,
+                                       health_chronic_5=PFQ063E,
+                                       #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DR1TOT_I.htm
                                        d1_calories=DR1TKCAL,
                                        d1_protein=DR1TPROT,
                                        d1_carb=DR1TCARB,
@@ -150,13 +170,16 @@ NHANES_8 <- merged_NHANES_8 %>% rename(gender=DMDHRGND,
            prescribed_BP,taking_prescribed_BP,prescribed_cholest,taking_prescribed_cholest,age_diabetes,
            told_prediabetes,feel_risk_diabetes,health_insurance,medicare,medicaid,no_insurance_1yr,
            gen_health,gen_health_v1yr,where_healthcare,how_many_healthcare,times_overnight_hosp,mental_last_year,
-           money_supermarket,money_non_food,eating_out,
+           money_supermarket,money_non_food,eating_out,minutes_vigorous_work,minutes_moderate_work,
+           walk_bike_work,minutes_vigorous_rec,minutes_moderate_rec,minutes_sedentary,hours_TV,hours_computer,
+           phys_limit_child,phys_limit_child_1yr,special_ed,health_prevent_work,health_limit_work,confusion,
+           health_chronic_1,health_chronic_2,health_chronic_3,health_chronic_4,health_chronic_5,
            d1_calories,d1_protein,d1_carb,
            d1_sugar,d1_fiber,d1_fat,d1_sat_fat,d1_cholesterol,d1_vit_E,d1_supp_E,d1_retinol,d1_vit_A,d1_alpha_carotene,
            d1_beta_carotene,d1_lycopene,d1_b1_thiamine,d1_b2_riboflavin,d1_niacin,d1_vit_b6,d1_total_folate,
            d1_b12,d1_supp_b12,d1_vit_C,d1_vit_D,d1_vit_K,d1_calcium,d1_phosphorus,d1_magnesium,d1_iron,d1_zinc,
            d1_copper,d1_sodium,d1_potassium,d1_selenium,d1_caffeine,d1_alcohol)
-NHANES_1 <- NHANES_8
+NHANES_1 <- NHANES_merged
 #add 4 luck columns - I want them to be permanent, instead of newly generated by the js
 NHANES_1['luck1'] <- apply(NHANES_1,1,function(x) sample(1:100,size=1))
 NHANES_1['luck2'] <- apply(NHANES_1,1,function(x) sample(1:100,size=1))
@@ -180,6 +203,7 @@ for(fact in unique(NHANES_1$race)){
 }
 
 #changing random household_income so they'll ascend more or less - will drop for values from census sample
+#decided to use percent_poverty instead.
 #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.htm#INDHHIN2
 #NHANES_1["household_income"] <- ifelse(NHANES_1$household_income == 12, 7, NHANES_1$household_income)
 #NHANES_1["household_income"] <- ifelse(NHANES_1$household_income == 13, 4, NHANES_1$household_income)
@@ -191,16 +215,24 @@ for(fact in unique(NHANES_1$race)){
 #because RIDEXPG in NHANES has 1,2,3 levels
 #NHANES_1["pregnant"] <- ifelse(NHANES_1$pregnant == 1, 1, 0) #have to think through for everything
 
-#rename race_ and select out race (there was no race_5)
-#NHANES_1 <- NHANES_1 %>% #rename(mex_american=race_1,hispanic=race_2,white=race_3,black=race_4,asian=race_6,multiracial=race_7) %>%
-#  select(-race, -gender)
+#education level is numeric and meaningful as goes up
+for(row in NHANES_1){
+  NHANES_1['educ_level'] <- ifelse(NHANES_1$educational_attainment<=5,NHANES_1$educational_attainment,0)
+} 
+#change sam to match - or to move upward, with 7 levels instead of 5 but in ascending level of educ.
+for(row in sam){
+  sam['educ_level'] <- ifelse(sam$educational_attainment=="Less than 9th grade",1,
+                              ifelse(sam$educational_attainment=="9th to 12th grade, no diploma",2,
+                                     ifelse(sam$educational_attainment=="High School Graduate",3,
+                                            ifelse(sam$educational_attainment=="Some College, no degree",4,
+                                                   ifelse(sam$educational_attainment=="Associate's degree",5,
+                                                          ifelse(sam$educational_attainment=="Bachelor's Degree",6,
+                                                                 ifelse(sam$educational_attainment=="Graduate or Professional Degree",7,0)))))))
+}
 
-#education may be meaningful as increases, so kept it going - 9 = "Don't know", but only 5 cases
-#for(fact in unique(NHANES_1$education)){
-#  NHANES_1[paste("education", fact, sep = "_")] <- ifelse(NHANES_1$education == fact, 1, 0)
-#}
 
-#sam should be ready from the main function calls in sam_mongolite.R
+
+#sam should be ready from the main function calls in sam_mongolite.R, through work on spatial dataframes (line 34)
 
 
 library(FactoMineR)
@@ -209,44 +241,27 @@ library(FactoMineR)
 #sam and NHANES_1 have to have some matching column names
 #will expand sam, then take extras out after the PCA and matching.
 #create S3 PCA object to use for prediction
-#3=educational_attainment,4=family_size,5=age,91=male,92=female,93-97 are race,11=poverty_ratio
-res.pca1 <- PCA(NHANES_1[,c(4,5,91:97,11)],scale.unit=TRUE, ncp=5) #add back education later - have to make them the same scales
+#4=(family_)size,5=age,110=male,111=female,112-6 are race (hispanic,white,black,asian,multiracial),117=educ_level,11=poverty_ratio
+res.pca1 <- PCA(NHANES_1[,c(4,5,110:117,11)],scale.unit=TRUE, ncp=5) #add back education later - have to make them the same scales
 #get warning that says: Missing values are imputed by the mean of the variable: you should use the imputePCA function of the missMDA package
-
-#read the sam data
-orig_sam <- readRDS("complete_sample_set2019-03-10.RDS")
-
-#some cleaning beofre moving on
-library(janitor)
-orig_sam <- clean_names(orig_sam)
-orig_sam <- orig_sam %>% select(-note,-hcad_num,-condo_flag,
-                      -loc_addr,-shape_area,-shape_len,-valid,-ms_replacement_cost,
-                      -county_2,-tract_2,-class_structure,-class_struc_description,
-                      -cama_replacement_cost,-accrued_depr_pct,-appraised_by,-appraised_date,
-                      -perimeter,-percent_complete,-nbhd_factor,-rcnld,-size_index,-lump_sum_adj,
-                      -na_dcentroids,-ptcoords)
-
-test_sam <- sample_n(sam,10000)
-sam <-test_sam
-
-#calculate approximate poverty_ratio for sam - https://aspe.hhs.gov/poverty-guidelines
-sam['poverty_ratio'] <- round(sam$household_income / (8000 + (sam$size*4500) ), digits = 3)
 
 sam["male"] <- ifelse(sam$sex == "Male", 1, 0)
 sam["female"] <- ifelse(sam$sex == "Female", 1, 0)
 for(fact in unique(sam$race)){
   sam[paste(fact)] <- ifelse(sam$race == fact, 1, 0)
 }
+#calculate approximate poverty_ratio for sam - https://aspe.hhs.gov/poverty-guidelines
+sam['poverty_ratio'] <- round(sam$household_income / (8000 + (sam$size*4500) ), digits = 3)
+
 
 #predict https://cran.r-project.org/web/packages/FactoMineR/FactoMineR.pdf p. 72
 #needs to be in same order, with same names, as res.pca1 
-pca_predict <- predict(res.pca1,sam[,c(4,8,69:78,68)])
+pca_predict <- predict(res.pca1,sam[,c(4,8,69,70,74,71,72,73,77,80,79)])
+sam_eigens <- cbind(sam,pca_predict$coord[,1:5])
 
 #create blank columns for names in sam
 #rename and select for right things...
-NHnames <- colnames(NHANES_1)
-for(i in NHnames)
-  sam[,i] <- NA
+
 
 
 #so, if you take each value, multiply it by res.pca$eig[,2][i] (the variance explained), and repeat for
@@ -254,40 +269,57 @@ for(i in NHnames)
 #example: mod = NHANES, as (SEQN,dim1:dim5 /etc); then SAM, filled in with predict_PCA from same NHANES
 #modifying from : https://github.com/allr/benchR/blob/master/MachineLearningAlg/learners-in-r/knn.R
 #k is the number of neighbors considered - trying with top 10, then sample
-k <- 3
+k <- 10
 mod <- res.pca1$ind$coord[,1:5] #whole thing, but only first 5 eigen dimensions
 targ <- pca_predict$coord[,1:5] #
 var <- res.pca1$eig[,2] #multiply each dimension in mod and targ by the percent var explained
 
-library(doParallel)
-no_cores <- detectCores() - 1
-registerDoParallel(no_cores)
 
-n = nrow(targ)
-extrap = rep(NA_character_, n)
-ptime <- system.time({
-  result <- foreach(i = 1:n, .combine = rbind) %dopar% {
-    nn = order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k] #treats all eigendimensions the same,
-    sam[i,79:162] = NHANES_1[sample(nn, 1),1:84]
-    #extrap[i] = sample(nn,1)
+#TRY: cbind targ onto end of SAM
+#then just do the calculation there
+
+
+#library(doParallel)
+#no_cores <- detectCores() - 2
+#cl <- makeCluster(no_cores, type="FORK")
+#registerDoParallel(cl)
+#library(foreach)
+library(devtools)
+devtools::install_github("hadley/multidplyr")
+library(multidplyr)
+cluster <- create_cluster(10)
+
+  #Sys.time()
+
+#  n = nrow(targ)
+  #sam_out <- data.frame()
+  #NHnames <- paste0('NH_',colnames(NHANES_1))
+  #for(colname in NHnames){
+  #  sam[colname] <- NA
+  #}
+  #filesize <- n/(no_cores)
+  #foreach(m=1:no_cores) %dopar% {
+  #  end <- ifelse(m*filesize<n,round(m*filesize),n)
+  #  p_sam <- test_sam[round(((m-1)*filesize)+1):end,]
+  #extrap = rep(NA_character_, n)
+  #NHrows=list()
   
-  #returns nn as mod ordered by closest for each row ##try on dfs with multiple columns
-    }
-  })[3]
-
-stime <- system.time({
-  result <- foreach(i = 1:n, .combine = rbind) %do% {
-    nn = order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k] #treats all eigendimensions the same,
-    sam[i,79:162] = NHANES_1[sample(nn, 1),1:84]
-    #extrap[i] = sample(nn,1)
+  sam_tracts <- sam_eigens %>%
+    partition(tract, cluster = cluster)
+  
+system.time({
+#    foreach(i=1000000:1100000) %do% {
+ sam_tracts_matched <- sample(order(apply(sam_tracts, 1, function(x) sum((x[,81:85] - mod)^2)))[1:10],1)
     
-    #returns nn as mod ordered by closest for each row ##try on dfs with multiple columns
-  }
-})[3]
+ sam_matched <- collect(sam_tracts_matched)
+#      NHrow <- sample(order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k],1)
+#      sam[i,80:196] <- NHANES_1[NHrow,]
+#    }
+#}
+})
+  Sys.time() #2019-05-28 04:13:54
+stopCluster(cl)
 
+saveRDS(sam,paste(file_folder,"/temp/sam_5_27.RDS",sep=""))
 
-
-
-
-
-#testing
+options(max.print = 1) #else it prints a lot in R-Studio console.

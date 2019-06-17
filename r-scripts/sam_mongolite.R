@@ -10,7 +10,8 @@ file_folder <- "/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Ho
 sam <- readRDS(paste(file_folder,"/complete_sample_set2019-03-10.RDS",sep=""))
 library(dplyr)
 
-test_sam <- sample_n(sam,1000)
+test_sam <- sample_n(sam,10000)
+
 sam <- test_sam
 
 #mongo doesn't like . in keys, so have to clean them out - they're still in factors.
@@ -28,12 +29,14 @@ sam <- sam %>% select(-note,-hcad_num,-condo_flag,
                                  -cama_replacement_cost,-accrued_depr_pct,-appraised_by,-appraised_date,
                                  -perimeter,-percent_complete,-nbhd_factor,-rcnld,-size_index,-lump_sum_adj,
                                  -na_dcentroids,-ptcoords)
-#add NHANES here
+
 
 st_geometry(sam) <- NULL
 sam$long <- sam$coords[,1]
 sam$lat <- sam$coords[,2]
 sam <- sam %>% select(-coords)
+
+#add NHANES here
 
 #do Entropy_Scores.R and Zip_Scores.R (Tom and Aditya)
 #do lowbirthweight-2.R (Merina)
