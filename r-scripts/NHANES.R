@@ -1,44 +1,38 @@
-# part of process run inside sam_mongolite
-# March 10, 2019 accessed from: 2015-16 / https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Demographics&CycleBeginYear=2015
 #perhaps, but not yet included - https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HSQ_I.htm / general health self-report
-
+#body measures https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BMX_I.htm 
 # and 4/30/2019 https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Questionnaire&CycleBeginYear=2015
-#to include: diabetes: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DIQ_I.htm
-#depression instrument: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DPQ_I.htm download on 4/30/1
-#medical conditions: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/MCQ_I.htm download on 4/30/19
-#insurance: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HIQ_I.htm
-#healthcare utilization: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HUQ_I.htm
-#body measures https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BMX_I.htm download on 4/30/19
-#could still use other categories
 
-NH_file_folder <- "/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NHANES"
-library(rio) 
-demo_NH <- import(paste(NH_file_folder,"/DEMO_I.XPT",sep=""))
+library(rio)
+library(dplyr)
+library(FactoMineR)
+source("tools.R")
+
+#set working directory to your local data directory, this depends on your OneDrive setup - we could change to a Sharepoint
+setwd("~/University Of Houston/Price, Daniel M - Social Network Hypergraphs")
+#setwd("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData")
+
+NH_file_folder <- "NHANES/"
 #https://wwwn.cdc.gov/nchs/nhanes/search/variablelist.aspx?Component=Demographics&CycleBeginYear=2015
-diet_nutrient1_NH <- import(paste(NH_file_folder,"/DR1TOT_I.XPT",sep=""))
-#diet_nutrient2_NH <- import("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NHANES/DR2TOT_I.XPT")
-med_condition_NH <- import(paste(NH_file_folder,"/MCQ_I.XPT",sep=""))
-depression_NH <- import(paste(NH_file_folder,"/DPQ_I.XPT",sep=""))
-blood_pressure_NH <- import(paste(NH_file_folder,"/BPQ_I.XPT",sep=""))
-#cardio_NH <- import("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NHANES/CDQ_I.XPT")
-diabetes_NH <- import(paste(NH_file_folder,"/DIQ_I.XPT",sep=""))
-insurance_NH <- import(paste(NH_file_folder,"/HIQ_I.XPT",sep=""))
-hospital_use_NH <- import(paste(NH_file_folder,"/HUQ_I.XPT",sep=""))
-consumer_NH <- import(paste(NH_file_folder,"/CBQ_I.XPT",sep=""))
-phys_act_NH <- import(paste(NH_file_folder,"/PAQ_I.XPT",sep=""))
-phys_func_NH <- import(paste(NH_file_folder,"/PFQ_I.XPT",sep=""))
-# etc.
 
-merged_NHANES_1 <- merge(demo_NH,diet_nutrient1_NH,by="SEQN")
-merged_NHANES_2 <- merge(merged_NHANES_1,med_condition_NH,by="SEQN")
-merged_NHANES_3 <- merge(merged_NHANES_2,depression_NH,by="SEQN")
-merged_NHANES_4 <- merge(merged_NHANES_3,insurance_NH,by="SEQN")
-merged_NHANES_5 <- merge(merged_NHANES_4,hospital_use_NH,by="SEQN")
-merged_NHANES_6 <- merge(merged_NHANES_5,consumer_NH,by="SEQN")
-merged_NHANES_7 <- merge(merged_NHANES_6,blood_pressure_NH,by="SEQN")
-merged_NHANES_8 <- merge(merged_NHANES_7,diabetes_NH,by="SEQN")
-merged_NHANES_9 <- merge(merged_NHANES_8,phys_act_NH,by="SEQN")
-merged_NHANES_F <- merge(merged_NHANES_9,phys_func_NH,by="SEQN")
+fileNames <- c("DEMO_I.XPT", #demographics  https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Demographics&CycleBeginYear=2015 download on March 10, 2019
+               "DR1TOT_I.XPT", #diet_nutrient1
+               "MCQ_I.XPT", #medical conditions: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/MCQ_I.htm download on 4/30/19
+               "DPQ_I.XPT", #depression instrument: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DPQ_I.htm download on 4/30/1
+               "BPQ_I.XPT", #blood_pressure
+               "DIQ_I.XPT", #diabetes: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DIQ_I.htm
+               "HIQ_I.XPT", #insurance https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HIQ_I.htm
+               "HUQ_I.XPT", #healthcare utilization: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HUQ_I.htm
+               "CBQ_I.XPT", #consumer
+               "PAQ_I.XPT", #phys_act
+               "PFQ_I.XPT") #phys_func
+
+#"DR2TOT_I.XPT" #diet_nutrient2
+#"CDQ_I.XPT" #cardio
+
+
+fileList=lapply(fileNames, function(x){paste0(NH_file_folder,x)})
+dataList = lapply(fileList, function(x){import(x)})
+merged_NHANES_F <- Reduce(function(x,y) {merge(x,y, by="SEQN")}, dataList)
 
 #Vitamin D for the NHANES data: it is called 1,25 (OH)3 D3
 
@@ -46,7 +40,6 @@ merged_NHANES_F <- merge(merged_NHANES_9,phys_func_NH,by="SEQN")
 #folate
 #vitamin A retinol
 
-library(dplyr)
 #see NHANES_2015.json for brief descriptions - didn't finish putting those in, or getting all the codes / types
 NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND,
                                        educational_attainment=DMDHREDU,
@@ -181,19 +174,21 @@ NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND,
            d1_copper,d1_sodium,d1_potassium,d1_selenium,d1_caffeine,d1_alcohol)
 NHANES_1 <- NHANES_merged
 #add 4 luck columns - I want them to be permanent, instead of newly generated by the js
-NHANES_1['luck1'] <- apply(NHANES_1,1,function(x) sample(1:100,size=1))
-NHANES_1['luck2'] <- apply(NHANES_1,1,function(x) sample(1:100,size=1))
-NHANES_1['luck3'] <- apply(NHANES_1,1,function(x) sample(1:100,size=1))
-NHANES_1['luck4'] <- apply(NHANES_1,1,function(x) sample(1:100,size=1))
+set.seed(6743)
+NHANES_1$luck1 <- sample(100, size = nrow(NHANES_1), replace = TRUE)
+NHANES_1$luck2 <- sample(100, size = nrow(NHANES_1), replace = TRUE)
+NHANES_1$luck3 <- sample(100, size = nrow(NHANES_1), replace = TRUE)
+NHANES_1$luck4 <- sample(100, size = nrow(NHANES_1), replace = TRUE)
 
-#make factors into list of binary variables, which will be removed later...
-NHANES_1["male"] <- ifelse(NHANES_1$gender == 1, 1, 0)
-NHANES_1["female"] <- ifelse(NHANES_1$gender == 2, 1, 0)
-
-#for(fact in unique(NHANES_1$marital_status)){
-#  NHANES_1[paste("marital_status", fact, sep = "_")] <- ifelse(NHANES_1$marital_status == fact, 1, 0)
-#}
-
+#preparation of NHANES for PCA
+#make categorical variables in vectors of binary, which will be removed later...
+#could do it where we didn't break out the categorical variables, and just did the PCA with supplemental values, but
+#this should give us more dimensions for the predictive fit.
+#gender
+NHANES_1 <- cbind(NHANES_1, sapply(levels(as.factor(NHANES_1$gender)), function(x) as.integer(x == NHANES_1$gender)))
+names(NHANES_1)[names(NHANES_1) == 1] <- 'Male'
+names(NHANES_1)[names(NHANES_1) == 2] <- 'Female'
+#race
 for(fact in unique(NHANES_1$race)){
   NHANES_1['hispanic'] <- ifelse(NHANES_1$race == 1 | NHANES_1$race ==2, 1, 0);
   NHANES_1['white'] <- ifelse(NHANES_1$race == 3, 1, 0);
@@ -215,11 +210,15 @@ for(fact in unique(NHANES_1$race)){
 #because RIDEXPG in NHANES has 1,2,3 levels
 #NHANES_1["pregnant"] <- ifelse(NHANES_1$pregnant == 1, 1, 0) #have to think through for everything
 
-#education level is numeric and meaningful as goes up
+#education level is numeric and meaningful as goes up (will not be broken up in columns)
 for(row in NHANES_1){
   NHANES_1['educ_level'] <- ifelse(NHANES_1$educational_attainment<=5,NHANES_1$educational_attainment,0)
 } 
-#change sam to match - or to move upward, with 7 levels instead of 5 but in ascending level of educ.
+
+##preparation of SAM for PCA (needs to match column names in NHANES)
+sam <- createSAMSample(samplesize = 1000)
+
+#education level - move upward, with 7 levels instead of 5 but in ascending level of educ.
 for(row in sam){
   sam['educ_level'] <- ifelse(sam$educational_attainment=="Less than 9th grade",1,
                               ifelse(sam$educational_attainment=="9th to 12th grade, no diploma",2,
@@ -230,37 +229,29 @@ for(row in sam){
                                                                  ifelse(sam$educational_attainment=="Graduate or Professional Degree",7,0)))))))
 }
 
+#gender
+sam <- cbind(sam, sapply(levels(as.factor(sam$sex)), function(x) as.integer(x == sam$sex)))
+#race
+sam <- cbind(sam, sapply(levels(as.factor(sam$race)), function(x) as.integer(x == sam$race)))
+
+#calculate approximate poverty_ratio for sam - https://aspe.hhs.gov/poverty-guidelines
+sam$poverty_ratio <- round(sam$household_income / (8000 + (sam$size*4500) ), digits = 3)
 
 
-#sam should be ready from the main function calls in sam_mongolite.R, through work on spatial dataframes (line 34)
 
 
-library(FactoMineR)
-#could do it where we didn't break out the categorical values, and just did the PCA with supplemental values, but
-#this should give us more dimensions for the predictive fit.
-#sam and NHANES_1 have to have some matching column names
-#will expand sam, then take extras out after the PCA and matching.
-#create S3 PCA object to use for prediction
-#4=(family_)size,5=age,110=male,111=female,112-6 are race (hispanic,white,black,asian,multiracial),117=educ_level,11=poverty_ratio
+#Run PCA
+#4=(family_)size,5=age,110=Male,111=Female,112-6 are race (hispanic,white,black,asian,multiracial),117=educ_level,11=poverty_ratio
 res.pca1 <- PCA(NHANES_1[,c(4,5,110:117,11)],scale.unit=TRUE, ncp=5) #add back education later - have to make them the same scales
 #get warning that says: Missing values are imputed by the mean of the variable: you should use the imputePCA function of the missMDA package
 
-sam["male"] <- ifelse(sam$sex == "Male", 1, 0)
-sam["female"] <- ifelse(sam$sex == "Female", 1, 0)
-for(fact in unique(sam$race)){
-  sam[paste(fact)] <- ifelse(sam$race == fact, 1, 0)
-}
-#calculate approximate poverty_ratio for sam - https://aspe.hhs.gov/poverty-guidelines
-sam['poverty_ratio'] <- round(sam$household_income / (8000 + (sam$size*4500) ), digits = 3)
-
-
 #predict https://cran.r-project.org/web/packages/FactoMineR/FactoMineR.pdf p. 72
 #needs to be in same order, with same names, as res.pca1 
-pca_predict <- predict(res.pca1,sam[,c(4,8,69,70,74,71,72,73,77,80,79)])
-sam_eigens <- cbind(sam,pca_predict$coord[,1:5])
+colnamesForPredict <- colnames(NHANES_1[,c(4,5,110:117,11)])
+pca_predict <- predict(res.pca1,sam[,colnames(sam)%in%colnamesForPredict])
+#sam_eigens <- cbind(sam,pca_predict$coord[,1:5])
 
-#create blank columns for names in sam
-#rename and select for right things...
+
 
 
 
@@ -273,23 +264,6 @@ k <- 10
 mod <- res.pca1$ind$coord[,1:5] #whole thing, but only first 5 eigen dimensions
 targ <- pca_predict$coord[,1:5] #
 var <- res.pca1$eig[,2] #multiply each dimension in mod and targ by the percent var explained
-
-
-#TRY: cbind targ onto end of SAM
-#then just do the calculation there
-
-
-#library(doParallel)
-#no_cores <- detectCores() - 2
-#cl <- makeCluster(no_cores, type="FORK")
-#registerDoParallel(cl)
-#library(foreach)
-library(devtools)
-devtools::install_github("hadley/multidplyr")
-library(multidplyr)
-cluster <- create_cluster(10)
-
-  #Sys.time()
 
 #  n = nrow(targ)
   #sam_out <- data.frame()
@@ -304,22 +278,24 @@ cluster <- create_cluster(10)
   #extrap = rep(NA_character_, n)
   #NHrows=list()
   
-  sam_tracts <- sam_eigens %>%
-    partition(tract, cluster = cluster)
   
-system.time({
-#    foreach(i=1000000:1100000) %do% {
- sam_tracts_matched <- sample(order(apply(sam_tracts, 1, function(x) sum((x[,81:85] - mod)^2)))[1:10],1)
-    
- sam_matched <- collect(sam_tracts_matched)
-#      NHrow <- sample(order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k],1)
-#      sam[i,80:196] <- NHANES_1[NHrow,]
-#    }
-#}
-})
-  Sys.time() #2019-05-28 04:13:54
-stopCluster(cl)
 
-saveRDS(sam,paste(file_folder,"/temp/sam_5_27.RDS",sep=""))
+   
+#create empty dataframe to hold NHANES columns for SAM    
+nhanes_columns_for_sam <- data.frame(matrix(NA, nrow = nrow(sam), ncol = ncol(NHANES_1) + 1))   
+#loop over all SAM
+for(i in 1:nrow(sam)) {
+  #create nearest neighbor
+  nn <- order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k]
+  #match with one of the nn
+  nhanes_columns_for_sam[i,] <- NHANES_1[sample(nn, 1),]
+  #add SAM ID column
+  nhanes_columns_for_sam[i,ncol(NHANES_1) + 1] <- sam[i,1]
+}
 
-options(max.print = 1) #else it prints a lot in R-Studio console.
+#put column names
+colnames(nhanes_columns_for_sam) <- c(colnames(NHANES_1), "account")
+#write the NHANES SAM dataframe
+saveRDS(nhanes_columns_for_sam,"NewSAMData/temp/nhanes_columns_for_sam_1000.RDS")
+
+#remove the additional columns that we had created for the PCA matching
