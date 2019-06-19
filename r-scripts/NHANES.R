@@ -216,7 +216,7 @@ for(row in NHANES_1){
 } 
 
 ##preparation of SAM for PCA (needs to match column names in NHANES)
-sam <- createSAMSample(samplesize = 1000)
+sam <- createSAMSample(samplesize = 100000)
 
 #education level - move upward, with 7 levels instead of 5 but in ascending level of educ.
 for(row in sam){
@@ -249,11 +249,6 @@ res.pca1 <- PCA(NHANES_1[,c(4,5,110:117,11)],scale.unit=TRUE, ncp=5) #add back e
 #needs to be in same order, with same names, as res.pca1 
 colnamesForPredict <- colnames(NHANES_1[,c(4,5,110:117,11)])
 pca_predict <- predict(res.pca1,sam[,colnames(sam)%in%colnamesForPredict])
-#sam_eigens <- cbind(sam,pca_predict$coord[,1:5])
-
-
-
-
 
 #so, if you take each value, multiply it by res.pca$eig[,2][i] (the variance explained), and repeat for
 #however eigendimensions you want...
@@ -279,23 +274,22 @@ var <- res.pca1$eig[,2] #multiply each dimension in mod and targ by the percent 
   #NHrows=list()
   
   
-
    
 #create empty dataframe to hold NHANES columns for SAM    
 nhanes_columns_for_sam <- data.frame(matrix(NA, nrow = nrow(sam), ncol = ncol(NHANES_1) + 1))   
 #loop over all SAM
-for(i in 1:nrow(sam)) {
+for(i in 89644:nrow(sam)) {
   #create nearest neighbor
   nn <- order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k]
   #match with one of the nn
   nhanes_columns_for_sam[i,] <- NHANES_1[sample(nn, 1),]
   #add SAM ID column
-  nhanes_columns_for_sam[i,ncol(NHANES_1) + 1] <- sam[i,1]
+  nhanes_columns_for_sam[i,ncol(NHANES_1) + 1] <- sam[i,'individual_id']
 }
 
 #put column names
-colnames(nhanes_columns_for_sam) <- c(colnames(NHANES_1), "account")
+colnames(nhanes_columns_for_sam) <- c(colnames(NHANES_1), "individual_id")
 #write the NHANES SAM dataframe
-saveRDS(nhanes_columns_for_sam,"NewSAMData/temp/nhanes_columns_for_sam_1000.RDS")
+saveRDS(nhanes_columns_for_sam,"NewSAMData/temp/nhanes_columns_for_sam_10000.RDS")
 
 #remove the additional columns that we had created for the PCA matching
