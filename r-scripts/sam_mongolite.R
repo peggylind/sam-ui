@@ -2,30 +2,41 @@ library(mongolite)
 library(rjson)
 
 
+#this depends on your OneDrive setup - we could change to a Sharepoint
+file_folder <- "/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData"
+
+
 #mongod open on my local, but connect as needed
-sam <- readRDS("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData/complete_sample_set2018-09-22.RDS")
+sam <- readRDS(paste(file_folder,"/complete_sample_set2019-03-10.RDS",sep=""))
 library(dplyr)
 
-test_sam <- sample_n(sam,100000)
+test_sam <- sample_n(sam,10000)
+
+sam <- test_sam
+
 #mongo doesn't like . in keys, so have to clean them out - they're still in factors.
 library(janitor)
 sam <- clean_names(sam)
 
-#Error in toJSON(samc[row, ]) : 
+#Error in toJSON(samc[row, ]) :
 #unable to escape string. String is not utf8
 #seems to have been 4or5 places with weird characters in the notes columns - 1782584,1850900,1868732,1937535
 #find them or just delete whole notes column:
 library (dplyr)
-sam <- sam %>% select(-note,-building_style_code,-hcad_num,-condo_flag,
+sam <- sam %>% select(-note,-hcad_num,-condo_flag,
                                  -loc_addr,-shape_area,-shape_len,-valid,-ms_replacement_cost,
                                  -county_2,-tract_2,-class_structure,-class_struc_description,
                                  -cama_replacement_cost,-accrued_depr_pct,-appraised_by,-appraised_date,
                                  -perimeter,-percent_complete,-nbhd_factor,-rcnld,-size_index,-lump_sum_adj,
                                  -na_dcentroids,-ptcoords)
+
+
 st_geometry(sam) <- NULL
 sam$long <- sam$coords[,1]
 sam$lat <- sam$coords[,2]
 sam <- sam %>% select(-coords)
+
+#add NHANES here
 
 #do Entropy_Scores.R and Zip_Scores.R (Tom and Aditya)
 #do lowbirthweight-2.R (Merina)
@@ -42,12 +53,18 @@ sam$coords <- coordinates(sam$coords)
 sam <- as.data.frame(sam)
 #test_sam <- split(test_sam,seq(nrow(test_sam)))
 
+#for adding _id
+#should have one_of first, and as.numeric - 11000, 10100, 100100, 100010, 100001 - adding first 1 to make it a number with leading
+#after that it should have household_id - again, as numeric - and then member type? and then a five digit random at end?? 
+
+
 SamCity <- mongo("samcity", url = "mongodb://localhost/SamCity");
 #remove first!!
 SamCity$drop()
 SamCity$find(limit = 2)
 #mongolite throws  Error: No method asJSON S3 class: sfg , so tried an extra toJSON
 sam2insert <- sam
+
 
 Sys.time()
 for (row in 1:nrow(sam2insert)){
@@ -83,7 +100,7 @@ Sys.time()
 SamCity$stats()
 SamCity$collStats()
 SamCity$totalIndexSize()
-SamCity$serverStatus() 
+SamCity$serverStatus()
 
 #if there's a problem, could be whatever caused jsonlite to say Error: Argument 'data' contains strings that are not JSON objects at elements: 1
 #SamCity$index(remove = 'one_of_1')
@@ -114,4 +131,3 @@ for (i in names(sam)){
   }
 }
 write(toJSON(unique_names),"unique_names.json")
-
