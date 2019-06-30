@@ -243,6 +243,7 @@ library(FactoMineR)
 #create S3 PCA object to use for prediction
 #4=(family_)size,5=age,110=male,111=female,112-6 are race (hispanic,white,black,asian,multiracial),117=educ_level,11=poverty_ratio
 res.pca1 <- PCA(NHANES_1[,c(4,5,110:117,11)],scale.unit=TRUE, ncp=5) #add back education later - have to make them the same scales
+res.pca2 <- PCA(sam[,c(4,8,69,70,74,71,72,73,77,80,79)])
 #get warning that says: Missing values are imputed by the mean of the variable: you should use the imputePCA function of the missMDA package
 
 sam["male"] <- ifelse(sam$sex == "Male", 1, 0)
@@ -256,8 +257,8 @@ sam['poverty_ratio'] <- round(sam$household_income / (8000 + (sam$size*4500) ), 
 
 #predict https://cran.r-project.org/web/packages/FactoMineR/FactoMineR.pdf p. 72
 #needs to be in same order, with same names, as res.pca1 
-pca_predict <- predict(res.pca1,sam[,c(4,8,69,70,74,71,72,73,77,80,79)])
-sam_eigens <- cbind(sam,pca_predict$coord[,1:5])
+#pca_predict <- predict(res.pca1,samT[,c(4,8,69,70,74,71,72,73,77,80,79)])
+#sam_eigens <- cbind(sam,pca_predict$coord[,1:5])
 
 #create blank columns for names in sam
 #rename and select for right things...
@@ -271,8 +272,13 @@ sam_eigens <- cbind(sam,pca_predict$coord[,1:5])
 #k is the number of neighbors considered - trying with top 10, then sample
 k <- 10
 mod <- res.pca1$ind$coord[,1:5] #whole thing, but only first 5 eigen dimensions
-targ <- pca_predict$coord[,1:5] #
-var <- res.pca1$eig[,2] #multiply each dimension in mod and targ by the percent var explained
+targ1 <- res.pca2$ind$coord[,1:5]
+#targ <- pca_predict$coord[,1:5] #
+norm_mod <- (res.pca1$eig[1:5,2]/100) * mod #multiply each dimension in mod and targ by the percent var explained?? 
+norm_targ <- (res.pca2$eig[1:5,2]/100) * targ1
+
+sam <- cbind(sam,norm_targ)
+
 
 
 #TRY: cbind targ onto end of SAM
@@ -289,14 +295,19 @@ devtools::install_github("hadley/multidplyr")
 library(multidplyr)
 cluster <- create_cluster(10)
 
+
+
+min_test <- sample(order(abs(norm_mod[1,1] - norm_targ[,1])+abs(norm_mod[1,2] - norm_targ[,2])
+                  +abs(norm_mod[1,3] - norm_targ[,3]) +abs(norm_mod[1,4] - norm_targ[,4])
+                  +abs(norm_mod[1,5] - norm_targ[,5]))[1:10],1)
   #Sys.time()
 
 #  n = nrow(targ)
   #sam_out <- data.frame()
-  #NHnames <- paste0('NH_',colnames(NHANES_1))
-  #for(colname in NHnames){
-  #  sam[colname] <- NA
-  #}
+  NHnames <- paste0('NH_',colnames(NHANES_1))
+  for(colname in NHnames){
+    sam[colname] <- NA
+  }
   #filesize <- n/(no_cores)
   #foreach(m=1:no_cores) %dopar% {
   #  end <- ifelse(m*filesize<n,round(m*filesize),n)
@@ -304,22 +315,56 @@ cluster <- create_cluster(10)
   #extrap = rep(NA_character_, n)
   #NHrows=list()
   
-  sam_tracts <- sam_eigens %>%
-    partition(tract, cluster = cluster)
   
+ # library(dplyr)
+samT <- sam[1:100000,]
+
 system.time({
-#    foreach(i=1000000:1100000) %do% {
- sam_tracts_matched <- sample(order(apply(sam_tracts, 1, function(x) sum((x[,81:85] - mod)^2)))[1:10],1)
+  NHMatch <- data.frame()
+  for(i in 1:length(sam[,1])){
+    NHMatch[i,1]  <- sample(order(abs(sam[i,'Dim.1'] - norm_mod[,1])
+                          +abs(sam[i,'Dim.2'] - norm_mod[,2])
+                          +abs(sam[i,'Dim.3'] - norm_mod[,3])
+                          +abs(sam[i,'Dim.4'] - norm_mod[,4])
+                          +abs(sam[i,'Dim.5'] - norm_mod[,5])),1)
+  }
+})
+
+system.time({
+      sam_matched <- sam %>%
+        partition(tract, cluster = cluster) %>%
+        cluster_assign_value("norm_mod",norm_mod) %>%
+        mutate(NHMatch= mapply(function(x) 
+          sample(order(abs(x - norm_mod[,1]))[1:10],1),Dim.1) ) %>%     
+#        mutate_at(.vars=c('Dim.1','Dim.2','Dim.3','Dim.4','Dim.5'), 
+#                  .funs=funs(sample(order(abs(Dim.1 - norm_mod[,1])+abs(Dim.2 - norm_mod[,2])
+#                                            +abs(Dim.3 - norm_mod[,3]) +abs(Dim.4 - norm_mod[,4])
+#                                            +abs(Dim.5 - norm_mod[,5]))[1:10],1)) ) %>%
+#        mutate(NHMatch= sample(order(abs(Dim.1 - norm_mod[,1]))[1:10],1)) %>%
+#        mutate(NHMatch= sample(order(abs(Dim.1 - norm_mod[,1])+abs(Dim.2 - norm_mod[,2])
+#                     +abs(Dim.3 - norm_mod[,3]) +abs(Dim.4 - norm_mod[,4])
+#                     +abs(Dim.5 - norm_mod[,5]))[1:10],1))  %>%
+      collect()
+})
+        
+        
+# sam_tracts_matched <- sample(order(apply(sam_tracts, 1, function(x) sum((x[,81:85] - mod)^2)))[1:10],1)
+#  sam_matched <- sam_eigens[1:10,] %>%
+#    partition(tract, cluster = cluster) %>%
+#    group_by(tract) %>% #not sure why it would need both
+#    rowwise() %>%
+#    mutate(NHMatch= sample(order(sum(Dim.1-targ[,'Dim.1'],na.rm = TRUE))),1)
     
- sam_matched <- collect(sam_tracts_matched)
-#      NHrow <- sample(order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k],1)
+#    collect()
+    
+#      NHrow <- sample(order(apply(mod, 1, function(x) abs(x - targ[i, ])))[1:10],1)
 #      sam[i,80:196] <- NHANES_1[NHrow,]
 #    }
-#}
-})
-  Sys.time() #2019-05-28 04:13:54
+#  }
+#})
+
 stopCluster(cl)
 
-saveRDS(sam,paste(file_folder,"/temp/sam_5_27.RDS",sep=""))
+saveRDS(sam_matched,paste(file_folder,"/temp/sam_matched_NH_6_29.RDS",sep=""))
 
 options(max.print = 1) #else it prints a lot in R-Studio console.
