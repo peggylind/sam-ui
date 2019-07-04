@@ -292,8 +292,12 @@ system.time({
     #  collect()
 })
 
+sam_matched$SEQN <- NHANES_1[sam_matched$NHMatch,'SEQN']
 
+sam_matched <- inner_join(sam_matched,NHANES_1,by = 'SEQN', suffix = c('.sam','.NH'))
 
-saveRDS(sam_matched,paste(file_folder,"/temp/sam_matched_NH_6_29.RDS",sep=""))
+SAMDataFolder <- "NewSAMData/"
+
+saveRDS(sam_matched,paste(SAMDataFolder,"/temp/sam_matched_NH_7_4.RDS",sep=""))
 
 options(max.print = 100) #else it prints a lot in R-Studio console.
