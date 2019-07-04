@@ -300,4 +300,3 @@ SAMDataFolder <- "NewSAMData/"
 
 saveRDS(sam_matched,paste(SAMDataFolder,"/temp/sam_matched_NH_7_4.RDS",sep=""))
 
-options(max.print = 100) #else it prints a lot in R-Studio console.
