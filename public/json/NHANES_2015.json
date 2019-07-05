@@ -8,13 +8,14 @@
         "fields": [
           {
             "name": "SEQN",
-            "type": "character",
+            "type": "numeric",
             "description": "(SEQN) Respondent sequence number."
           },
           {
             "name": "gender",
             "type": "character",
-            "description": "(DMDHRGND) Household reference person's gender."
+            "description": "(DMDHRGND) Household reference person's gender.",
+            "options": {"1":"Male","2":"Female",".":"Missing"}
           },
           {
             "name": "education",
@@ -22,24 +23,28 @@
             "description": "(DMDHREDU) Highest education level."
           },
           {
-            "name": "size",
+            "name": "size_NH",
             "type": "character",
-            "description": "(DMDFMSIZ) Total number of people in the Family."
+            "description": "(DMDFMSIZ) Total number of people in the Family.",
+            "options": {"1":"1","2":"2","3":"3","4":"4","5":"5","6":"6","7":"7 or more",".":"Missing"}
           },
           {
-            "name": "age",
+            "name": "age_NH",
             "type": "character",
-            "description": "(DMDHRAGE) Household reference person's age in years."
+            "description": "(DMDHRAGE) Household reference person's age in years.",
+            "options": {"0-79":"range","80":">80",".":"Missing"}
           },
           {
             "name": "marital_status",
             "type": "character",
-            "description": "(DMDHRMAR) Household reference person's marital status."
+            "description": "(DMDHRMAR) Household reference person's marital status.",
+            "options": {"1":"Married","2":"Widowed","3":"Divorced","4":"Separated","5":"Never Married","6":"Living with Partner","77":"Refused","99":"Don't Know",".":"Missing"}
           },
           {
             "name": "yrs_US",
             "type": "character",
-            "description": "(DMDYRSUS) Length of time in US. NA if whole life."
+            "description": "(DMDYRSUS) Length of time in US. NA if whole life.",
+            "options": {"1":"<1 year","2":"1-5 years","3":"5-10 years","4":"10-15 years","5":"15-20 years","6":"20-30 years","7":"30-40 years","8":"40-50 years","9":">50 years","77":"Refused","99":"Don't Know",".":"Missing"}
           },
           {
             "name": "vet_foreign_war",
@@ -55,6 +60,18 @@
             "name": "birth_country",
             "type": "character",
             "description": "(DMDHRBR4) Household reference person's country of birth"
+          },
+          {
+            "name": "pregnant.NH",
+            "type": "character",
+            "description": "(HSQ590) Except for tests {you/SP} may have had as part of blood donations, {have you/has he/has she} ever had {your/his/her} blood tested for the AIDS virus infection? (16-150 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "body_weight",
+            "type": "character",
+            "description": "(BMXWT) Weight in kg (0-150 years old)",
+            "options": {"3.6-198.9":"kg",".":"Missing"}
           },
           {
             "name": "no_interest_do_things",
