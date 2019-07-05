@@ -299,6 +299,7 @@ system.time({
 })
 
 sam_NH <- inner_join(sam_matched,NHANES_1,by = 'SEQN', suffix = c('_sam','_NH'))
+
 samplesam_NH <- sample_n(sam_NH, 100000)
 
 SAMDataFolder <- "NewSAMData/"
