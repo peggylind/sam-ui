@@ -8,307 +8,324 @@
         "fields": [
           {
             "name": "SEQN",
-            "type": "double",
+            "type": "numeric",
             "description": "(SEQN) Respondent sequence number."
           },
           {
             "name": "gender",
-            "type": "double",
-            "description": "(DMDHRGND) Household reference person's gender."
+            "type": "character",
+            "description": "(DMDHRGND) Household reference person's gender.",
+            "options": {"1":"Male","2":"Female",".":"Missing"}
           },
           {
             "name": "education",
-            "type": "double",
+            "type": "character",
             "description": "(DMDHREDU) Highest education level."
           },
           {
-            "name": "size",
-            "type": "double",
-            "description": "(DMDFMSIZ) Total number of people in the Family."
+            "name": "size_NH",
+            "type": "character",
+            "description": "(DMDFMSIZ) Total number of people in the Family.",
+            "options": {"1":"1","2":"2","3":"3","4":"4","5":"5","6":"6","7":"7 or more",".":"Missing"}
           },
           {
-            "name": "age",
-            "type": "double",
-            "description": "(DMDHRAGE) Household reference person's age in years."
+            "name": "age_NH",
+            "type": "character",
+            "description": "(DMDHRAGE) Household reference person's age in years.",
+            "options": {"0-79":"range","80":">80",".":"Missing"}
           },
           {
             "name": "marital_status",
-            "type": "double",
-            "description": "(DMDHRMAR) Household reference person's marital status."
+            "type": "character",
+            "description": "(DMDHRMAR) Household reference person's marital status.",
+            "options": {"1":"Married","2":"Widowed","3":"Divorced","4":"Separated","5":"Never Married","6":"Living with Partner","77":"Refused","99":"Don't Know",".":"Missing"}
           },
           {
             "name": "yrs_US",
-            "type": "double",
-            "description": "(DMDYRSUS) Length of time in US. NA if whole life."
+            "type": "character",
+            "description": "(DMDYRSUS) Length of time in US. NA if whole life.",
+            "options": {"1":"<1 year","2":"1-5 years","3":"5-10 years","4":"10-15 years","5":"15-20 years","6":"20-30 years","7":"30-40 years","8":"40-50 years","9":">50 years","77":"Refused","99":"Don't Know",".":"Missing"}
           },
           {
             "name": "vet_foreign_war",
-            "type": "double",
+            "type": "character",
             "description": "(DMQADFC) Served in foreign country during armed conflict."
           },
           {
             "name": "veteran",
-            "type": "double",
+            "type": "character",
             "description": "(DMQMILIZ) Served on active duty in the U.S. Armed Forces, military Reserves, or National Guard."
           },
           {
             "name": "birth_country",
-            "type": "double",
+            "type": "character",
             "description": "(DMDHRBR4) Household reference person's country of birth"
           },
           {
+            "name": "pregnant.NH",
+            "type": "character",
+            "description": "(HSQ590) Except for tests {you/SP} may have had as part of blood donations, {have you/has he/has she} ever had {your/his/her} blood tested for the AIDS virus infection? (16-150 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "body_weight",
+            "type": "character",
+            "description": "(BMXWT) Weight in kg (0-150 years old)",
+            "options": {"3.6-198.9":"kg",".":"Missing"}
+          },
+          {
             "name": "no_interest_do_things",
-            "type": "double",
+            "type": "character",
             "description": "(DPQ010) Over the last 2 weeks, how often have you been bothered by the following problems: little interest or pleasure in doing things?",
             "options": {"0":"Not at all","1":"Several Days","2":"More than half the days","3":"Nearly Every Day","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "depressed",
-            "type": "double",
+            "type": "character",
             "description": "(DPQ020) [Over the last 2 weeks, how often have you been bothered by the following problems:] feeling down, depressed, or hopeless?",
             "options": {"0":"Not at all","1":"Several Days","2":"More than half the days","3":"Nearly Every Day","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "trouble_sleep",
-            "type": "double",
+            "type": "character",
             "description": "(DPQ030) [Over the last 2 weeks, how often have you been bothered by the following problems:] trouble falling or staying asleep, or sleeping too much?",
             "options": {"0":"Not at all","1":"Several Days","2":"More than half the days","3":"Nearly Every Day","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "no_energy",
-            "type": "double",
+            "type": "character",
             "description": "(DPQ040) [Over the last 2 weeks, how often have you been bothered by the following problems:] feeling tired or having little energy?",
             "options": {"0":"Not at all","1":"Several Days","2":"More than half the days","3":"Nearly Every Day","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "poor_eating",
-            "type": "double",
+            "type": "character",
             "description": "(DPQ050) [Over the last 2 weeks, how often have you been bothered by the following problems:] poor appetite or overeating?",
             "options": {"0":"Not at all","1":"Several Days","2":"More than half the days","3":"Nearly Every Day","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "better_dead",
-            "type": "double",
+            "type": "character",
             "description": "(DPQ090) [Over the last 2 weeks, how often have you been bothered by the following problems:] Thoughts that you would be better off dead or of hurting yourself in some way?",
             "options": {"0":"Not at all","1":"Several Days","2":"More than half the days","3":"Nearly Every Day","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "BP_dr_said",
-            "type": "double",
+            "type": "character",
             "description": "(BPQ020) {Have you/Has SP} ever been told by a doctor or other health professional that {you/s/he} had hypertension, also called high blood pressure?",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "age_hypertension",
-            "type": "double",
+            "type": "character",
             "description": "(BPD035) Age told had hypertension."
           },
           {
             "name": "prescribed_BP",
-            "type": "double",
+            "type": "character",
             "description": "(BPQ040A) Because of {your/SP's} (high blood pressure/hypertension), {have you/has s/he} ever been told to . . . take prescribed medicine?",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "taking_prescribed_BP",
-            "type": "double",
+            "type": "character",
             "description": "(BPQ050A) (Are you/Is SP) now taking prescribed hypertension/ high blood pressure medicine",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "prescribed_cholest",
-            "type": "double",
+            "type": "character",
             "description": "(BPQ090D) [To lower (your/his/her) blood cholesterol, (have/has) (you/SP) ever been told by a doctor or other health professional]... to take prescribed medicine?",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "taking_prescribed_cholest",
-            "type": "double",
+            "type": "character",
             "description": "(BPQ100D) (Are you/Is SP) now taking prescribed cholesterol medicine",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "age_diabetes",
-            "type": "double",
+            "type": "character",
             "description": "(DID040) Age told had diabetes."
           },
           {
             "name": "told_prediabetes",
-            "type": "double",
+            "type": "character",
             "description": "(DIQ160) {Have you/Has SP} ever been told by a doctor or other health professional that {you have/SP has} any of the following: prediabetes, impaired fasting glucose, impaired glucose tolerance, borderline diabetes or that {your/her/his} blood sugar is higher than normal but not high enough to be called diabetes or sugar diabetes?",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "feel_risk_diabetes",
-            "type": "double",
+            "type": "character",
             "description": "(DIQ172) {Do you/Does SP} feel {you/he/she} could be at risk for diabetes or prediabetes?",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "health_insurance",
-            "type": "double",
+            "type": "character",
             "description": "(HIQ011) {Are you/Is SP} covered by health insurance or some other kind of health care plan? [Include health insurance obtained through employment or purchased directly as well as government programs like Medicare and Medicaid that provide medical care or help pay medical bills.]",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "medicare",
-            "type": "double",
+            "type": "character",
             "description": "(HIQ031B) {Are you/Is SP} covered by Medicare?",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "medicaid",
-            "type": "double",
+            "type": "character",
             "description": "(HIQ031B) {Are you/Is SP} covered by Medicaid?",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "no_insurance_1yr",
-            "type": "double",
+            "type": "character",
             "description": "(HIQ210) In the past 12 months, was there any time when {you/SP} did not have any health insurance coverage?",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "gen_health",
-            "type": "double",
+            "type": "character",
             "description": "(HUQ010) Would you say {your/SP's} health in general is . . ",
             "options": {"1":"Excellent","2":"Very good","3":"Good","4":"Fair","5":"Poor","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "gen_health_v1yr",
-            "type": "double",
+            "type": "character",
             "description": "(HUQ020) Compared with 12 months ago, would you say {your/SP's} health is now . . . ",
             "options": {"1":"Better","2":"Worse","3":"About the same","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "where_healthcare",
-            "type": "double",
+            "type": "character",
             "description": "(HUQ041) What kind of place {do you/does SP} go to most often - a clinic, doctor's office, emergency room, or some other place?",
             "options": {"1":"Clinic or health center","2":"Doctor's office or HMO","3":"Hospital emergency room","4":"Hospital outpatient department","5":"Some other place","6":"Doesn't go to one place most often","77":"Refused","99":"Don't Know",".":"Missing"}
           },
           {
             "name": "how_many_healthcare",
-            "type": "double",
+            "type": "character",
             "description": "(HUQ051) {During the past 12 months, how/How} many times {have you/has SP} seen a doctor or other health care professional about {your/his/her} health at a doctor's office, a clinic or some other place? Do not include times {you were/s/he was} hospitalized overnight, visits to hospital emergency rooms, home visits or telephone calls.",
             "options": {"0":"None","1":"1","2":"2-3","3":"4-5","4":"6-7","5":"8-9","6":"10-12","7":"13-15","8":"16 or more","77":"Refused","99":"Don't Know",".":"Missing"}
           },
           {
             "name": "times_overnight_hosp",
-            "type": "double",
+            "type": "character",
             "description": "(HUD080) How many different times did {you/SP} stay in any hospital overnight or longer {during the past 12 months}? (Do not count total number of nights, just total number of hospital admissions for stays which lasted 1 or more nights.)",
             "options": {"1":"1","2":"2","3":"3","4":"4","5":"5","6":"6 or more","77777":"Refused","99999":"Don't Know",".":"Missing"}
           },
           {
             "name": "mental_last_year",
-            "type": "double",
+            "type": "character",
             "description": "(HUQ090) During the past 12 months, that is since {DISPLAY CURRENT MONTH} of {DISPLAY LAST YEAR}, {have you/has SP} seen or talked to a mental health professional such as a psychologist, psychiatrist, psychiatric nurse or clinical social worker about {your/his/her} health?",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "money_supermarket",
-            "type": "double",
+            "type": "character",
             "description": "(CBD071) When you answer these questions, please do not include money spent on alcoholic beverages. During the past 30 days, how much money {did your family/did you} spend at supermarkets or grocery stores? Please include purchases made with food stamps.",
             "options": {"8400":"more than 8400","777777":"Refused","999999":"Don't Know",".":"Missing"}
           },
           {
             "name": "money_non_food",
-            "type": "double",
+            "type": "character",
             "description": "(CBD091) About how much money was spent on nonfood items?",
             "options": {"8400":"more than 8400","777777":"Refused","999999":"Don't Know",".":"Missing"}
           },
           {
             "name": "eating_out",
-            "type": "double",
+            "type": "character",
             "description": "(CBD121) During the past 30 days, how much money {did your family/did you} spend on eating out? Please include money spent in cafeterias at work or at school or on vending machines, for all family members.",
             "options": {"8400":"more than 8400","777777":"Refused","999999":"Don't Know",".":"Missing"}
           },
           {
             "name": "minutes_vigorous_work",
-            "type": "double",
+            "type": "character",
             "description": "(PAD615) How much time {do you/does SP} spend doing vigorous-intensity activities at work on a typical day? (Missing if less than 10)",
             "options": {"10-840":"Minutes of activity","7777":"Refused","9999":"Don't Know",".":"Missing/no vigorous work"}
           },
           {
             "name": "minutes_moderate_work",
-            "type": "double",
+            "type": "character",
             "description": "(PAD615) How much time {do you/does SP} spend doing moderate-intensity activities at work on a typical day? (Missing if less than 10)",
             "options": {"10-990":"Minutes of activity","7777":"Refused","9999":"Don't Know",".":"Missing/no moderate work"}
           },
           {
             "name": "walk_bike_work",
-            "type": "double",
+            "type": "character",
             "description": "(PAD645) How much time {do you/does SP} spend walking or bicycling for travel on a typical day? (Missing if less than 10)",
             "options": {"10-1200":"Minutes of activity","7777":"Refused","9999":"Don't Know",".":"Missing/no bike_walk work"}
           },
           {
             "name": "minutes_vigorous_rec",
-            "type": "double",
+            "type": "character",
             "description": "(PAD660) How much time {do you/does SP} spend doing vigorous-intensity sports, fitness or recreational activities on a typical day? (Missing if less than 10)",
             "options": {"10-1200":"Minutes of activity","7777":"Refused","9999":"Don't Know",".":"Missing/no vigorous recreational activity"}
           },
           {
             "name": "minutes_moderate_rec",
-            "type": "double",
+            "type": "character",
             "description": "(PAD675) How much time {do you/does SP} spend doing moderate-intensity sports, fitness or recreational activities on a typical day? (Missing if less than 10)",
             "options": {"10-1200":"Minutes of activity","7777":"Refused","9999":"Don't Know",".":"Missing/no moderate recreational activity"}
           },
           {
             "name": "minutes_sedentary",
-            "type": "double",
+            "type": "character",
             "description": "(PAD680) How much time {do you/does SP} usually spend sitting on a typical day?",
             "options": {"0-1380":"Minutes sitting","7777":"Refused","9999":"Don't Know",".":"Missing"}
           },
           {
             "name": "hours_TV",
-            "type": "double",
+            "type": "character",
             "description": "(PAQ710)  Over the past 30 days, on average how many hours per day did {you/SP} sit and watch TV or videos? (age 2-150)",
             "options": {"0":"Less than 1 hour","1":"1 hours","2":"2 hours","3":"3 hours","4":"4 hours","5":"5 hours or more","8":"None","77":"Refused","99":"Don't Know",".":"Missing"}
           },
           {
             "name": "hours_computer",
-            "type": "double",
+            "type": "character",
             "description": "(PAQ710)  Over the past 30 days, on average how many hours per day did {you/SP} sit and watch TV or videos? (age 2-150)",
             "options": {"0":"Less than 1 hour","1":"1 hours","2":"2 hours","3":"3 hours","4":"4 hours","5":"5 hours or more","8":"None","77":"Refused","99":"Don't Know",".":"Missing"}
           },
           {
             "name": "phys_limit_child",
-            "type": "double",
+            "type": "character",
             "description": "(PFQ020) {Do you/Does SP} have an impairment or health problem that limits {your/his/her} ability to {walk, run or play} {walk or run}? (3-19 years old)",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "phys_limit_child_1yr",
-            "type": "double",
+            "type": "character",
             "description": "(PFQ030) Is this an impairment or health problem that has lasted, or is expected to last 12 months or longer? (3-19 years old)",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "special_ed",
-            "type": "double",
+            "type": "character",
             "description": "(PFQ041) Does {SP} receive Special Education or Early Intervention Services? (3-17 years old)",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "health_prevent_work",
-            "type": "double",
+            "type": "character",
             "description": "(PFQ049) Does a physical, mental or emotional problem now keep {you/SP} from working at a job or business? (20-150 years old)",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "health_limit_work",
-            "type": "double",
+            "type": "character",
             "description": "(PFQ051) {Are you/Is SP} limited in the kind or amount of work {you/s/he} can do because of a physical, mental or emotional problem? (20-150 years old)",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "confusion",
-            "type": "double",
+            "type": "character",
             "description": "(PFQ057) {Are you/Is SP} limited in any way because of difficulty remembering or because {you/s/he} experience{s} periods of confusion? (20-150 years old)",
             "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
           },
           {
             "name": "health_chronic_1",
-            "type": "double",
+            "type": "character",
             "description": "(PFQ063A) What condition or health problem causes {you/SP} to have difficulty with or need help with {NAME OF UP TO 3 ACTIVITIES/these activities}? (20-150 years old)",
             "options": {"10":"Arthritis/rheumatism","11":"Back or neck problem","12":"Birth Defect","13":"Cancer","14":"Depression/anxiety/emotional problem","15":"Other developmental problem (such as cerebral palsy)",
               "16":"Diabetes","17":"Fractures, bone/joint injury","18":"Hearing Problem","19":"Heart Problem","20":"Hypertension/high blood pressure","21":"Lung/breathing problem",
@@ -317,7 +334,7 @@
           },
           {
             "name": "health_chronic_2",
-            "type": "double",
+            "type": "character",
             "description": "(PFQ063B) What condition or health problem causes {you/SP} to have difficulty with or need help with {NAME OF UP TO 3 ACTIVITIES/these activities}? (20-150 years old)",
             "options": {"10":"Arthritis/rheumatism","11":"Back or neck problem","12":"Birth Defect","13":"Cancer","14":"Depression/anxiety/emotional problem","15":"Other developmental problem (such as cerebral palsy)",
               "16":"Diabetes","17":"Fractures, bone/joint injury","18":"Hearing Problem","19":"Heart Problem","20":"Hypertension/high blood pressure","21":"Lung/breathing problem",
@@ -326,7 +343,7 @@
           },
           {
             "name": "health_chronic_3",
-            "type": "double",
+            "type": "character",
             "description": "(PFQ063C) What condition or health problem causes {you/SP} to have difficulty with or need help with {NAME OF UP TO 3 ACTIVITIES/these activities}? (20-150 years old)",
             "options": {"10":"Arthritis/rheumatism","11":"Back or neck problem","12":"Birth Defect","13":"Cancer","14":"Depression/anxiety/emotional problem","15":"Other developmental problem (such as cerebral palsy)",
               "16":"Diabetes","17":"Fractures, bone/joint injury","18":"Hearing Problem","19":"Heart Problem","20":"Hypertension/high blood pressure","21":"Lung/breathing problem",
@@ -335,7 +352,7 @@
           },
           {
             "name": "health_chronic_4",
-            "type": "double",
+            "type": "character",
             "description": "(PFQ063D) What condition or health problem causes {you/SP} to have difficulty with or need help with {NAME OF UP TO 3 ACTIVITIES/these activities}? (20-150 years old)",
             "options": {"10":"Arthritis/rheumatism","11":"Back or neck problem","12":"Birth Defect","13":"Cancer","14":"Depression/anxiety/emotional problem","15":"Other developmental problem (such as cerebral palsy)",
               "16":"Diabetes","17":"Fractures, bone/joint injury","18":"Hearing Problem","19":"Heart Problem","20":"Hypertension/high blood pressure","21":"Lung/breathing problem",
@@ -344,12 +361,102 @@
           },
           {
             "name": "health_chronic_5",
-            "type": "double",
+            "type": "character",
             "description": "(PFQ063E) What condition or health problem causes {you/SP} to have difficulty with or need help with {NAME OF UP TO 3 ACTIVITIES/these activities}? (20-150 years old)",
             "options": {"10":"Arthritis/rheumatism","11":"Back or neck problem","12":"Birth Defect","13":"Cancer","14":"Depression/anxiety/emotional problem","15":"Other developmental problem (such as cerebral palsy)",
               "16":"Diabetes","17":"Fractures, bone/joint injury","18":"Hearing Problem","19":"Heart Problem","20":"Hypertension/high blood pressure","21":"Lung/breathing problem",
               "22":"Mental retardation","23":"other injury","24":"Senility","25":"Stroke problem","26":"Vision problem","27":"Weight problem","28":"Other problem",
               "77":"Refused","99":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "Cold_30days",
+            "type": "character",
+            "description": "(HSQ500) Did {you/SP} have a head cold or chest cold that started during those 30 days? (1-150 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "GI_30days",
+            "type": "character",
+            "description": "(HSQ510) Did {you/SP} have a stomach or intestinal illness with vomiting or diarrhea that started during those 30 days? (1-150 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "flu_30days",
+            "type": "character",
+            "description": "(HSQ520) Did {you/SP} have flu, pneumonia, or ear infections that started during those 30 days? (1-150 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "donated_blood",
+            "type": "character",
+            "description": "(HSQ571) During the past 12 months, that is, since (DISPLAY CURRENT MONTH, DISPLAY LAST YEAR), (have you/has SP) donated blood? (16-150 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "had_HIV_test",
+            "type": "character",
+            "description": "(HSQ590) Except for tests {you/SP} may have had as part of blood donations, {have you/has he/has she} ever had {your/his/her} blood tested for the AIDS virus infection? (16-150 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "body_weight",
+            "type": "character",
+            "description": "(BMXWT) Weight in kg (0-150 years old)",
+            "options": {"3.6-198.9":"kg",".":"Missing"}
+          },
+          {
+            "name": "standing_height",
+            "type": "character",
+            "description": "(BMXHT) Height in cm (0-150 years old)",
+            "options": {"80.7-202.7":"cm",".":"Missing"}
+          },
+          {
+            "name": "BMI",
+            "type": "character",
+            "description": "(BMXBMI) Body Mass Index (2-150 years old)",
+            "options": {"11.5-67.3":"cm",".":"Missing"}
+          },
+          {
+            "name": "hrs_work_wk",
+            "type": "character",
+            "description": "(OCQ180) How many hours did {you/SP} work last week at all jobs or businesses? (16-150 years old)",
+            "options": {"1-79":"hours/week","80":"80 or more","77777":"Refused","99999":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "work_situation",
+            "type": "character",
+            "description": "(OCQ260) Description of job/work situation (16-150 years old)",
+            "options": {"1":"private company","2":"Federal Government","3":"State Government","4":"Local Government","5":"Self-employed","6":"Unpaid with family business","77":"Refused","99":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "work_35hrs",
+            "type": "character",
+            "description": "(OCQ210) {Do you/Does SP} usually work 35 hours or more per week in total at all jobs or businesses? (16-150 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "how_healthy_diet",
+            "type": "character",
+            "description": "(DBQ700) How healthy is your overall diet (16-150 years old)",
+            "options": {"1":"Excellent","2":"Very Good","3":"Good","4":"Fair","5":"Poor","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "Free_meals_sr",
+            "type": "character",
+            "description": "(DBQ301) In the past 12 months, did {you/SP} receive any meals delivered to {your/his/her} home from community programs, 'Meals on Wheels', or any other programs? (60-150 years old)",
+            "options": {"1":"Yes","2":"No","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "school_lunch_cost",
+            "type": "character",
+            "description": "(DBQ390) School lunch free, reduced or full price (4-19 years old)",
+            "options": {"1":"Free","2":"Reduced Price","3":"Full Price","7":"Refused","9":"Don't Know",".":"Missing"}
+          },
+          {
+            "name": "summer_lunch",
+            "type": "character",
+            "description": "(DBQ424) Summer program free lunch (4-19 years old)",
+            "options": {"1":"Yes","2":"No","3":"Did not attend summer program","7":"Refused","9":"Don't Know",".":"Missing"}
           }
         ]
       }

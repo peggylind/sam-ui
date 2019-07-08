@@ -1,6 +1,5 @@
-#perhaps, but not yet included - https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HSQ_I.htm / general health self-report
-#body measures https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BMX_I.htm 
-# and 4/30/2019 https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Questionnaire&CycleBeginYear=2015
+# part of process run inside sam_mongolite
+# March 10, 2019 accessed from: 2015-16 / https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?BeginYear=2015
 
 library(rio)
 library(dplyr)
@@ -14,34 +13,33 @@ setwd("~/University Of Houston/Price, Daniel M - Social Network Hypergraphs")
 NH_file_folder <- "NHANES/"
 #https://wwwn.cdc.gov/nchs/nhanes/search/variablelist.aspx?Component=Demographics&CycleBeginYear=2015
 
-fileNames <- c("DEMO_I.XPT", #demographics  https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Demographics&CycleBeginYear=2015 download on March 10, 2019
-               "DR1TOT_I.XPT", #diet_nutrient1
+fileNames <- c("DEMO_I.XPT", #demographics  https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.htm download on March 10, 2019
+               "DR1TOT_I.XPT", #diet_nutrient1: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DR1TOT_I.htm
                "MCQ_I.XPT", #medical conditions: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/MCQ_I.htm download on 4/30/19
                "DPQ_I.XPT", #depression instrument: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DPQ_I.htm download on 4/30/1
-               "BPQ_I.XPT", #blood_pressure
+               "BPQ_I.XPT", #blood_pressure: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BPQ_I.htm
                "DIQ_I.XPT", #diabetes: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DIQ_I.htm
                "HIQ_I.XPT", #insurance https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HIQ_I.htm
                "HUQ_I.XPT", #healthcare utilization: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HUQ_I.htm
-               "CBQ_I.XPT", #consumer
-               "PAQ_I.XPT", #phys_act
-               "PFQ_I.XPT") #phys_func
+               "CBQ_I.XPT", #consumer: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/CBQ_I.htm
+               "DBQ_I.XPT", #dietary behavior: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DBQ_I.htm
+               "OCQ_I.XPT", #occupation: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/OCQ_I.htm
+               "HSQ_I.XPT", #current health: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HSQ_I.htm
+               "BMX_I.XPT", #Body measures: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BMX_I.htm
+               "PAQ_I.XPT", #phys_act: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/PAQ_I.htm
+               "PFQ_I.XPT") #phys_func: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/PFQ_I.htm
 
-#"DR2TOT_I.XPT" #diet_nutrient2
-#"CDQ_I.XPT" #cardio
-
+#not included
+#"DR2TOT_I.XPT" #diet_nutrient2: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DR2IFF_I.htm
+#"CDQ_I.XPT" #cardio: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/CDQ_I.htm
 
 fileList=lapply(fileNames, function(x){paste0(NH_file_folder,x)})
 dataList = lapply(fileList, function(x){import(x)})
 merged_NHANES_F <- Reduce(function(x,y) {merge(x,y, by="SEQN")}, dataList)
 
-#Vitamin D for the NHANES data: it is called 1,25 (OH)3 D3
-
-#the measured active form of B6 in serum is pyridoxal phosphate (PLP.)
-#folate
-#vitamin A retinol
 
 #see NHANES_2015.json for brief descriptions - didn't finish putting those in, or getting all the codes / types
-NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND,
+NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND, #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.htm
                                        educational_attainment=DMDHREDU,
                                        size=DMDFMSIZ, #family size but to match for PCA with sam
                                        age=DMDHRAGE,
@@ -119,6 +117,25 @@ NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND,
                                        health_chronic_3=PFQ063C,
                                        health_chronic_4=PFQ063D,
                                        health_chronic_5=PFQ063E,
+                                       #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HSQ_I.htm
+                                       Cold_30days=HSQ500,
+                                       GI_30days=HSQ510,
+                                       flu_30days=HSQ520,
+                                       donated_blood=HSQ571,
+                                       had_HIV_test=HSQ590,
+                                       #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BMX_I.htm#BMDBMIC
+                                       body_weight=BMXWT,
+                                       standing_height=BMXHT,
+                                       BMI=BMXBMI,
+                                       #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/OCQ_I.htm
+                                       hrs_work_wk=OCQ180,
+                                       work_situation=OCQ260,
+                                       work_35hrs=OCQ210,
+                                       #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DBQ_I.htm
+                                       how_healthy_diet=DBQ700,
+                                       Free_meals_sr=DBQ301,
+                                       school_lunch_cost=DBQ390,
+                                       summer_lunch=DBQ424,
                                        #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DR1TOT_I.htm
                                        d1_calories=DR1TKCAL,
                                        d1_protein=DR1TPROT,
@@ -167,12 +184,14 @@ NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND,
            walk_bike_work,minutes_vigorous_rec,minutes_moderate_rec,minutes_sedentary,hours_TV,hours_computer,
            phys_limit_child,phys_limit_child_1yr,special_ed,health_prevent_work,health_limit_work,confusion,
            health_chronic_1,health_chronic_2,health_chronic_3,health_chronic_4,health_chronic_5,
+           Cold_30days,GI_30days,flu_30days,donated_blood,had_HIV_test,body_weight,standing_height,BMI,
+           hrs_work_wk,work_situation,work_35hrs,how_healthy_diet,Free_meals_sr,school_lunch_cost,summer_lunch,
            d1_calories,d1_protein,d1_carb,
            d1_sugar,d1_fiber,d1_fat,d1_sat_fat,d1_cholesterol,d1_vit_E,d1_supp_E,d1_retinol,d1_vit_A,d1_alpha_carotene,
            d1_beta_carotene,d1_lycopene,d1_b1_thiamine,d1_b2_riboflavin,d1_niacin,d1_vit_b6,d1_total_folate,
            d1_b12,d1_supp_b12,d1_vit_C,d1_vit_D,d1_vit_K,d1_calcium,d1_phosphorus,d1_magnesium,d1_iron,d1_zinc,
            d1_copper,d1_sodium,d1_potassium,d1_selenium,d1_caffeine,d1_alcohol)
-NHANES_1 <- NHANES_merged
+NHANES_1 <- NHANES_merged #separated in case need to redo
 #add 4 luck columns - I want them to be permanent, instead of newly generated by the js
 set.seed(6743)
 NHANES_1$luck1 <- sample(100, size = nrow(NHANES_1), replace = TRUE)
@@ -186,8 +205,8 @@ NHANES_1$luck4 <- sample(100, size = nrow(NHANES_1), replace = TRUE)
 #this should give us more dimensions for the predictive fit.
 #gender
 NHANES_1 <- cbind(NHANES_1, sapply(levels(as.factor(NHANES_1$gender)), function(x) as.integer(x == NHANES_1$gender)))
-names(NHANES_1)[names(NHANES_1) == 1] <- 'Male'
-names(NHANES_1)[names(NHANES_1) == 2] <- 'Female'
+names(NHANES_1)[names(NHANES_1) == 1] <- 'male'
+names(NHANES_1)[names(NHANES_1) == 2] <- 'female'
 #race
 for(fact in unique(NHANES_1$race)){
   NHANES_1['hispanic'] <- ifelse(NHANES_1$race == 1 | NHANES_1$race ==2, 1, 0);
@@ -196,100 +215,94 @@ for(fact in unique(NHANES_1$race)){
   NHANES_1['asian'] <- ifelse(NHANES_1$race == 6, 1, 0);
   NHANES_1['multiracial'] <- ifelse(NHANES_1$race == 7, 1, 0);
 }
-
-#changing random household_income so they'll ascend more or less - will drop for values from census sample
-#decided to use percent_poverty instead.
-#https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.htm#INDHHIN2
-#NHANES_1["household_income"] <- ifelse(NHANES_1$household_income == 12, 7, NHANES_1$household_income)
-#NHANES_1["household_income"] <- ifelse(NHANES_1$household_income == 13, 4, NHANES_1$household_income)
-#NHANES_1["household_income"] <- ifelse(NHANES_1$household_income == 77, 0, NHANES_1$household_income)
-#NHANES_1["household_income"] <- ifelse(NHANES_1$household_income == 99, 0, NHANES_1$household_income)
-#for(fact in unique(NHANES_1$race)){
-#  NHANES_1[paste("race", fact, sep = "_")] <- ifelse(NHANES_1$race == fact, 1, 0)
-#}
-#because RIDEXPG in NHANES has 1,2,3 levels
-#NHANES_1["pregnant"] <- ifelse(NHANES_1$pregnant == 1, 1, 0) #have to think through for everything
-
-#education level is numeric and meaningful as goes up (will not be broken up in columns)
+#education level is numeric and meaningful as goes up
 for(row in NHANES_1){
   NHANES_1['educ_level'] <- ifelse(NHANES_1$educational_attainment<=5,NHANES_1$educational_attainment,0)
-} 
+}
 
-##preparation of SAM for PCA (needs to match column names in NHANES)
+##preparation of SAM for PCA (needs to match column names in NHANES) - from tools.R
 sam <- createSAMSample(samplesize = 100000)
 
-#education level - move upward, with 7 levels instead of 5 but in ascending level of educ.
-for(row in sam){
-  sam['educ_level'] <- ifelse(sam$educational_attainment=="Less than 9th grade",1,
-                              ifelse(sam$educational_attainment=="9th to 12th grade, no diploma",2,
-                                     ifelse(sam$educational_attainment=="High School Graduate",3,
-                                            ifelse(sam$educational_attainment=="Some College, no degree",4,
-                                                   ifelse(sam$educational_attainment=="Associate's degree",5,
-                                                          ifelse(sam$educational_attainment=="Bachelor's Degree",6,
-                                                                 ifelse(sam$educational_attainment=="Graduate or Professional Degree",7,0)))))))
-}
+#add pregnancy from Pregnancy_Autism.R thru line 50
+
+#change sam to match - or to move upward, with 7 levels instead of 5 but in ascending level of educ.
+#change to dplyr case_when and also do pregnancy here..
+sam <- sam %>% mutate(educ_level = case_when(
+  educational_attainment=="Less than 9th grade" ~ 1,
+  educational_attainment=="9th to 12th grade, no diploma" ~ 2,
+  educational_attainment=="High School Graduate" ~ 3,
+  educational_attainment=="Some College, no degree" ~ 4,
+  educational_attainment=="Associate's degree" ~ 5,
+  educational_attainment=="Bachelor's Degree" ~ 6,
+  educational_attainment=="Graduate or Professional Degree" ~ 7,
+  TRUE ~ 0 
+))
 
 #gender
 sam <- cbind(sam, sapply(levels(as.factor(sam$sex)), function(x) as.integer(x == sam$sex)))
+sam["male"] <- ifelse(sam$sex == "Male", 1, 0)
+sam["female"] <- ifelse(sam$sex == "Female", 1, 0)
 #race
 sam <- cbind(sam, sapply(levels(as.factor(sam$race)), function(x) as.integer(x == sam$race)))
+
 
 #calculate approximate poverty_ratio for sam - https://aspe.hhs.gov/poverty-guidelines
 sam$poverty_ratio <- round(sam$household_income / (8000 + (sam$size*4500) ), digits = 3)
 
+#run PCA from FactoMineR
+
+#sam and NHANES_1 only have to have matching column names if pca_predict, but now doing
+#pca on both, and the column names don't have to match - although they do, still
+#4=(family_)size,5=age,110=male,111=female,112-6 are race (hispanic,white,black,asian,multiracial),117=educ_level,11=poverty_ratio
+res.pcaNH <- PCA(NHANES_1[,c('size','age','male','female','hispanic','white','black','asian','multiracial','educ_level','poverty_ratio')],scale.unit=TRUE, ncp=5)
+res.pcaSam <- PCA(sam[,c('size','age','male','female','hispanic','white','black','asian','multiracial','educ_level','poverty_ratio')],scale.unit=TRUE, ncp=5)
+
+mod <- res.pcaNH$ind$coord[,1:5] #whole thing, but only first 5 eigen dimensions
+targ <- res.pcaSam$ind$coord[,1:5]
+norm_mod <- (res.pcaNH$eig[1:5,2]/100) * mod #multiply each dimension in mod and targ by the percent var explained??
+norm_targ <- (res.pcaSam$eig[1:5,2]/100) * targ
+
+sam <- cbind(sam,norm_targ)
+NH <- cbind(NHANES_1,norm_mod)
+NH_Male <- NH %>% filter(gender=='1')
+NH_Female <- NH %>% filter(gender=='1')
+NH_Pregnant <- NH %>% filter(pregnant=='1')
+#others to do??
+
+#quick little way to test for whether it's finding plausible minimums
+min_test <- sample(order(abs(norm_mod[1,1] - norm_targ[,1])+abs(norm_mod[1,2] - norm_targ[,2])
+                  +abs(norm_mod[1,3] - norm_targ[,3]) +abs(norm_mod[1,4] - norm_targ[,4])
+                  +abs(norm_mod[1,5] - norm_targ[,5]))[1:10],1)
 
 
+#if I split up case_when like this, should I change what's in the PCA?
+system.time({
+      sam_matched <- sam %>%
+        mutate(SEQN = 
+          case_when(sex == 'Female' ~ as.numeric(
+            NH_Female[mapply(function(x,y,z,a,b) 
+              sample(order(abs(x - NH_Female[,'Dim.1'])+abs(y - NH_Female[,'Dim.2'])+abs(z - NH_Female[,'Dim.3'])
+                       +abs(a - NH_Female[,'Dim.4'])+abs(b - NH_Female[,'Dim.5']))[1:5],1),
+            Dim.1,Dim.2,Dim.3,Dim.4,Dim.5),'SEQN']),
+          pregnant == '1' ~ as.numeric(
+            NH_Pregnant[mapply(function(x,y,z,a,b) 
+              sample(order(abs(x - NH_Pregnant[,'Dim.1'])+abs(y - NH_Pregnant[,'Dim.2'])+abs(z - NH_Pregnant[,'Dim.3'])
+                           +abs(a - NH_Pregnant[,'Dim.4'])+abs(b - NH_Pregnant[,'Dim.5']))[1:5],1),
+              Dim.1,Dim.2,Dim.3,Dim.4,Dim.5),'SEQN']),
+          TRUE ~ as.numeric(
+            NH_Male[mapply(function(x,y,z,a,b) 
+              sample(order(abs(x - NH_Male[,'Dim.1'])+abs(y - NH_Male[,'Dim.2'])+abs(z - NH_Male[,'Dim.3'])
+                           +abs(a - NH_Male[,'Dim.4'])+abs(b - NH_Male[,'Dim.5']))[1:5],1),
+              Dim.1,Dim.2,Dim.3,Dim.4,Dim.5),'SEQN'])
+          )
+        )
+})
 
-#Run PCA
-#4=(family_)size,5=age,110=Male,111=Female,112-6 are race (hispanic,white,black,asian,multiracial),117=educ_level,11=poverty_ratio
-res.pca1 <- PCA(NHANES_1[,c(4,5,110:117,11)],scale.unit=TRUE, ncp=5) #add back education later - have to make them the same scales
-#get warning that says: Missing values are imputed by the mean of the variable: you should use the imputePCA function of the missMDA package
+sam_NH <- inner_join(sam_matched,NHANES_1,by = 'SEQN', suffix = c('_sam','_NH'))
 
-#predict https://cran.r-project.org/web/packages/FactoMineR/FactoMineR.pdf p. 72
-#needs to be in same order, with same names, as res.pca1 
-colnamesForPredict <- colnames(NHANES_1[,c(4,5,110:117,11)])
-pca_predict <- predict(res.pca1,sam[,colnames(sam)%in%colnamesForPredict])
+samplesam_NH <- sample_n(sam_NH, 100000)
 
-#so, if you take each value, multiply it by res.pca$eig[,2][i] (the variance explained), and repeat for
-#however eigendimensions you want...
-#example: mod = NHANES, as (SEQN,dim1:dim5 /etc); then SAM, filled in with predict_PCA from same NHANES
-#modifying from : https://github.com/allr/benchR/blob/master/MachineLearningAlg/learners-in-r/knn.R
-#k is the number of neighbors considered - trying with top 10, then sample
-k <- 10
-mod <- res.pca1$ind$coord[,1:5] #whole thing, but only first 5 eigen dimensions
-targ <- pca_predict$coord[,1:5] #
-var <- res.pca1$eig[,2] #multiply each dimension in mod and targ by the percent var explained
+SAMDataFolder <- "NewSAMData/"
 
-#  n = nrow(targ)
-  #sam_out <- data.frame()
-  #NHnames <- paste0('NH_',colnames(NHANES_1))
-  #for(colname in NHnames){
-  #  sam[colname] <- NA
-  #}
-  #filesize <- n/(no_cores)
-  #foreach(m=1:no_cores) %dopar% {
-  #  end <- ifelse(m*filesize<n,round(m*filesize),n)
-  #  p_sam <- test_sam[round(((m-1)*filesize)+1):end,]
-  #extrap = rep(NA_character_, n)
-  #NHrows=list()
-  
-  
-   
-#create empty dataframe to hold NHANES columns for SAM    
-nhanes_columns_for_sam <- data.frame(matrix(NA, nrow = nrow(sam), ncol = ncol(NHANES_1) + 1))   
-#loop over all SAM
-for(i in 89644:nrow(sam)) {
-  #create nearest neighbor
-  nn <- order(apply(mod, 1, function(x) sum((x - targ[i, ])^2)))[1:k]
-  #match with one of the nn
-  nhanes_columns_for_sam[i,] <- NHANES_1[sample(nn, 1),]
-  #add SAM ID column
-  nhanes_columns_for_sam[i,ncol(NHANES_1) + 1] <- sam[i,'individual_id']
-}
+saveRDS(samplesam_NH,paste(SAMDataFolder,"/temp/sam_NH_7_5_100k.RDS",sep=""))
 
-#put column names
-colnames(nhanes_columns_for_sam) <- c(colnames(NHANES_1), "individual_id")
-#write the NHANES SAM dataframe
-saveRDS(nhanes_columns_for_sam,"NewSAMData/temp/nhanes_columns_for_sam_10000.RDS")
-
-#remove the additional columns that we had created for the PCA matching
