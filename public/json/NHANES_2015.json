@@ -14,7 +14,7 @@
           {
             "name": "gender",
             "type": "character",
-            "description": "(DMDHRGND) Household reference person's gender.",
+            "description": "(RIAGENDR) Household reference person's gender.",
             "options": {"1":"Male","2":"Female",".":"Missing"}
           },
           {
