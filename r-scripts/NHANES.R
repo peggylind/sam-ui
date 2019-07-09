@@ -35,15 +35,16 @@ fileNames <- c("DEMO_I.XPT", #demographics  https://wwwn.cdc.gov/Nchs/Nhanes/201
 
 fileList=lapply(fileNames, function(x){paste0(NH_file_folder,x)})
 dataList = lapply(fileList, function(x){import(x)})
-merged_NHANES_F <- Reduce(function(x,y) {merge(x,y, by="SEQN")}, dataList)
+merged_NHANES_F <- Reduce(function(x,y) {merge(x,y, by="SEQN",all = TRUE)}, dataList)
 
 
 #see NHANES_2015.json for brief descriptions - didn't finish putting those in, or getting all the codes / types
-NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND, #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.htm
-                                       educational_attainment=DMDHREDU,
+NHANES_merged <- merged_NHANES_F %>% rename(gender=RIAGENDR, #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.htm
+                                       educational_attainment=DMDEDUC2,
+                                       educational_level_child=DMDEDUC3,
                                        size=DMDFMSIZ, #family size but to match for PCA with sam
-                                       age=DMDHRAGE,
-                                       marital_status=DMDHRMAR,
+                                       age=RIDAGEYR,
+                                       marital_status=DMDMARTL,
                                        yrs_US=DMDYRSUS,
                                        vet_foreign_war=DMQADFC,
                                        veteran=DMQMILIZ,
@@ -57,6 +58,14 @@ NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND, #https://wwwn.cdc.g
                                        still_have_asthma=MCQ035,
                                        asthma_attack_1yr=MCQ040,
                                        ER_asthma_1yr=MCQ050,
+                                       ever_told_COPD=MCQ160o,
+                                       ever_told_bronchitis=MCQ160k,
+                                       still_have_bronchitis=MCQ170k,
+                                       age_first_bronchitis=MCQ180k,
+                                       ever_told_emphysema=MCQ160g,
+                                       age_first_emphysema=MCQ180g,
+                                       ever_told_overweight=MCQ080,
+                                       hay_fever_1yr=AGQ030,
                                        age_arthritis=MCQ180A,
                                        age_coronary_heart_disease=MCQ180C,
                                        age_heart_attack=MCQ180E,
@@ -173,8 +182,11 @@ NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND, #https://wwwn.cdc.g
                                        d1_selenium=DR1TSELE,
                                        d1_caffeine=DR1TCAFF,
                                        d1_alcohol=DR1TALCO) %>%
-    select(SEQN,gender,educational_attainment,size,age,marital_status,yrs_US,vet_foreign_war,veteran,birth_country,
+    select(SEQN,gender,educational_attainment,educational_level_child,
+           size,age,marital_status,yrs_US,vet_foreign_war,veteran,birth_country,
            poverty_ratio,pregnant,race,age_first_asthma,ever_told_asthma,still_have_asthma,asthma_attack_1yr,
+           ever_told_COPD,ever_told_bronchitis,still_have_bronchitis,age_first_bronchitis,ever_told_emphysema,
+           age_first_emphysema,ever_told_overweight,hay_fever_1yr,
            ER_asthma_1yr,age_arthritis,age_coronary_heart_disease,age_heart_attack,no_interest_do_things,
            depressed,trouble_sleep,no_energy,poor_eating,feel_bad_self,better_dead,BP_dr_said,age_hypertension,
            prescribed_BP,taking_prescribed_BP,prescribed_cholest,taking_prescribed_cholest,age_diabetes,
@@ -215,7 +227,7 @@ for(fact in unique(NHANES_1$race)){
   NHANES_1['asian'] <- ifelse(NHANES_1$race == 6, 1, 0);
   NHANES_1['multiracial'] <- ifelse(NHANES_1$race == 7, 1, 0);
 }
-#education level is numeric and meaningful as goes up
+#education level is numeric and meaningful as goes up; children are educational_level_child, but also ascends and for purposes of PCA matching, just 0 here.
 for(row in NHANES_1){
   NHANES_1['educ_level'] <- ifelse(NHANES_1$educational_attainment<=5,NHANES_1$educational_attainment,0)
 }
