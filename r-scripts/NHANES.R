@@ -58,12 +58,12 @@ NHANES_merged <- merged_NHANES_F %>% rename(gender=RIAGENDR, #https://wwwn.cdc.g
                                        still_have_asthma=MCQ035,
                                        asthma_attack_1yr=MCQ040,
                                        ER_asthma_1yr=MCQ050,
-                                       ever_told_COPD=MCQ160o,
-                                       ever_told_bronchitis=MCQ160k,
-                                       still_have_bronchitis=MCQ170k,
-                                       age_first_bronchitis=MCQ180k,
-                                       ever_told_emphysema=MCQ160g,
-                                       age_first_emphysema=MCQ180g,
+                                       ever_told_COPD=MCQ160O,
+                                       ever_told_bronchitis=MCQ160K,
+                                       still_have_bronchitis=MCQ170K,
+                                       age_first_bronchitis=MCQ180K,
+                                       ever_told_emphysema=MCQ160G,
+                                       age_first_emphysema=MCQ180G,
                                        ever_told_overweight=MCQ080,
                                        hay_fever_1yr=AGQ030,
                                        age_arthritis=MCQ180A,
@@ -281,13 +281,13 @@ NH_Female <- NH %>% filter(gender=='1')
 NH_Pregnant <- NH %>% filter(pregnant=='1')
 #others to do??
 
-#quick little way to test for whether it's finding plausible minimums
+#quick little way to test for whether it's finding plausible minimums NOT RUN
 min_test <- sample(order(abs(norm_mod[1,1] - norm_targ[,1])+abs(norm_mod[1,2] - norm_targ[,2])
                   +abs(norm_mod[1,3] - norm_targ[,3]) +abs(norm_mod[1,4] - norm_targ[,4])
                   +abs(norm_mod[1,5] - norm_targ[,5]))[1:10],1)
 
 
-#if I split up case_when like this, should I change what's in the PCA?
+#if I split up case_when like this, should I change what's in the PCA? Going with full PCA now.
 system.time({
       sam_matched <- sam %>%
         mutate(SEQN = 
@@ -316,5 +316,6 @@ samplesam_NH <- sample_n(sam_NH, 100000)
 
 SAMDataFolder <- "NewSAMData/"
 
-saveRDS(samplesam_NH,paste(SAMDataFolder,"/temp/sam_NH_7_5_100k.RDS",sep=""))
+saveRDS(samplesam_NH,paste(SAMDataFolder,"/temp/sam_NH_7_9_100k.RDS",sep=""))
+saveRDS(samplesam_NH,paste(SAMDataFolder,"/temp/sam_NH_7_9_4m.RDS",sep=""))
 
