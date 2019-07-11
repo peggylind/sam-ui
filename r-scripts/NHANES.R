@@ -317,5 +317,5 @@ samplesam_NH <- sample_n(sam_NH, 100000)
 SAMDataFolder <- "NewSAMData/"
 
 saveRDS(samplesam_NH,paste(SAMDataFolder,"/temp/sam_NH_7_9_100k.RDS",sep=""))
-saveRDS(samplesam_NH,paste(SAMDataFolder,"/temp/sam_NH_7_9_4m.RDS",sep=""))
+saveRDS(sam_NH,paste(SAMDataFolder,"/temp/sam_NH_7_9_4m.RDS",sep=""))
 
