@@ -33,9 +33,9 @@ polys <- st_cast(sf_sam_geom[3000:3002,'geometry'], "POLYGON", group_or_split = 
 sf_sam_geom_test <- sf_sam_geom %>%
   group_by(account) %>% 
   mutate(
-    num_residents = n()
-#    new_coords = st_sample(geometry,num_residents,replace = FALSE) #st_cast(geometry, "POLYGON")
-        #mapply(function(x) for (poly in x) st_cast(poly, "POLYGON"), geometry)
+  #  num_residents = n()
+    new_coords = #st_sample(geometry,num_residents,replace = FALSE) #st_cast(geometry, "POLYGON")
+        mapply(function(x) for (poly in x) print(poly), geometry)
  ) # %>% 
 group_by(household_id) %>%
   mutate(apt_test =
