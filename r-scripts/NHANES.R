@@ -6,13 +6,15 @@ library(dplyr)
 library(FactoMineR)
 source("tools.R")
 
-#set working directory to your local data directory, this depends on your OneDrive setup - we could change to a Sharepoint
-setwd("~/University Of Houston/Price, Daniel M - Social Network Hypergraphs")
-#setwd("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData")
 
-NH_file_folder <- "NHANES/"
+nhanesdir = "~/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NHANES/" #Dan at home
+#nhanesdir = "~/Downloads/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NHANES/" #Dan at work
+nhanesyear = "2012/" #or 2016/
+file_path <- paste0(censusdir, vintage, "/downloaded/", state, "_", county, "_", groupname, ".csv")
+
+NH_file_folder <- paste0(nhanesdir,nhanesyear)
 #https://wwwn.cdc.gov/nchs/nhanes/search/variablelist.aspx?Component=Demographics&CycleBeginYear=2015
-
+#these are for 2015-2016, in folder: 2016.
 fileNames <- c("DEMO_I.XPT", #demographics  https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.htm download on March 10, 2019
                "DR1TOT_I.XPT", #diet_nutrient1: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DR1TOT_I.htm
                "MCQ_I.XPT", #medical conditions: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/MCQ_I.htm download on 4/30/19
@@ -32,6 +34,23 @@ fileNames <- c("DEMO_I.XPT", #demographics  https://wwwn.cdc.gov/Nchs/Nhanes/201
 #not included
 #"DR2TOT_I.XPT" #diet_nutrient2: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DR2IFF_I.htm
 #"CDQ_I.XPT" #cardio: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/CDQ_I.htm
+
+#2012 downloaded Oct 11, 2019
+fileNames <- c("DEMO_G.XPT", #demographics  https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.htm download on March 10, 2019
+               "DR1TOT_I.XPT", #diet_nutrient1: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DR1TOT_I.htm
+               "MCQ_I.XPT", #medical conditions: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/MCQ_I.htm download on 4/30/19
+               "DPQ_I.XPT", #depression instrument: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DPQ_I.htm download on 4/30/1
+               "BPQ_I.XPT", #blood_pressure: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BPQ_I.htm
+               "DIQ_I.XPT", #diabetes: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DIQ_I.htm
+               "HIQ_I.XPT", #insurance https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HIQ_I.htm
+               "HUQ_I.XPT", #healthcare utilization: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HUQ_I.htm
+               "CBQ_I.XPT", #consumer: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/CBQ_I.htm
+               "DBQ_I.XPT", #dietary behavior: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DBQ_I.htm
+               "OCQ_I.XPT", #occupation: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/OCQ_I.htm
+               "HSQ_I.XPT", #current health: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HSQ_I.htm
+               "BMX_I.XPT", #Body measures: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BMX_I.htm
+               "PAQ_I.XPT", #phys_act: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/PAQ_I.htm
+               "PFQ_I.XPT") #phys_func: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/PFQ_I.htm
 
 fileList=lapply(fileNames, function(x){paste0(NH_file_folder,x)})
 dataList = lapply(fileList, function(x){import(x)})
@@ -211,6 +230,7 @@ NHANES_1$luck2 <- sample(100, size = nrow(NHANES_1), replace = TRUE)
 NHANES_1$luck3 <- sample(100, size = nrow(NHANES_1), replace = TRUE)
 NHANES_1$luck4 <- sample(100, size = nrow(NHANES_1), replace = TRUE)
 
+#write_csv2(demo12,paste0(nhanesdir,"demo12.csv"))# etc.
 #preparation of NHANES for PCA
 #make categorical variables in vectors of binary, which will be removed later...
 #could do it where we didn't break out the categorical variables, and just did the PCA with supplemental values, but
