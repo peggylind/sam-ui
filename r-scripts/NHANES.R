@@ -6,13 +6,15 @@ library(dplyr)
 library(FactoMineR)
 source("tools.R")
 
-#set working directory to your local data directory, this depends on your OneDrive setup - we could change to a Sharepoint
-setwd("~/University Of Houston/Price, Daniel M - Social Network Hypergraphs")
-#setwd("/Users/dan/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NewSAMData")
 
-NH_file_folder <- "NHANES/"
+nhanesdir = "~/Downloads/UH_OneDrive/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NHANES/" #Dan at home
+#nhanesdir = "~/Downloads/OneDrive\ -\ University\ Of\ Houston/Social\ Network\ Hypergraphs/NHANES/" #Dan at work
+nhanesyear = "2012/" #or 2016/
+file_path <- paste0(censusdir, vintage, "/downloaded/", state, "_", county, "_", groupname, ".csv")
+
+NH_file_folder <- paste0(nhanesdir,nhanesyear)
 #https://wwwn.cdc.gov/nchs/nhanes/search/variablelist.aspx?Component=Demographics&CycleBeginYear=2015
-
+#these are for 2015-2016, in folder: 2016.
 fileNames <- c("DEMO_I.XPT", #demographics  https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.htm download on March 10, 2019
                "DR1TOT_I.XPT", #diet_nutrient1: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DR1TOT_I.htm
                "MCQ_I.XPT", #medical conditions: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/MCQ_I.htm download on 4/30/19
@@ -33,17 +35,35 @@ fileNames <- c("DEMO_I.XPT", #demographics  https://wwwn.cdc.gov/Nchs/Nhanes/201
 #"DR2TOT_I.XPT" #diet_nutrient2: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DR2IFF_I.htm
 #"CDQ_I.XPT" #cardio: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/CDQ_I.htm
 
+#2012 downloaded Oct 11, 2019
+fileNames <- c("DEMO_G.XPT", #demographics  https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.htm download on March 10, 2019
+               "DR1TOT_I.XPT", #diet_nutrient1: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DR1TOT_I.htm
+               "MCQ_I.XPT", #medical conditions: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/MCQ_I.htm download on 4/30/19
+               "DPQ_I.XPT", #depression instrument: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DPQ_I.htm download on 4/30/1
+               "BPQ_I.XPT", #blood_pressure: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BPQ_I.htm
+               "DIQ_I.XPT", #diabetes: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DIQ_I.htm
+               "HIQ_I.XPT", #insurance https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HIQ_I.htm
+               "HUQ_I.XPT", #healthcare utilization: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HUQ_I.htm
+               "CBQ_I.XPT", #consumer: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/CBQ_I.htm
+               "DBQ_I.XPT", #dietary behavior: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DBQ_I.htm
+               "OCQ_I.XPT", #occupation: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/OCQ_I.htm
+               "HSQ_I.XPT", #current health: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/HSQ_I.htm
+               "BMX_I.XPT", #Body measures: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BMX_I.htm
+               "PAQ_I.XPT", #phys_act: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/PAQ_I.htm
+               "PFQ_I.XPT") #phys_func: https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/PFQ_I.htm
+
 fileList=lapply(fileNames, function(x){paste0(NH_file_folder,x)})
 dataList = lapply(fileList, function(x){import(x)})
-merged_NHANES_F <- Reduce(function(x,y) {merge(x,y, by="SEQN")}, dataList)
+merged_NHANES_F <- Reduce(function(x,y) {merge(x,y, by="SEQN",all = TRUE)}, dataList)
 
 
 #see NHANES_2015.json for brief descriptions - didn't finish putting those in, or getting all the codes / types
-NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND, #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.htm
-                                       educational_attainment=DMDHREDU,
+NHANES_merged <- merged_NHANES_F %>% rename(gender=RIAGENDR, #https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.htm
+                                       educational_attainment=DMDEDUC2,
+                                       educational_level_child=DMDEDUC3,
                                        size=DMDFMSIZ, #family size but to match for PCA with sam
-                                       age=DMDHRAGE,
-                                       marital_status=DMDHRMAR,
+                                       age=RIDAGEYR,
+                                       marital_status=DMDMARTL,
                                        yrs_US=DMDYRSUS,
                                        vet_foreign_war=DMQADFC,
                                        veteran=DMQMILIZ,
@@ -57,6 +77,14 @@ NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND, #https://wwwn.cdc.g
                                        still_have_asthma=MCQ035,
                                        asthma_attack_1yr=MCQ040,
                                        ER_asthma_1yr=MCQ050,
+                                       ever_told_COPD=MCQ160O,
+                                       ever_told_bronchitis=MCQ160K,
+                                       still_have_bronchitis=MCQ170K,
+                                       age_first_bronchitis=MCQ180K,
+                                       ever_told_emphysema=MCQ160G,
+                                       age_first_emphysema=MCQ180G,
+                                       ever_told_overweight=MCQ080,
+                                       hay_fever_1yr=AGQ030,
                                        age_arthritis=MCQ180A,
                                        age_coronary_heart_disease=MCQ180C,
                                        age_heart_attack=MCQ180E,
@@ -173,8 +201,11 @@ NHANES_merged <- merged_NHANES_F %>% rename(gender=DMDHRGND, #https://wwwn.cdc.g
                                        d1_selenium=DR1TSELE,
                                        d1_caffeine=DR1TCAFF,
                                        d1_alcohol=DR1TALCO) %>%
-    select(SEQN,gender,educational_attainment,size,age,marital_status,yrs_US,vet_foreign_war,veteran,birth_country,
+    select(SEQN,gender,educational_attainment,educational_level_child,
+           size,age,marital_status,yrs_US,vet_foreign_war,veteran,birth_country,
            poverty_ratio,pregnant,race,age_first_asthma,ever_told_asthma,still_have_asthma,asthma_attack_1yr,
+           ever_told_COPD,ever_told_bronchitis,still_have_bronchitis,age_first_bronchitis,ever_told_emphysema,
+           age_first_emphysema,ever_told_overweight,hay_fever_1yr,
            ER_asthma_1yr,age_arthritis,age_coronary_heart_disease,age_heart_attack,no_interest_do_things,
            depressed,trouble_sleep,no_energy,poor_eating,feel_bad_self,better_dead,BP_dr_said,age_hypertension,
            prescribed_BP,taking_prescribed_BP,prescribed_cholest,taking_prescribed_cholest,age_diabetes,
@@ -199,6 +230,7 @@ NHANES_1$luck2 <- sample(100, size = nrow(NHANES_1), replace = TRUE)
 NHANES_1$luck3 <- sample(100, size = nrow(NHANES_1), replace = TRUE)
 NHANES_1$luck4 <- sample(100, size = nrow(NHANES_1), replace = TRUE)
 
+#write_csv2(demo12,paste0(nhanesdir,"demo12.csv"))# etc.
 #preparation of NHANES for PCA
 #make categorical variables in vectors of binary, which will be removed later...
 #could do it where we didn't break out the categorical variables, and just did the PCA with supplemental values, but
@@ -215,7 +247,7 @@ for(fact in unique(NHANES_1$race)){
   NHANES_1['asian'] <- ifelse(NHANES_1$race == 6, 1, 0);
   NHANES_1['multiracial'] <- ifelse(NHANES_1$race == 7, 1, 0);
 }
-#education level is numeric and meaningful as goes up
+#education level is numeric and meaningful as goes up; children are educational_level_child, but also ascends and for purposes of PCA matching, just 0 here.
 for(row in NHANES_1){
   NHANES_1['educ_level'] <- ifelse(NHANES_1$educational_attainment<=5,NHANES_1$educational_attainment,0)
 }
@@ -269,13 +301,13 @@ NH_Female <- NH %>% filter(gender=='1')
 NH_Pregnant <- NH %>% filter(pregnant=='1')
 #others to do??
 
-#quick little way to test for whether it's finding plausible minimums
+#quick little way to test for whether it's finding plausible minimums NOT RUN
 min_test <- sample(order(abs(norm_mod[1,1] - norm_targ[,1])+abs(norm_mod[1,2] - norm_targ[,2])
                   +abs(norm_mod[1,3] - norm_targ[,3]) +abs(norm_mod[1,4] - norm_targ[,4])
                   +abs(norm_mod[1,5] - norm_targ[,5]))[1:10],1)
 
 
-#if I split up case_when like this, should I change what's in the PCA?
+#if I split up case_when like this, should I change what's in the PCA? Going with full PCA now.
 system.time({
       sam_matched <- sam %>%
         mutate(SEQN = 
@@ -304,5 +336,6 @@ samplesam_NH <- sample_n(sam_NH, 100000)
 
 SAMDataFolder <- "NewSAMData/"
 
-saveRDS(samplesam_NH,paste(SAMDataFolder,"/temp/sam_NH_7_5_100k.RDS",sep=""))
+saveRDS(samplesam_NH,paste(SAMDataFolder,"/temp/sam_NH_7_9_100k.RDS",sep=""))
+saveRDS(sam_NH,paste(SAMDataFolder,"/temp/sam_NH_7_9_4m.RDS",sep=""))
 

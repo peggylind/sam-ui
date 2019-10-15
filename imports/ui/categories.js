@@ -27,7 +27,9 @@ export function categories(list) {
     {category: 'household_income', pretty_name: 'income', type: 'range', low: 0, high:700000,
       factors:[{factorName:'low',factorColor:5},{factorName:'high',factorColor:1}],fnd:'',fnd_top_num:1000000,fnd_bottom_num:0,ScaleHeight:1,Mode:"Scatter"},
       //7
-    {category: 'lowbirthweightbyrace', pretty_name: 'low birthweight by race', type: 'factor',
+    // {category: 'lowbirthweightbyrace', pretty_name: 'low birthweight by race', type: 'factor',
+    //   factors: [{factorName:'yes',factorColor:5},{factorName:'no',factorColor:1}],fnd:'',ScaleHeight:1,Mode:"Scatter"},
+    {category: 'lowbirthweightbyrace', pretty_name: 'Hypertension and Preeclampsia', type: 'factor',
       factors: [{factorName:'yes',factorColor:5},{factorName:'no',factorColor:1}],fnd:'',ScaleHeight:1,Mode:"Scatter"},
       //8
     {category: 'member', pretty_name: 'family member',
@@ -35,7 +37,7 @@ export function categories(list) {
       factors: [{factorName:'Adult',factorColor:3},{factorName:'Child',factorColor:2},
           {factorName:'Householder',factorColor:1},{factorName:'Wife',factorColor:6}],fnd:'',ScaleHeight:1,Mode:"Scatter"},
       //9
-    {category: 'pregnant', pretty_name: 'pregnant', type: 'factor',
+    {category: 'pregnant', pretty_name: 'Pregnant last year', type: 'factor',
       factors: [{factorName:'yes',factorColor:5},{factorName:'no',factorColor:1}],fnd:'',ScaleHeight:1,Mode:"Scatter"},
       //10
     {category: 'quality_description', type: 'factor', pretty_name: 'HCAD house quality',
@@ -58,7 +60,9 @@ export function categories(list) {
     {category: 'stresslevelrace', pretty_name: 'stress by race', type: 'range', low:-2, high:30,
       factors: [{factorName:'yes',factorColor:5},{factorName:'no',factorColor:1}],fnd:'',ScaleHeight:1,Mode:"Scatter"},
       //16
-    {category: 'veteran_status', pretty_name: 'veteran', type: 'factor',
+    // {category: 'veteran_status', pretty_name: 'veteran', type: 'factor',
+    //   factors: [{factorName:'Nonveteran',factorColor:1},{factorName:'Veteran',factorColor:11}],fnd:'',ScaleHeight:1,Mode:"Scatter"}
+    {category: 'veteran_status', pretty_name: 'Preeclampsia', type: 'factor',
       factors: [{factorName:'Nonveteran',factorColor:1},{factorName:'Veteran',factorColor:11}],fnd:'',ScaleHeight:1,Mode:"Scatter"}
 
 ];

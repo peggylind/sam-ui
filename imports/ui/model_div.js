@@ -112,10 +112,10 @@ export default class ModelDivs extends React.PureComponent {
     {this.state.toolTipInfo.info ?
       <div style={{position:"relative",backgroundColor:"#f8f8ff",width:"90%",left:"5%",borderRadius:"15px",borderStyle:"solid",borderWidth:".2em"}}>
         {this.state.toolTipInfo.info.age != "NA" & this.state.toolTipInfo.info.age != "" & this.state.toolTipInfo.info.race == 'black' &&
-          <div><div><hr></hr>This {this.state.toolTipInfo.info.age} year old {this.state.toolTipInfo.info.sex} has a household income of {this.formatDollars(this.state.toolTipInfo.info.household_income)} </div>
-          <div>They already experience 15% more mental stress than average Houstonians, and reported fewer than 15 healthy days (both physical and mental) a month.</div><hr></hr>
-          <div>After Harvey, they had $10,000 worth of damage to their home and over the following 6 months they lost 25 days of work and had fewer than 5 healthy days a month.</div>
-          <div>With our intervention, they would have had $3,000 less damage to their home, and over the next 6 months would have lost 5 fewer days from work and had 10 healthy days a month.</div></div>}
+          <div><div><hr></hr>This {this.state.toolTipInfo.info.age} year old African American {this.state.toolTipInfo.info.sex} has a household income of {this.formatDollars(this.state.toolTipInfo.info.household_income)} </div>
+          <div>She has self-reported poor eating habits, such as low appetite or overeating, and a BMI of 31.</div><hr></hr>
+          <div>She had been told previously by a doctor that she had high blood pressure, and she takes her prescribed medication.</div>
+          <div>Her hypertension contributed to her preeclampsia, which luckily did not develop into eclampsia</div></div>}
         {this.state.toolTipInfo.info.age != "NA" & this.state.toolTipInfo.info.age != "" & this.state.toolTipInfo.info.race == 'hispanic' &&
           <div><div><hr></hr>This {this.state.toolTipInfo.info.age} year old {this.state.toolTipInfo.info.sex} has a household income of {this.formatDollars(this.state.toolTipInfo.info.household_income)} </div>
           <div>They already experience 15% more mental stress than average Houstonians, and reported fewer than 15 healthy days (both physical and mental) a month.</div><hr></hr>
